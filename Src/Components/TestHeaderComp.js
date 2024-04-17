@@ -23,21 +23,27 @@ const TestHeaderComp = ({
         <View style={{ ...styles.headerView, ...headerStyles }}>
             <StatusBar backgroundColor={Colors.THEME} barStyle="light-content" />
             <TouchableOpacity style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }} onPress={!!onPressBack ? onPressBack : () => goBack()}>
-                <Image
-                    source={imagePaths.BACK}
-                    style={styles.image}
-                />
-                <Text style={{ color: Colors.WHITE, fontSize: 18, marginLeft: 12 }}>{headerTitle}</Text>
-                <View
-                    style={{ paddingHorizontal: 8, marginVertical: 8, borderRadius: 20, backgroundColor: "#81BADD" }}
-                >
-                    <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
-                        <Image style={{ width: 20, height: 20 }} source={imagePaths.TEST_TIMER_ICON} />
-                        <Text style={{ fontSize: 13, fontWeight: "400", color: Colors.BLACK, paddingLeft: 4 }}>01:11:11</Text>
-                    </View>
+                <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+                    <Image
+                        source={imagePaths.BACK}
+                        style={styles.image}
+                    />
+                    <Text style={{ color: Colors.WHITE, fontSize: 18, marginLeft: 12 }}>{headerTitle}</Text>
                 </View>
-                <View style={{ alignItems: "center", marginRight: 10 }}>
-                    <Image style={{ height: 20, width: 20 }} source={imagePaths.TEST_HAMBURGER} />
+                <View>
+                    <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+                        <View
+                            style={{ paddingHorizontal: 8, marginVertical: 8, marginHorizontal: 10, borderRadius: 20, backgroundColor: "#81BADD" }}
+                        >
+                            <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+                                <Image style={{ width: 20, height: 20 }} source={imagePaths.TEST_TIMER_ICON} />
+                                <Text style={{ fontSize: 13, fontWeight: "400", color: Colors.BLACK, paddingLeft: 4 }}>01:11:11</Text>
+                            </View>
+                        </View>
+                        <View style={{ alignItems: "center", marginRight: 10 }}>
+                            <Image style={{ height: 20, width: 20 }} source={imagePaths.TEST_HAMBURGER} />
+                        </View>
+                    </View>
                 </View>
             </TouchableOpacity>
         </View>

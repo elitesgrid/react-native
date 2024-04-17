@@ -1,5 +1,6 @@
 export default {
     BASE_URL: 'https://www.elitesgrid.com/api/',
+    BASE_URL_WEB: "https://www.elitesgrid.com/",
     BEARER_TOKEN: "21*dNerglnw3@@OI)30@I*Dm'@@",
     VERSION: '1',
     DEVICE_TYPE: '1',

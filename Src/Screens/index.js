@@ -29,10 +29,10 @@ export { RecordedClasses3 } from "./MyPortal/RecordedClasses/RecordedClasses3";
 
 export { TestSeries2 } from "./MyPortal/TestSeries/TestSeries2";
 export { TestSeries3 } from "./MyPortal/TestSeries/TestSeries3";
-export { Instructions } from "./Test/Instructions";
-export { AttemptTest } from "./Test/AttemptTest";
+//export { Instructions } from "./Test/Instructions";
+//export { AttemptTest } from "./Test/AttemptTest";
 
-
+export { TestWebView } from "./Test/TestWebView";
 
 export { StudyMaterial2 } from "./MyPortal/StudyMaterial/StudyMaterial2";
 export { StudyMaterial3 } from "./MyPortal/StudyMaterial/StudyMaterial3";

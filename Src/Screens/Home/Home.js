@@ -22,7 +22,9 @@ export const Home = (props) => {
   const [testimonial, setTestimonial] = useState([]);
 
   const navPastPaperDetail = function (item) {
-    navigation.navigate(navigationStrings.PAST_PAPER_DETAIL, item);
+    item = {"allow_move_section": "0", "ask_sec_priority": "0", "calc_allowed": "0", "course_search_ids": "6", "created": "1652796426", "description": "Number of Questions - 3 | Time - 10 minutes", "end_date": "1711774200", "file_type": "8", "hide_answer_default": "1", "hide_mark_for_review": "0", "hide_over_web": "0", "hide_percentile": "1", "hide_rank": "1", "id": "5300", "internal_type": "Start Test", "is_download": "0", "is_free": "0", "is_live": "0", "length": "180", "marking_type": "0", "marks": "", "min_mark_per_sec": "1", "modified": "1709873687", "position": "0", "practice": "1", "report_id": "", "res_seq_attempt": "0", "result_date": "0", "section_id": "162", "section_title": "Test", "shuffling": "0", "start_date": "1709527800", "state": "", "status": "1", "subject": "VARC", "subject_id": "84", "submit_hide": "0", "temp_id": "1312", "thumbnail": "https://elites-prod.s3.ap-south-1.amazonaws.com/file_master/thumbnails//2195674reading-comprehension-theory.png", "title": "Testing Dev", "topic_id": "96", "total_marks": "9", "total_questions": "3", "url": "", "url_2": "", "video_type": "0", "view_rankers_count": "0"}
+    navigation.navigate(navigationStrings.TEST_ATTEMPT, item);
+    //navigation.navigate(navigationStrings.PAST_PAPER_DETAIL, item);
   }
 
   const navCourseDetail = function (item) {

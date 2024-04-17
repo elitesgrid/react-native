@@ -36,9 +36,10 @@ export default {
     TEST_SERIES2:"Test Topic List",
     TEST_SERIES3:"Test List",
     TEST_INSTRUCTIONS:"Test Instructions",
-    TEST_ATTEMPT:"Test Attempt",
-    TEST_VIEW_RESULT:"Test View Result",
-    TEST_RANKERS:"Test Rankers",
+    //TEST_ATTEMPT:"Test Attempt",
+    //TEST_VIEW_RESULT:"Test View Result",
+    //TEST_RANKERS:"Test Rankers",
+    TEST_WEBVIEW:"Tet Webview",
 
     PDF2:"PDF Topic List",
     PDF3:"PDF List",

@@ -26,6 +26,22 @@ const TestSeriesStyle = StyleSheet.create({
   instHeadingGradientText: { color: "white", fontSize: 20, marginLeft: "3%" },
   instPointTick: { flex: 1, flexDirection: "row", marginHorizontal: "4%", marginVertical: 5,height:20 },
   instPointTickImage: { height: 20, width: 20 },
+
+  //Attempt Now
+  testSectionsCard:{borderBottomColor: Colors.WHITE, borderBottomWidth: 3},
+  testSectionsCardText:{ fontSize: 16, color: Colors.WHITE, marginHorizontal: 8, marginVertical: 5 },
+  questionTypeCard: { marginHorizontal: 8, marginVertical: 6 },
+  questionTypeText:{ color: "#000000" },
+  questionNumberingCard:{ backgroundColor: "#0274ba42", width: "18%", alignItems: "center" },
+  questionNumberingText:{ fontSize: 10, color: "#0274BA", marginVertical: 3 },
+  questionCard:{ flex: 1, marginHorizontal: 15, marginTop: 8 },
+  optionsCard:{ flex: 0.1, backgroundColor: Colors.WHITE, flexDirection: "row", borderWidth: 1, borderColor: "#222222", borderRadius: 20, overflow: "scroll", marginVertical: 3, alignItems: "center" },
+  
+
+
+
+
+
 });
 
 export default TestSeriesStyle;

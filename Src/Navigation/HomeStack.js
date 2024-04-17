@@ -21,8 +21,9 @@ import {
     StudyMaterial2,
     StudyMaterial3,
     PdfViewer,
-    Instructions,
-    AttemptTest
+    //Instructions,
+    //AttemptTest
+    TestWebView
 } from '../Screens/index';
 import CustomDrawerContent from '../Components/CustomDrawerContent';
 
@@ -69,8 +70,9 @@ export default function HomeStack() {
             <Drawer.Screen name={navigationStrings.PDF2} component={StudyMaterial2}></Drawer.Screen>
             <Drawer.Screen name={navigationStrings.PDF3} component={StudyMaterial3}></Drawer.Screen>
             <Drawer.Screen name={navigationStrings.PDF_VIEWER} component={PdfViewer}></Drawer.Screen>
-            <Drawer.Screen name={navigationStrings.TEST_INSTRUCTIONS} component={Instructions}></Drawer.Screen>
-            <Drawer.Screen name={navigationStrings.TEST_ATTEMPT} component={AttemptTest}></Drawer.Screen>
+            {/* <Drawer.Screen name={navigationStrings.TEST_INSTRUCTIONS} component={Instructions}></Drawer.Screen> */}
+            {/* <Drawer.Screen name={navigationStrings.TEST_ATTEMPT} component={AttemptTest}></Drawer.Screen> */}
+            <Drawer.Screen name={navigationStrings.TEST_WEBVIEW} component={TestWebView}></Drawer.Screen>
         </Drawer.Navigator>
         // <Stack.Navigator screenOptions={{headerShown:false}}>
         //     <Stack.Screen name={navigationStrings.BOTTOM_TABS}  component={TabRoutes}/>

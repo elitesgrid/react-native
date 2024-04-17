@@ -53,16 +53,8 @@ export const TestSeries3 = (props) => {
             });
     };
 
-    const navToTestInstructions = function (item) {
-        navigation.navigate(navigationStrings.TEST_INSTRUCTIONS, item);
-    }
-
-    const navToViewRankers = function (item) {
-        navigation.navigate(navigationStrings.TEST_RANKERS, item);
-    }
-
-    const navToTestResult = function (item) {
-        navigation.navigate(navigationStrings.TEST_VIEW_RESULT, item);
+    const navToTestWebView = function (item) {
+        navigation.navigate(navigationStrings.TEST_WEBVIEW, item);
     }
 
     useEffect(function () {
@@ -117,7 +109,7 @@ export const TestSeries3 = (props) => {
                                             {
                                                 item.report_id && item.state == "2" && (
                                                     <LinearGradient colors={['#37B6F1', '#0274BA']} style={TestSeriesStyle.testListButton}>
-                                                        <TouchableOpacity onPress={() => { navToTestResult({ ...item, ...{ internal_type: "View Result" } }) }}>
+                                                        <TouchableOpacity onPress={() => { navToTestWebView({ ...item, ...{ internal_type: "View Result" } }) }}>
                                                             <Text style={{ marginVertical: 1, fontSize: 12, color: Colors.WHITE }}>{"View Result"}</Text>
                                                         </TouchableOpacity>
                                                     </LinearGradient>
@@ -126,7 +118,7 @@ export const TestSeries3 = (props) => {
                                             {
                                                 item.report_id && item.state !== "2" && (
                                                     <LinearGradient colors={['#37B6F1', '#0274BA']} style={TestSeriesStyle.testListButton}>
-                                                        <TouchableOpacity onPress={() => { navToTestInstructions({ ...item, ...{ internal_type: "Resume Test" } }) }}>
+                                                        <TouchableOpacity onPress={() => { navToTestWebView({ ...item, ...{ internal_type: "Resume Test" } }) }}>
                                                             <Text style={{ marginVertical: 1, fontSize: 12, color: Colors.WHITE }}>{"Resume"}</Text>
                                                         </TouchableOpacity>
                                                     </LinearGradient>
@@ -135,7 +127,7 @@ export const TestSeries3 = (props) => {
                                             {
                                                 !item.report_id && (
                                                     <LinearGradient colors={['#37B6F1', '#0274BA']} style={TestSeriesStyle.testListButton}>
-                                                        <TouchableOpacity onPress={() => { navToTestInstructions({ ...item, ...{ internal_type: "Start Test" } }) }}>
+                                                        <TouchableOpacity onPress={() => { navToTestWebView({ ...item, ...{ internal_type: "Start Test" } }) }}>
                                                             <Text style={{ marginVertical: 1, fontSize: 12, color: Colors.WHITE }}>{"Attempt Now"}</Text>
                                                         </TouchableOpacity>
                                                     </LinearGradient>
@@ -144,7 +136,7 @@ export const TestSeries3 = (props) => {
                                             {
                                                 item.report_id && item.view_rankers_count !== "0" && (
                                                     <LinearGradient colors={['#37B6F1', '#0274BA']} style={TestSeriesStyle.testListButton}>
-                                                        <TouchableOpacity onPress={() => { navToViewRankers(item) }}>
+                                                        <TouchableOpacity onPress={() => { navToTestWebView({...item,...{internal_type:"View Rankers"}}) }}>
                                                             <Text style={{ marginVertical: 1, fontSize: 12, color: Colors.WHITE }}>{"View Rankers"}</Text>
                                                         </TouchableOpacity>
                                                     </LinearGradient>
@@ -153,7 +145,7 @@ export const TestSeries3 = (props) => {
                                             {
                                                 item.report_id && item.state == "2" && item.practice == "0" && (
                                                     <LinearGradient colors={['#37B6F1', '#0274BA']} style={TestSeriesStyle.testListButton}>
-                                                        <TouchableOpacity onPress={() => {  navToTestInstructions({ ...item, ...{ internal_type: "Start Practice" } })  }}>
+                                                        <TouchableOpacity onPress={() => {  navToTestWebView({ ...item, ...{ internal_type: "Start Practice" } })  }}>
                                                             <Text style={{ marginVertical: 1, fontSize: 12, color: Colors.WHITE }}>{"Practice"}</Text>
                                                         </TouchableOpacity>
                                                     </LinearGradient>
