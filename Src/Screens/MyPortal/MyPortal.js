@@ -9,7 +9,7 @@ import { RecordedClasses1 } from './RecordedClasses/RecordedClasses1';
 import { TestSeries1 } from './TestSeries/TestSeries1';
 import { StudyMaterial1 } from './StudyMaterial/StudyMaterial1';
 import Colors from '../../Constants/Colors';
-
+import { FeedList } from '../Feeds/FeedList';
 
 const SecondRoute = () => (
   <View style={{ flex: 1, backgroundColor: '#673ab7' }} />
@@ -24,7 +24,7 @@ export const MyPortal = (props) => {
     recorded_videos: () => <RecordedClasses1 navigation={navigation} />,
     test_series: () => <TestSeries1 navigation={navigation} />,
     study_material: () => <StudyMaterial1 navigation={navigation} />,
-    feed: () => <SecondRoute navigation={navigation} />,
+    feed: () => <FeedList navigation={navigation} />,
     notice_board: () => <SecondRoute navigation={navigation} />,
   });
 

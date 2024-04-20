@@ -39,3 +39,4 @@ export { StudyMaterial3 } from "./MyPortal/StudyMaterial/StudyMaterial3";
 
 export { PdfViewer } from "./Pdf/PdfViewer";
 
+export { Notification } from "./Notification/Notification";

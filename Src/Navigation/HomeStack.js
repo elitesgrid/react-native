@@ -23,7 +23,8 @@ import {
     PdfViewer,
     //Instructions,
     //AttemptTest
-    TestWebView
+    TestWebView,
+    Notification
 } from '../Screens/index';
 import CustomDrawerContent from '../Components/CustomDrawerContent';
 
@@ -73,6 +74,7 @@ export default function HomeStack() {
             {/* <Drawer.Screen name={navigationStrings.TEST_INSTRUCTIONS} component={Instructions}></Drawer.Screen> */}
             {/* <Drawer.Screen name={navigationStrings.TEST_ATTEMPT} component={AttemptTest}></Drawer.Screen> */}
             <Drawer.Screen name={navigationStrings.TEST_WEBVIEW} component={TestWebView}></Drawer.Screen>
+            <Drawer.Screen name={navigationStrings.NOTIFICATION} component={Notification}></Drawer.Screen>
         </Drawer.Navigator>
         // <Stack.Navigator screenOptions={{headerShown:false}}>
         //     <Stack.Screen name={navigationStrings.BOTTOM_TABS}  component={TabRoutes}/>

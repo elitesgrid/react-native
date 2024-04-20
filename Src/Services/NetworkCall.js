@@ -28,11 +28,14 @@ const api_list = {
     SUBMIT_TEST_DETAIL:"test/submit_detail_test",
     GET_TEST_RESULT:"test/result_test",
     GET_BOOKMARKED_QUESTIONS:"test/get_bookmarked_questions",
+    GET_NOTIFICATION: "courses/get_notifications",
+    READ_NOTIFICATION: "user/read_notification",
     
     GET_PDF: "windows/get_pdf",
-    GET_NOTIFICATION: "windows/get_notification",
     GENERATE_ZOOM_PLAY_URL: "windows/ajax_generate_zoom_play_url",
-    MARK_COMPLETE_PDF: "courses/save_pdf_log"
+    MARK_COMPLETE_PDF: "courses/save_pdf_log",
+
+    GET_FEED_LIST : "feeds/get_post_list"
 };
 
 async function network_call(API, payload) {

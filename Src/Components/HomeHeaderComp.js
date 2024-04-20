@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import CommonStyles from '../Assets/Style/CommonStyle';
 import Colors from '../Constants/Colors';
+import navigationStrings from '../Constants/navigationStrings';
 
 
 // create a component
@@ -20,6 +21,11 @@ const HomeHeaderComp = ({
     const goBack = function () {
         navigation.goBack();
     }
+
+    const navToNofication = function(){
+        navigation.navigate(navigationStrings.NOTIFICATION, {});
+    }
+
     return (
         <View style={{...CommonStyles.headerView,...headerStyles}}>
             <StatusBar backgroundColor={Colors.THEME} barStyle="light-content" />
@@ -32,6 +38,7 @@ const HomeHeaderComp = ({
                 </TouchableOpacity>
                 <Text style={CommonStyles.headerText}>{headingText}</Text>
                 <Image
+                    onPress={()=>{navToNofication()}}
                     source={imagePaths.NOTIFICATION}
                     style={CommonStyles.notificationImage}
                 />
