@@ -16,8 +16,8 @@ async function login(payload) {
     return result;
 }
 
-async function send_verification_otp(payload) {
-    return await network_call("SEND_VERIFICATION_OTP", payload);
+async function forgot_password(payload) {
+    return await network_call("FORGOT_PASSWORD", payload);
 }
 
 async function update_password(payload) {
@@ -31,17 +31,15 @@ async function logout(payload) {
 }
 
 
-async function login_with_otp(event, payload) {
-    payload.device_id = machineIdSync({original: true});
-    payload.is_social = "0";
-    var result = await network_call("LOGIN_WITH_OTP", payload);
+async function registration(payload) {
+    payload.device_id = "Android";//machineIdSync({original: true});
+    payload.device_token = "DT";
+    payload.device_type = "1"
+    var result = await network_call("REGISTRATION", payload);
     if (result.status === true && payload.otp) {
         if (result.status === true) {
-            await StorageManager.set_key("JWT", result.data);
-            result = await network_call("GET_MY_PROFILE", {cb: result.cb});
-            if (result.status === true) {
-                await StorageManager.set_session(result.data);
-            }
+            await StorageManager.set_key("JWT", result.id);
+            await StorageManager.set_session(result.data);
         }
     }
     return result;
@@ -49,8 +47,8 @@ async function login_with_otp(event, payload) {
 
 module.exports = {
     login,
-    send_verification_otp,
+    forgot_password,
     update_password,
     logout,
-    login_with_otp
+    registration
 };

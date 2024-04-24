@@ -4,6 +4,8 @@ export default {
     FORGOT_PASSWORD: "ForgotPassword",
     LOGOUT: "Logout",
     OTP_VERIFICATION: "OTP Verification",
+    CHANGE_PASSWORD:"Change Password",
+    CONTACT_US:"Contact Us",
 
     TAB_ROUTES: "Tab Routes",
     STACK_NAV: "Stack Navigation",

@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity,StatusBar } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity,StatusBar,SafeAreaView } from 'react-native';
 import { Image } from 'react-native-elements';
 import imagePaths from '../Constants/imagePaths';
 import { useNavigation } from '@react-navigation/native';
@@ -19,7 +19,7 @@ const HeaderComp = ({
         navigation.goBack(null);
     }
     return (
-        <View style={{ ...styles.headerView, ...headerStyles }}>
+        <SafeAreaView  style={{ ...styles.headerView, ...headerStyles }}>
             <StatusBar backgroundColor={Colors.THEME} barStyle="light-content" />
             <TouchableOpacity style={{ flex: 1, flexDirection: "row", alignItems: "center" }} onPress={!!onPressBack ? onPressBack : () => goBack()}>
                 <Image
@@ -29,14 +29,14 @@ const HeaderComp = ({
                 <Text style={{ color: Colors.WHITE, fontSize: 18, marginLeft: 12 }}>{headerTitle}</Text>
                 <Text></Text>
             </TouchableOpacity>
-        </View>
+        </SafeAreaView>
     );
 };
 
 // define your styles
 const styles = StyleSheet.create({
     headerView: {
-        height: 42,
+        height: 110,
         width: "100%",
         justifyContent: "center",
         backgroundColor: Colors.THEME

@@ -61,7 +61,7 @@ export const Login = ({ navigation }) => {
 
   return (
     <View style={Styles.container}>
-      <View style={[Styles.containerChild,{paddingTop: moderateVerticalScale((150-keyBoardHeight))}]}>
+      <View style={[Styles.containerChild,{paddingTop: moderateVerticalScale((120-keyBoardHeight))}]}>
         <View>
           <View style={Styles.logo_bg_parent}>
             <Image

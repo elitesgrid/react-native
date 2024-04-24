@@ -16,7 +16,7 @@ const CommonStyles = StyleSheet.create({
     marginRight: 5
   },
   headerView:{
-    height:50,
+    height:110,
     width:"100%",
     justifyContent:"center",
     backgroundColor:Colors.THEME
@@ -33,6 +33,7 @@ const CommonStyles = StyleSheet.create({
   },
   HeaderContainer:{
     flexDirection:"row",
+    marginTop:moderateScale(15),
     flex:1,
     alignItems:"center",
     justifyContent:"space-between"

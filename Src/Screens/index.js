@@ -6,11 +6,14 @@ export { Register } from "./Auth/Register";
 export { ForgotPassword } from "./Auth/ForgotPassword";
 export { OtpVerification } from "./Auth/OtpVerification";
 
+
 //Main Screens
 export { Home } from "./Home/Home";
 export { MyPortal } from "./MyPortal/MyPortal";
 export { MyOrder } from "./MyOrder/MyOrder";
 export { Profile } from "./Profile/Profile";
+export { ChangePassword } from "./Profile/ChangePassword";
+export { ContactUS } from "./Profile/ContactUs";
 
 export { PastPaperDetail } from "./PastPaper/PastPaperDetail";
 export { Player } from "./Player/Player";

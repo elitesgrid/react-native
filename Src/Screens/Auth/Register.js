@@ -5,6 +5,8 @@ import { moderateVerticalScale } from 'react-native-size-matters';
 
 // import Parse from 'parse/react-native';
 import { useNavigation } from '@react-navigation/native';
+
+import Auth from "../../Services/apis/AuthService";
 import Styles from '../../Assets/Style/LoginStyle';
 import imagePaths from '../../Constants/imagePaths';
 import navigationStrings from '../../Constants/navigationStrings';
@@ -15,29 +17,26 @@ export const Register = () => {
   const navigation = useNavigation();
 
   const [name, setName] = useState('');
-  const [email, setemail] = useState('');
-  const [mobile, setmobile] = useState('');
+  const [email, setEmail] = useState('');
+  const [mobile, setMobile] = useState('');
   const [password, setPassword] = useState('');
   const [isVisible, setisVisible] = useState(true);
 
   const doUserSignUp = async function () {
-    // Note that this values come from state variables that we've declared before
-    const nameValue = name;
-    const emailValue = email;
-    const mobileValue = mobile;
-    const passwordValue = password;
     // Since the signUp method returns a Promise, we need to call it using await
-    return await User.signUp(nameValue, emailValue, mobileValue, passwordValue)
-      .then((createdUser) => {
-        console.log(nameValue);
-        // Parse.User.signUp returns the already created ParseUser object if successful
-        Alert.alert(
-          'Success!',
-          `User ${createdUser.get('username')} was successfully created!`,
-        );
-
-        navigation.navigate(navigationStrings.HOME);
-        return true;
+    let payload = {name:name, email:email, mobile:mobile, password:password};
+    return await Auth.registration(payload)
+      .then((response) => {
+        if(response.status==false){
+          Alert.alert(
+            'Warning!',
+            response.message,
+          );
+          return false;
+        }else{
+          navigation.navigate(navigationStrings.OTP_VERIFICATION,payload);
+          return true;
+        }
       })
       .catch((error) => {
         console.log(error.message);
@@ -53,11 +52,11 @@ export const Register = () => {
 
   return (
     <View style={Styles.container}>
-      <HeaderComp />
+      <HeaderComp headerTitle="Sign Up" />
       <View style={Styles.containerChild}>
         <View>
-          <View style={[Styles.title_master, { marginTop: 0, marginBottom: 0 }]}>
-            <Text style={Styles.title}>Sign Up</Text>
+          <View style={[Styles.title_master, { marginTop: 10, marginBottom: 0 }]}>
+            <Text style={Styles.title}>Create an account!</Text>
           </View>
           <View style={Styles.form}>
             <View style={Styles.inputSection}>
@@ -66,7 +65,7 @@ export const Register = () => {
               />
               <TextInput
                 style={Styles.form_input}
-                value={email}
+                value={name}
                 placeholder={'Enter Your Name'}
                 onChangeText={(text) => setName(text)}
                 autoCapitalize={'none'}
@@ -80,7 +79,7 @@ export const Register = () => {
                 style={Styles.form_input}
                 value={email}
                 placeholder={'Enter Email Address'}
-                onChangeText={(text) => setemail(text)}
+                onChangeText={(text) => setEmail(text)}
                 autoCapitalize={'none'}
                 keyboardType={'email-address'}
               />
@@ -93,7 +92,7 @@ export const Register = () => {
                 style={Styles.form_input}
                 value={mobile}
                 placeholder={'Enter Mobile'}
-                onChangeText={(text) => setmobile(text)}
+                onChangeText={(text) => setMobile(text)}
                 autoCapitalize={'none'}
               />
             </View>

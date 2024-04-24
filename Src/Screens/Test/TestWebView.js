@@ -1,11 +1,11 @@
 //import liraries
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, SafeAreaView,StatusBar } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 //import TestHeaderComp from '../../Components/TestHeaderComp';
 //import HeaderComp from '../../Components/HeaderComp';
-//import Colors from '../../Constants/Colors';
+import Colors from '../../Constants/Colors';
 import TestSeriesStyle from '../../Assets/Style/TestSeriesStyle';
 import envVariables from '../../Constants/envVariables';
 import StorageManager from '../../Services/StorageManager';
@@ -83,7 +83,8 @@ export const TestWebView = (props) => {
                     )
                     :
                     (
-                        <View style={TestSeriesStyle.container}>
+                        <SafeAreaView style={{flex:1}}>
+                            <StatusBar backgroundColor={Colors.THEME} barStyle="light-content" />
                             {/* <TestHeaderComp headerTitle={params.title} /> */}
                             {/* <HeaderComp headerTitle={params.title} /> */}
                             <View style={{ flex: 1 }}>
@@ -93,8 +94,6 @@ export const TestWebView = (props) => {
                                     source={{ uri: testUrl }}
                                     style={{
                                         flex: 1,
-                                        borderRadius: 20,
-                                        backgroundColor: "#fff0",
                                         height: 1450
                                     }}
                                     onMessage={event => {
@@ -108,8 +107,7 @@ export const TestWebView = (props) => {
                                     }}
                                 />
                             </View>
-
-                        </View>
+                       </SafeAreaView>
                     )
             }
         </>

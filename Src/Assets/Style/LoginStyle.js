@@ -20,7 +20,7 @@ const Styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   title_master: {
-    marginLeft: moderateScale(30),
+    marginHorizontal: moderateScale(30),
     marginTop: moderateScale(30),
   },
   title: {
@@ -40,6 +40,7 @@ const Styles = StyleSheet.create({
     borderColor: '#E4DFDF',
     borderWidth: 1,
     borderRadius: scale(50),
+    height:40,
     alignItems: "center"
   },
   imageRightStyle: {
@@ -48,7 +49,7 @@ const Styles = StyleSheet.create({
     right: 15
   },
   form_input: {
-    marginLeft: moderateScale(10),
+    marginLeft: moderateScale(12),
     maxWidth: "80%"
   },
   forgot_password: {
@@ -82,7 +83,7 @@ const Styles = StyleSheet.create({
   },
   bottomView: {
     justifyContent: "center",
-    marginTop: moderateVerticalScale(50),
+    marginTop: moderateVerticalScale(60),
     marginBottom: moderateVerticalScale(34)
   }
 });

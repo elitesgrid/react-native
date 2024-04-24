@@ -1,58 +1,96 @@
-import React, { useState } from 'react';
+import React, { useEffect,useState } from 'react';
 
 import { Alert, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { moderateVerticalScale } from 'react-native-size-matters';
-import { useNavigation } from '@react-navigation/native';
+import RNRestart from 'react-native-restart';
 // import Parse from 'parse/react-native';
 
 import Auth from "../../Services/apis/AuthService";
 import Styles from '../../Assets/Style/LoginStyle';
 import imagePaths from '../../Constants/imagePaths';
 import navigationStrings from '../../Constants/navigationStrings';
+import HeaderComp from '../../Components/HeaderComp';
 
+export const OtpVerification = (props) => {
+  const { route, navigation } = props;
+  const {params} = route;
 
-export const OtpVerification = () => {
-
+  const [otp, setOTP] = useState('');
   const [username, setUsername] = useState('');
 
   const doSendOTP = async function () {
     // Note that this values come from state variables that we've declared before
-    const usernameValue = username;
-
-    return await Auth.send_verification_otp({ email: usernameValue, password: passwordValue })
+    let payload = params;
+    payload.otp = otp;
+    if(payload.otp=== "" || payload.otp != 4){
+        Alert.alert('Error!', "Please enter valid OTP.");
+        return false;
+    }
+    if(payload.name){
+      return await Auth.registration(payload)
       .then(async (data) => {
-        Alert.alert('Alert!', data.message);
-        if (data.status === true) {
-          navigation.navigate(navigationStrings.OTP_VERIFICATION);
+        if(data.status === false){
+          Alert.alert('Warning!', data.message);
+          return false;
+        }else{
+          Alert.alert('Success!', data.message);
+          if (data.status === true) {
+            RNRestart.Restart();
+          }
+          return true;
         }
-        return true;
       })
       .catch((error) => {
         Alert.alert('Error!', error.message);
         return false;
       });
+    }else{
+      return await Auth.forgot_password(payload)
+      .then(async (data) => {
+        if(data.status === false){
+          Alert.alert('Warning!', data.message);
+          return false;
+        }else{
+          Alert.alert('Success!', data.message);
+          if (data.status === true) {
+            RNRestart.Restart();
+          }
+          return true;
+        }
+      })
+      .catch((error) => {
+        Alert.alert('Error!', error.message);
+        return false;
+      });
+    }
   };
 
+  useEffect(function () {
+    //console.log("Effect-2: "+JSON.stringify(params));
+    const unsubscribe = navigation.addListener('focus', () => {
+        setUsername(params.email);
+    });
+    return unsubscribe;
+}, [navigation, params]);
+
+
   return (
-    <View style={[Styles.container, { paddingTop: moderateVerticalScale(50) }]}>
-      <View>
-        <TouchableOpacity style={{ marginLeft: 20,marginBottom:20 }} onPress={() => navigation.navigate(navigationStrings.LOGIN)}>
-          <Image source={imagePaths.BACK} />
-        </TouchableOpacity>
+    <View style={[Styles.container]}>
+      <HeaderComp headerTitle='OTP Verification'/>
+      <View style={{marginTop:80}}>
         <View style={[Styles.title_master, { marginTop: 0, marginBottom: 0 }]}>
           <Text style={Styles.title}>OTP Verification</Text>
-          <Text>We’ve send you the verification code on +1 2620 0323 7631</Text>
+          <Text>We’ve send you the verification code on {username}</Text>
         </View>
         <View style={Styles.form}>
           <View style={Styles.inputSection}>
             <Image
-              source={imagePaths.MOBILE}
+              source={imagePaths.EMAIL}
             />
             <TextInput
               style={Styles.form_input}
-              value={username}
-              placeholder={'Enter Mobile'}
-              onChangeText={(text) => setUsername(text)}
+              value={otp}
+              placeholder={'Enter OTP'}
+              onChangeText={(text) => setOTP(text)}
               autoCapitalize={'none'}
             />
           </View>

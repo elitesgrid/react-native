@@ -7,6 +7,8 @@ import TabRoutes from './TabRoutes';
 import {
     MyOrder,
     MyPortal,
+    ChangePassword,
+    ContactUS,
     PastPaperDetail,
     Player,
     CourseDetail,
@@ -57,6 +59,8 @@ export default function HomeStack() {
             <Drawer.Screen name={navigationStrings.TAB_ROUTES} component={TabRoutes}></Drawer.Screen>
             {/* <Drawer.Screen name={navigationStrings.STACK_NAV} component={StackNavigator}></Drawer.Screen> */}
             <Drawer.Screen name={navigationStrings.MY_PORTAL} component={MyOrder}></Drawer.Screen>
+            <Drawer.Screen name={navigationStrings.CHANGE_PASSWORD} component={ChangePassword}></Drawer.Screen>
+            <Drawer.Screen name={navigationStrings.CONTACT_US} component={ContactUS}></Drawer.Screen>
             <Drawer.Screen name={navigationStrings.PAST_PAPER_DETAIL} component={PastPaperDetail}></Drawer.Screen>
             <Drawer.Screen name={navigationStrings.PLAYER} component={Player}></Drawer.Screen>
             <Drawer.Screen name={navigationStrings.COURSE_DETAIL} component={CourseDetail}></Drawer.Screen>

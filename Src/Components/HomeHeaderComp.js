@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component } from 'react';
-import { View, Text, StatusBar, TouchableOpacity } from 'react-native';
+import { View, Text, StatusBar, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Image } from 'react-native-elements';
 import imagePaths from '../Constants/imagePaths';
 import { useNavigation } from '@react-navigation/native';
@@ -27,7 +27,7 @@ const HomeHeaderComp = ({
     }
 
     return (
-        <View style={{...CommonStyles.headerView,...headerStyles}}>
+        <SafeAreaView style={{...CommonStyles.headerView,...headerStyles}}>
             <StatusBar backgroundColor={Colors.THEME} barStyle="light-content" />
             <View style={CommonStyles.HeaderContainer}>
                 <TouchableOpacity onPress={!!onPressBack ? onPressBack : () => goBack()}>
@@ -43,7 +43,7 @@ const HomeHeaderComp = ({
                     style={CommonStyles.notificationImage}
                 />
             </View>
-        </View>
+        </SafeAreaView>
     );
 };
 

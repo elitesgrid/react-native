@@ -12,9 +12,9 @@ import envVariables from "../Constants/envVariables";
 const api_list = {
     GET_VERSION: "version/get_version",
     LOGIN_AUTH: "user/login",
-    LOGIN_WITH_OTP: "users/login_with_otp",
-    SEND_VERIFICATION_OTP: "users/send_verification_otp",
-    UPDATE_PASSWORD: "users/update_password",
+    FORGOT_PASSWORD: "user/forgot_password",
+    REGISTRATION: "user/registration",
+    UPDATE_PASSWORD: "user/change_password",
     GET_HOME: "home/get_home",
     GET_SYLLABUS_DETAIL: "courses/get_syllabus",
     GET_COURSE_DETAIL:"courses/get_course_detail",

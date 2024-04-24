@@ -8,7 +8,16 @@ export default {
     SHOW_EYE: require("../Assets/Images/hide_eye.png"),
     BACK: require("../Assets/Images/back.png"),
 
-    //Bottom Tabs IConsr
+    //Sidebar
+    BOOK_MARK: require("../Assets/Images/sidebar/bookmark.png"),
+    SETTING: require("../Assets/Images/sidebar/setting.png"),
+    SIGN_OUT: require("../Assets/Images/sidebar/sign_out.png"),
+    CONTACT_US: require("../Assets/Images/sidebar/contact_us.png"),
+    HELP_CIRCLE: require("../Assets/Images/sidebar/help-circle.png"),
+    H_PROFILE: require("../Assets/Images/sidebar/profile.png"),
+
+
+    //Bottom Tabs ICons
     HOME: require("../Assets/Images/bottom_tabs/home.png"),
     DEFAULT_16_9: require("../Assets/Images/16x9_default.png"),
     MY_PORTAL: require("../Assets/Images/bottom_tabs/MyPortal.png"),
@@ -35,6 +44,15 @@ export default {
     TEST_OPTION_B: require("../Assets/Images/test/option_b.png"),
     TEST_OPTION_C: require("../Assets/Images/test/option_c.png"),
     TEST_OPTION_D: require("../Assets/Images/test/option_d.png"),
+
+    //Feeds
+    FEED_LIKE: require("../Assets/Images/feeds/like.png"),
+    FEED_COMMENT: require("../Assets/Images/feeds/comment.png"),
+    FEED_MORE_GRAY: require("../Assets/Images/feeds/more_gray.png"),
+
+    //Contact US
+    CONTACT_US_EMAIL: require("../Assets/Images/contact_us/email.png"),
+    CONTACT_US_CALL: require("../Assets/Images/contact_us/call.png"),
 
     LETTERS:{
         "0":require("../Assets/Images/letters/0.png"),

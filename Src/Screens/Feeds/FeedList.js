@@ -79,26 +79,41 @@ export const FeedList = (props) => {
           return (
             <View style={{ flex: 1, marginHorizontal: 10, backgroundColor: "#FFFFFF", borderRadius: 10, marginTop: 6, borderColor: "#FFFFFF", borderWidth: 1 }}>
               <View style={{ flex: 1, flexDirection: "row" }}>
-                <View style={{ justifyContent: "center", alignItems: "center" }}>
-                  <Image source={fixImageUrl(item.profile_image, item.name)} resizeMode='stretch' style={{ height: 50, width: 50 }} />
+                <View style={{ flex:0.15,justifyContent: "center", alignItems: "center" }}>
+                  <Image source={fixImageUrl(item.profile_image, item.name)} resizeMode='stretch' style={{ height: 30, width: 30,borderRadius:20,borderWidth:0.2,borderColor:"#9096B4" }} />
                 </View>
-                <View style={{ marginHorizontal: 10 }}>
-                  <Text style={{ fontSize: 14, color: "#05030D", marginVertical: 5 }}>{item.name}</Text>
-                  <Text style={{ color: "black" }}>{CustomHelper.tsToDate(item.created, "d-m-Y h:i A")}</Text>
+                <View style={{ flex:0.8,marginHorizontal: 10 }}>
+                  <Text style={{ fontSize: 12, color: "#0274BA", marginVertical: 3 }}>{item.name}</Text>
+                  <Text style={{ color: "#9096B4",fontSize:10 }}>{CustomHelper.tsToDate(item.created, "d-m-Y h:i A")}</Text>
+                </View>
+                <View>
+                  <Image style={{width:4,height:16,marginHorizontal:5}} resizeMode='stretch' source={imagePaths.FEED_MORE_GRAY} />
                 </View>
               </View>
-              <View>
+              <View style={{marginVertical:8}}>
                 <View>
-                  <Text>{item.text}</Text>
+                  <Text style={{fontSize:13,opacity:0.6}}>{item.text}</Text>
                 </View>
                 {
-                  item.meta_url !== "" && <View>
-                    <Image source={item.meta_url} resizeMode='stretch' />
+                  item.meta_url !== "" && <View style={{marginTop:10}}>
+                    <Image style={{width:"100%",height:200}} source={{uri:item.meta_url}} resizeMode='stretch' />
+                  </View>
+                }
+                {
+                  item.meta_url_1 !== "" && <View style={{marginTop:10}}>
+                    <Image style={{width:"100%",height:200}} source={{uri:item.meta_url_1}} resizeMode='stretch' />
                   </View>
                 }
               </View>
-              <View>
-                <Text>{"sdf"}</Text>
+              <View style={{flex:1,flexDirection:"row",height:20,marginLeft:5}}>
+                <View style={{flexDirection:"row",width:"20%"}}>
+                  <Image style={{width:15,height:15}} source={imagePaths.FEED_LIKE} />
+                  <Text>{" Like"}</Text>
+                </View>
+                <View style={{flexDirection:"row",width:"20%"}}>
+                  <Image style={{width:15,height:15}} source={imagePaths.FEED_COMMENT} />
+                  <Text>{" Comment"}</Text>
+                </View>
               </View>
             </View>
           )

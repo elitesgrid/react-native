@@ -16,18 +16,15 @@ export const ForgotPassword = () => {
   const navigation = useNavigation();
 
   const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
 
   const doUserLogIn = async function () {
     // Note that this values come from state variables that we've declared before
-    const usernameValue = username;
-    const passwordValue = password;
-
-    return await Auth.login({ email: usernameValue, password: passwordValue })
+    let payload = { email: username };
+    return await Auth.forgot_password(payload)
       .then(async (data) => {
         Alert.alert('Alert!', data.message);
         if (data.status === true) {
-          navigation.navigate(navigationStrings.HOME);
+          navigation.navigate(navigationStrings.OTP_VERIFICATION);
         }
         return true;
       })
@@ -39,22 +36,22 @@ export const ForgotPassword = () => {
 
   return (
     <View style={Styles.container}>
-      <HeaderComp />
+      <HeaderComp headerTitle='Forgot Password' />
       <View style={[Styles.containerChild, { paddingTop: moderateVerticalScale(50) }]}>
         <View>
           <View style={[Styles.title_master, { marginTop: 0, marginBottom: 0 }]}>
             <Text style={Styles.title}>Forgot Password</Text>
-            <Text>Please enter your email address or mobile number to receive verification code.</Text>
+            <Text style={{fontSize:12,color:"gray"}}>Please enter your mobile/email address or mobile number to receive verification code.</Text>
           </View>
           <View style={Styles.form}>
             <View style={Styles.inputSection}>
               <Image
-                source={imagePaths.MOBILE}
+                source={imagePaths.EMAIL}
               />
               <TextInput
                 style={Styles.form_input}
                 value={username}
-                placeholder={'Enter Mobile'}
+                placeholder={'Enter Email/Mobile'}
                 onChangeText={(text) => setUsername(text)}
                 autoCapitalize={'none'}
               />
