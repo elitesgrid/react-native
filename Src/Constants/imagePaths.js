@@ -1,0 +1,106 @@
+export default {
+    LOGIN_WITH_TITLE: require("../Assets/Images/icon/logo_name.png"),
+    LOGO: require("../Assets/Images/icon/icon.png"),
+    EMAIL: require("../Assets/Images/email.png"),
+    MOBILE: require("../Assets/Images/mobile.png"),
+    USER: require("../Assets/Images/user.png"),
+    PASSWORD: require("../Assets/Images/password.png"),
+    HIDE_EYE: require("../Assets/Images/show_eye.png"),
+    SHOW_EYE: require("../Assets/Images/hide_eye.png"),
+    BACK: require("../Assets/Images/back.png"),
+
+    CAMERA: require("../Assets/Images/camera.png"),
+
+    //Sidebar
+    BOOK_MARK: require("../Assets/Images/sidebar/bookmark.png"),
+    SETTING: require("../Assets/Images/sidebar/setting.png"),
+    SIGN_OUT: require("../Assets/Images/sidebar/sign_out.png"),
+    CONTACT_US: require("../Assets/Images/sidebar/contact_us.png"),
+    HELP_CIRCLE: require("../Assets/Images/sidebar/help-circle.png"),
+    H_PROFILE: require("../Assets/Images/sidebar/profile.png"),
+
+
+    //Bottom Tabs ICons
+    HOME: require("../Assets/Images/bottom_tabs/home.png"),
+    DEFAULT_16_9: require("../Assets/Images/16x9_default.png"),
+    MY_PORTAL: require("../Assets/Images/bottom_tabs/MyPortal.png"),
+    MY_ORDER: require("../Assets/Images/bottom_tabs/MyOrder.png"),
+    PROFILE: require("../Assets/Images/bottom_tabs/profile.png"),
+
+    NOTIFICATION: require("../Assets/Images/notification.png"),
+    NOTIFICATION_ACTIVE: require("../Assets/Images/notification_active.png"),
+    HAMBURGER: require("../Assets/Images/hamburger.png"),
+    PEOPLE_COUNT: require("../Assets/Images/people_count.png"),
+    STAR: require("../Assets/Images/star.png"),
+
+    PLAY: require("../Assets/Images/play.png"),
+    PAST_PAPER: require("../Assets/Images/PastPapers.png"),
+    DEFAULT_VIDEO: require("../Assets/Images/video.png"),
+    DEFAULT_TEST: require("../Assets/Images/test.png"),
+    DEFAULT_PDF: require("../Assets/Images/pdf.png"),
+    DEFAULT_PDF2: require("../Assets/Images/pdf2.png"),
+
+    TEST_INSTRUCTION_CHECK: require("../Assets/Images/test/test_instruction_check.png"),
+    TEST_TIMER_ICON: require("../Assets/Images/test/timer_icon.png"),
+    TEST_HAMBURGER: require("../Assets/Images/test/hamburger.png"),
+    TEST_OPTION_A: require("../Assets/Images/test/option_a.png"),
+    TEST_OPTION_B: require("../Assets/Images/test/option_b.png"),
+    TEST_OPTION_C: require("../Assets/Images/test/option_c.png"),
+    TEST_OPTION_D: require("../Assets/Images/test/option_d.png"),
+    ANSWERED: require("../Assets/Images/test/answered.png"),
+    NOT_ANSWERED: require("../Assets/Images/test/not_answered.png"),
+    NOT_VISITED: require("../Assets/Images/test/not_visited.png"),
+    MARK_FOR_REVIEW: require("../Assets/Images/test/mark_for_review.png"),
+    ANSWERED_MARK_FOR_REVIEW: require("../Assets/Images/test/answered_mark_for_review.png"),
+
+    //Feeds
+    FEED_LIKE: require("../Assets/Images/feeds/like.png"),
+    FEED_UNLIKE: require("../Assets/Images/feeds/unlike.png"),
+    FEED_COMMENT: require("../Assets/Images/feeds/comment.png"),
+    FEED_MORE_GRAY: require("../Assets/Images/feeds/more_gray.png"),
+    DELETE: require("../Assets/Images/delete.png"),
+
+    //Contact US
+    CONTACT_US_EMAIL: require("../Assets/Images/contact_us/email.png"),
+    CONTACT_US_CALL: require("../Assets/Images/contact_us/call.png"),
+
+    LETTERS:{
+        "0":require("../Assets/Images/letters/0.png"),
+        "1":require("../Assets/Images/letters/1.png"),
+        "2":require("../Assets/Images/letters/2.png"),
+        "3":require("../Assets/Images/letters/3.png"),
+        "4":require("../Assets/Images/letters/4.png"),
+        "5":require("../Assets/Images/letters/5.png"),
+        "6":require("../Assets/Images/letters/6.png"),
+        "7":require("../Assets/Images/letters/7.png"),
+        "8":require("../Assets/Images/letters/8.png"),
+        "9":require("../Assets/Images/letters/9.png"),
+        
+        "A":require("../Assets/Images/letters/A.png"),
+        "B":require("../Assets/Images/letters/B.png"),
+        "C":require("../Assets/Images/letters/C.png"),
+        "D":require("../Assets/Images/letters/D.png"),
+        "E":require("../Assets/Images/letters/E.png"),
+        "F":require("../Assets/Images/letters/F.png"),
+        "G":require("../Assets/Images/letters/G.png"),
+        "H":require("../Assets/Images/letters/H.png"),
+        "I":require("../Assets/Images/letters/I.png"),
+        "J":require("../Assets/Images/letters/J.png"),
+        "K":require("../Assets/Images/letters/K.png"),
+        "L":require("../Assets/Images/letters/L.png"),
+        "M":require("../Assets/Images/letters/M.png"),
+        "N":require("../Assets/Images/letters/N.png"),
+        "O":require("../Assets/Images/letters/O.png"),
+        "P":require("../Assets/Images/letters/P.png"),
+        "Q":require("../Assets/Images/letters/Q.png"),
+        "R":require("../Assets/Images/letters/R.png"),
+        "S":require("../Assets/Images/letters/S.png"),
+        "T":require("../Assets/Images/letters/T.png"),
+        "U":require("../Assets/Images/letters/U.png"),
+        "V":require("../Assets/Images/letters/V.png"),
+        "W":require("../Assets/Images/letters/W.png"),
+        "X":require("../Assets/Images/letters/X.png"),
+        "Y":require("../Assets/Images/letters/Y.png"),
+        "Z":require("../Assets/Images/letters/Z.png")
+    }
+}
