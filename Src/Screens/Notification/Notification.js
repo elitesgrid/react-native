@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, ActivityIndicator, Image, FlatList, Alert } from 'react-native';
+import { Text, View, ActivityIndicator, Image, TouchableOpacity, FlatList, Alert } from 'react-native';
 
 import HeaderComp from '../../Components/HeaderComp';
 import Styles from '../../Assets/Style/LoginStyle';
 import imagePaths from '../../Constants/imagePaths';
 import CustomHelper from '../../Constants/CustomHelper';
 import NotificationService from '../../Services/apis/NotificationService';
-
+import navigationStrings from '../../Constants/navigationStrings';
+import Colors from '../../Constants/Colors';
 
 export const Notification = (props) => {
   const { route, navigation } = props;
@@ -23,7 +24,7 @@ export const Notification = (props) => {
         setIsLoading(false);
         if (data.status === true) {
           data = data.data;
-          //console.log((data.notification));
+          console.log((data.notification.length));
           setNotificationList(data.notification);
         }
         return true;
@@ -54,6 +55,25 @@ export const Notification = (props) => {
     }
   }
 
+  const notificationClick = async function(item){
+    let json = JSON.parse(item.json);
+    switch(json.file_type){
+      case "1":
+        json.title = "PDF List";
+        navigation.navigate(navigationStrings.PDF3, json);
+        break;
+      case "3":
+        json.title = "Video List";
+        navigation.navigate(navigationStrings.RECORDED_VIDEO3, json);
+        break;
+      case "8":
+        json.title = "Test Series List";
+        navigation.navigate(navigationStrings.TEST_SERIES3, json);
+        break;
+    }
+    console.log(json);
+  }
+
   useEffect(function () {
     const unsubscribe = navigation.addListener('focus', () => {
       async function fetchData() {
@@ -69,7 +89,7 @@ export const Notification = (props) => {
   const renderLoader = () => {
     return (
       <View>
-        <ActivityIndicator size="large" color="red" />
+        <ActivityIndicator size="large" color={Colors.THEME} />
       </View>
     );
   };
@@ -82,23 +102,23 @@ export const Notification = (props) => {
           data={notificationList}
           renderItem={(item) => {
             item = item.item;
-            return (<View style={{ flex: 1, flexDirection: "row", marginHorizontal: 10, height: 80, backgroundColor: "#FFFFFF", borderRadius: 10, marginTop: 6, borderColor: "#FFFFFF", borderWidth: 1 }}>
+            return (<TouchableOpacity onPress={()=>notificationClick(item)} style={{ flex: 1, flexDirection: "row", marginHorizontal: 10, height: 80, backgroundColor: "#FFFFFF", borderRadius: 10, marginTop: 6, borderColor: "#FFFFFF", borderWidth: 1 }}>
                       <View style={{ justifyContent: "center", alignItems: "center" }}>
                         <Image source={fixImageUrl(item.message)} resizeMode='stretch' style={{ height: 50, width: 50 }} />
                       </View>
-                      <View style={{ marginHorizontal: 5 }}>
+                      <View style={{ marginHorizontal: 15,paddingTop: 6 }}>
                         <Text style={{ fontSize: 14, color: "#05030D", marginVertical: 10 }}>{item.message}</Text>
                         <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between" }}>
-                          <Text style={{ color: "black" }}>{CustomHelper.tsToDate(item.created, "d-m-Y h:i A")}</Text>
+                          <Text style={{ color:Colors.IDLE,fontSize:12 }}>{CustomHelper.tsToDate(item.created, "d-m-Y h:i A")}</Text>
                         </View>
                       </View>
-                    </View>)
+                    </TouchableOpacity>)
           }}
           keyExtractor={item => item.id}
           ListFooterComponent={renderLoader}
           onEndReached={loadItems}
           onScrollToTop={loadItemsPrev}
-          onEndReachedThreshold={0.5}
+          onEndReachedThreshold={0.8}
         />
       </View>
     </View>

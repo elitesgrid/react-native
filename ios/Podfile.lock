@@ -948,6 +948,10 @@ PODS:
     - React-debug
   - react-native-blob-util (0.19.9):
     - React-Core
+  - react-native-compressor (1.9.0):
+    - glog
+    - RCT-Folly (= 2022.05.16.00)
+    - React-Core
   - react-native-image-picker (7.1.2):
     - glog
     - RCT-Folly (= 2022.05.16.00)
@@ -964,10 +968,14 @@ PODS:
     - React-Core
   - react-native-safe-area-context (4.10.1):
     - React-Core
-  - react-native-video (5.2.1):
+  - react-native-video (6.4.3):
+    - glog
+    - RCT-Folly (= 2022.05.16.00)
     - React-Core
-    - react-native-video/Video (= 5.2.1)
-  - react-native-video/Video (5.2.1):
+    - react-native-video/Video (= 6.4.3)
+  - react-native-video/Video (6.4.3):
+    - glog
+    - RCT-Folly (= 2022.05.16.00)
     - React-Core
   - react-native-webview (13.10.2):
     - glog
@@ -1222,6 +1230,7 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - react-native-blob-util (from `../node_modules/react-native-blob-util`)
+  - react-native-compressor (from `../node_modules/react-native-compressor`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-pdf (from `../node_modules/react-native-pdf`)
@@ -1336,6 +1345,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   react-native-blob-util:
     :path: "../node_modules/react-native-blob-util"
+  react-native-compressor:
+    :path: "../node_modules/react-native-compressor"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-pager-view:
@@ -1453,13 +1464,14 @@ SPEC CHECKSUMS:
   React-logger: 60afd40b183e8e6642bfd0108f1a1ad360cc665e
   React-Mapbuffer: 672a9342eb75a4d0663306e94d4dfc88aee73b93
   react-native-blob-util: 18b510205c080a453574a7d2344d64673d0ad9af
+  react-native-compressor: 5b4428113afb17ea4556d4bf8f58f47bb468ecfc
   react-native-image-picker: d3db110a3ded6e48c93aef7e8e51afdde8b16ed0
   react-native-pager-view: f1e72cb827406f1b49f007ab07400197d421b6e7
   react-native-pdf: 103940c90d62adfd259f63cca99c7c0c306b514c
   react-native-render-html: 984dfe2294163d04bf5fe25d7c9f122e60e05ebe
   react-native-restart: 7595693413fe3ca15893702f2c8306c62a708162
   react-native-safe-area-context: dcab599c527c2d7de2d76507a523d20a0b83823d
-  react-native-video: c26780b224543c62d5e1b2a7244a5cd1b50e8253
+  react-native-video: 8c6bfa0daa8849aaf4b3b4430dd49e2688ff6160
   react-native-webview: c461fed0b58be5ee5180c3c3092a1d5dcb214a94
   React-nativeconfig: 2e44d0d2dd222b12a5183f4bcaa4a91881497acb
   React-NativeModulesApple: 8aa032fe6c92c1a3c63e4809d42816284a56a9b0
@@ -1492,6 +1504,6 @@ SPEC CHECKSUMS:
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 2a16e58450c48e110211dae1159fb114bbcdcfc0
 
-PODFILE CHECKSUM: 5668d5963f96014dbacf9e94225980a603c642c0
+PODFILE CHECKSUM: f61def004ea52c356b2af10449278ac0c30c5d75
 
 COCOAPODS: 1.15.2

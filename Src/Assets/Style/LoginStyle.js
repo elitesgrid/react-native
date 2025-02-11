@@ -1,16 +1,20 @@
-import { StyleSheet } from 'react-native';
-import { moderateScale, scale, moderateVerticalScale } from 'react-native-size-matters';
+import {StyleSheet} from 'react-native';
+import {
+  moderateScale,
+  scale,
+  moderateVerticalScale,
+} from 'react-native-size-matters';
 import Colors from '../../Constants/Colors';
 
 const Styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.BACKGROUND
+    backgroundColor: Colors.BACKGROUND,
   },
   containerChild: {
     flex: 1,
-    justifyContent: "space-between",
-    backgroundColor: "white"
+    justifyContent: 'space-between',
+    backgroundColor: 'white',
   },
   logo_bg_parent: {
     alignItems: 'center',
@@ -24,9 +28,9 @@ const Styles = StyleSheet.create({
     marginTop: moderateScale(30),
   },
   title: {
-    fontWeight: "400",
+    fontWeight: '400',
     fontSize: scale(24),
-    color: "#120D26"
+    color: '#120D26',
   },
   form: {
     marginTop: moderateVerticalScale(20),
@@ -40,21 +44,21 @@ const Styles = StyleSheet.create({
     borderColor: '#E4DFDF',
     borderWidth: 1,
     borderRadius: scale(50),
-    height:40,
-    alignItems: "center"
+    height: 50,
+    alignItems: 'center',
   },
   imageRightStyle: {
     resizeMode: 'stretch',
-    position: "absolute",
-    right: 15
+    position: 'absolute',
+    right: 15,
   },
   form_input: {
     marginLeft: moderateScale(12),
-    width: "80%"
+    width: '80%',
   },
   forgot_password: {
-    alignSelf: "flex-end",
-    marginBottom: moderateVerticalScale(20)
+    alignSelf: 'flex-end',
+    marginBottom: moderateVerticalScale(20),
   },
   button: {
     alignItems: 'center',
@@ -68,13 +72,13 @@ const Styles = StyleSheet.create({
     fontSize: scale(15),
   },
   login_footer_text: {
-    textAlign: "center",
+    textAlign: 'center',
     flexDirection: 'row',
     alignItems: 'center',
     color: '#808080',
     fontSize: scale(15),
     // position:"absolute",
-    bottom: 50
+    bottom: 50,
   },
   login_footer_link: {
     color: '#208AEC',
@@ -82,10 +86,10 @@ const Styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   bottomView: {
-    justifyContent: "center",
+    justifyContent: 'center',
     marginTop: moderateVerticalScale(60),
-    marginBottom: moderateVerticalScale(34)
-  }
+    marginBottom: moderateVerticalScale(34),
+  },
 });
 
 export default Styles;

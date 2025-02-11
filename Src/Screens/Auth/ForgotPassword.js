@@ -1,16 +1,23 @@
-import React, { useState } from 'react';
-import Auth from "../../Services/apis/AuthService";
+import React, {useState} from 'react';
+import Auth from '../../Services/apis/AuthService';
 
-import { Alert, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { moderateVerticalScale } from 'react-native-size-matters';
+import {
+  Alert,
+  Image,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {moderateVerticalScale} from 'react-native-size-matters';
 
 // import Parse from 'parse/react-native';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import Styles from '../../Assets/Style/LoginStyle';
 import imagePaths from '../../Constants/imagePaths';
 import navigationStrings from '../../Constants/navigationStrings';
 import HeaderComp from '../../Components/HeaderComp';
-
+import Colors from '../../Constants/Colors';
 
 export const ForgotPassword = () => {
   const navigation = useNavigation();
@@ -19,16 +26,19 @@ export const ForgotPassword = () => {
 
   const doUserLogIn = async function () {
     // Note that this values come from state variables that we've declared before
-    let payload = { email: username };
+    let payload = {email: username};
     return await Auth.forgot_password(payload)
-      .then(async (data) => {
+      .then(async data => {
         Alert.alert('Alert!', data.message);
         if (data.status === true) {
-          navigation.navigate(navigationStrings.OTP_VERIFICATION);
+          navigation.navigate(navigationStrings.OTP_VERIFICATION, {
+            email: payload.email,
+            password: true,
+          });
         }
         return true;
       })
-      .catch((error) => {
+      .catch(error => {
         Alert.alert('Error!', error.message);
         return false;
       });
@@ -36,23 +46,29 @@ export const ForgotPassword = () => {
 
   return (
     <View style={Styles.container}>
-      <HeaderComp headerTitle='Forgot Password' />
-      <View style={[Styles.containerChild, { paddingTop: moderateVerticalScale(50) }]}>
+      <HeaderComp headerTitle="Forgot Password" />
+      <View
+        style={[
+          Styles.containerChild,
+          {paddingTop: moderateVerticalScale(50)},
+        ]}>
         <View>
-          <View style={[Styles.title_master, { marginTop: 0, marginBottom: 0 }]}>
+          <View style={[Styles.title_master, {marginTop: 0, marginBottom: 0}]}>
             <Text style={Styles.title}>Forgot Password</Text>
-            <Text style={{fontSize:12,color:"gray"}}>Please enter your mobile/email address or mobile number to receive verification code.</Text>
+            <Text
+              style={{fontSize: 12, marginVertical: 15, color: Colors.IDLE}}>
+              Please enter your mobile/email address or mobile number to receive
+              verification code.
+            </Text>
           </View>
           <View style={Styles.form}>
             <View style={Styles.inputSection}>
-              <Image
-                source={imagePaths.EMAIL}
-              />
+              <Image source={imagePaths.EMAIL} />
               <TextInput
                 style={Styles.form_input}
                 value={username}
                 placeholder={'Enter Email/Mobile'}
-                onChangeText={(text) => setUsername(text)}
+                onChangeText={text => setUsername(text)}
                 autoCapitalize={'none'}
               />
             </View>
@@ -64,9 +80,10 @@ export const ForgotPassword = () => {
           </View>
         </View>
         <View style={Styles.bottomView}>
-          <TouchableOpacity onPress={() => navigation.navigate(navigationStrings.LOGIN)}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate(navigationStrings.LOGIN)}>
             <Text style={Styles.login_footer_text}>
-              {"Already have an account? "}
+              {'Already have an account? '}
               <Text style={Styles.login_footer_link}>{'Log In'}</Text>
             </Text>
           </TouchableOpacity>

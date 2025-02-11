@@ -27,9 +27,12 @@ export const StudyMaterial3 = (props) => {
             page: 1,
             level: 3,
             subject_id: params.subject_id,
-            topic_id: params.id,
+            topic_id: params?.id || params?.topic_id,
         }
-        //console.log(params);
+        if(params.file_id){
+            payload.file_id = params.file_id;
+        }
+        //console.log(payload);
         return await PortalService.get_pdf(payload)
             .then(async (data) => {
                 if (data.status === true) {
@@ -57,14 +60,17 @@ export const StudyMaterial3 = (props) => {
             is_open: item.is_open === "0" ? "1" : "0",
             remark: "",
         }
-        setIsLoading(true);
+        // console.log(payload);
+        // setIsLoading(true);
+        var newData = [...studyMaterial];
         let response = await PortalService.mark_complete_pdf(payload);
-        studyMaterial.forEach((element, index) => {
-            element.id === payload.file_id ? studyMaterial[index].is_open = payload.is_open : "";
+        // console.log(response);
+        newData.forEach((element, index) => {
+            element.id === payload.file_id ? newData[index].is_open = payload.is_open : "";
         });
 
-        setIsLoading(false);
-        setStudyMaterial(studyMaterial);
+        // setIsLoading(false);
+        setStudyMaterial(newData);
     }
 
     useEffect(function () {
@@ -94,28 +100,32 @@ export const StudyMaterial3 = (props) => {
                             <FlatList
                                 data={studyMaterial}
                                 numColumns={1}
+                                showsVerticalScrollIndicator={false}
                                 renderItem={({ item, index }) => (
                                     <View style={{ borderColor: "#EEEEEE", backgroundColor: "white", borderWidth: 1, borderRadius: 10, marginVertical: 2.5, marginHorizontal: 2.5, width: "100%", height: 70, paddingVertical: 10, paddingHorizontal: 10, flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                                         <View>
                                             <Image resizeMode='stretch' source={imagePaths.DEFAULT_PDF2} style={{ ...CommonStyles.playIcon, ...{ height: 30, width: 30 } }} />
                                         </View>
                                         <View style={{ flex: 1, flexDirection: "column", marginLeft: 10 }}>
-                                            <Text style={{ color: Colors.BLACK, fontSize: 16, fontWeight: "500" }}>{item.title}</Text>
-                                        </View>
-                                        <View>
-                                            <LinearGradient colors={['#37B6F1', '#0274BA']} style={{ borderRadius: 5, alignItems: "center", paddingHorizontal: 5 }}>
-                                                <TouchableOpacity onPress={() => { nav_to_pdf({ title: item.title, url: item.url }) }}>
-                                                    <Text style={{ marginVertical: 1, fontSize: 12, color: Colors.WHITE }}>View</Text>
+                                            <View>
+                                                <Text style={{ color: Colors.BLACK, fontSize: 14, fontWeight: "500" }}>{item.title}</Text>
+                                                <Text style={{ color: Colors.IDLE, fontSize: 12,marginVertical:3 }}>{"Desc:" + item.description}</Text>
+                                            </View>
+                                            <View style={{flexDirection:"row"}}>
+                                                <LinearGradient colors={['#37B6F1', '#0274BA']} style={{ borderRadius: 5, justifyContent:"center", paddingHorizontal: 5,height:17,marginRight:8 }}>
+                                                    <TouchableOpacity onPress={() => { nav_to_pdf({ title: item.title, url: item.url }) }}>
+                                                        <Text style={{fontSize: 12, color: Colors.WHITE }}>View</Text>
+                                                    </TouchableOpacity>
+                                                </LinearGradient>
+                                                <TouchableOpacity onPress={() => { update_pdf_state(item) }} style={{ alignItems: "center", backgroundColor: (item.is_open === "1" ? Colors.SUCCESS : Colors.WARNING),borderRadius:5 }}>
+                                                    <Text style={{ marginHorizontal: 8, fontSize: 14, color: Colors.WHITE }}>{(item.is_open === "1" ? "Completed" : "Pending")}</Text>
                                                 </TouchableOpacity>
-                                            </LinearGradient>
-                                            <TouchableOpacity onPress={() => { update_pdf_state(item) }} style={{ alignItems: "center", backgroundColor: (item.is_open === "1" ? Colors.SUCCESS : Colors.WARNING),marginTop:5,borderRadius:5 }}>
-                                                <Text style={{ marginHorizontal: 8, fontSize: 14, color: Colors.WHITE }}>{(item.is_open === "1" ? "Completed" : "Pending")}</Text>
-                                            </TouchableOpacity>
+                                            </View>
                                         </View>
                                     </View>
                                 )}
                                 keyExtractor={(item) => item.id}
-                                contentContainerStyle={{ marginHorizontal: 5, marginTop: 10 }}
+                                contentContainerStyle={{ marginHorizontal: 5, marginTop: 10}}
                             />
                         </View>
                     )

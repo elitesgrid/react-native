@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, ImageBackground, Image, Text, TextInput, TouchableOpacity, View,Keyboard } from 'react-native';
+import { Alert, SafeAreaView, Image, Text, TextInput, TouchableOpacity, View,Keyboard } from 'react-native';
 import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 import RNRestart from 'react-native-restart';
+import DeviceInfo from 'react-native-device-info';
 
 import Auth from "../../Services/apis/AuthService";
-
-
-
 import Styles from '../../Assets/Style/LoginStyle';
-
 import navigationStrings from '../../Constants/navigationStrings';
 import imagePaths from '../../Constants/imagePaths';
+import Colors from '../../Constants/Colors';
 
 export const Login = ({ navigation }) => {
 
@@ -60,7 +58,7 @@ export const Login = ({ navigation }) => {
   },[]);
 
   return (
-    <View style={Styles.container}>
+    <SafeAreaView style={Styles.container}>
       <View style={[Styles.containerChild,{paddingTop: moderateVerticalScale((120-keyBoardHeight))}]}>
         <View>
           <View style={Styles.logo_bg_parent}>
@@ -128,7 +126,10 @@ export const Login = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         }
+        <View style={{alignItems:"center"}}>
+          <Text style={{color:Colors.IDLE}}>{"Version "+DeviceInfo.getVersion()}</Text>
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };

@@ -27,7 +27,7 @@ export const Notices = (props) => {
                 setIsLoading(false);
                 if (data.status === true) {
                     data = data.data;
-                    console.log(data);
+                    //console.log(data);
                     setNoticesList(data.notices);
                     setIsLoading(false);
                 }
