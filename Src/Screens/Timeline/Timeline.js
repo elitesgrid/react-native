@@ -128,14 +128,14 @@ const TimelineTabs = props => {
     // setIsLoading(true);
     let response = await PortalService.mark_complete_pdf(payload);
     // console.log(response);
-    const updatedStudyMaterial = studyMaterial.map(element =>
+    const updatedTimeline = timeline.map(element =>
       element.id === payload.file_id
         ? {...element, is_open: payload.is_open}
         : element,
     );
 
     // setIsLoading(false);
-    setStudyMaterial(updatedStudyMaterial);
+    setTimeline(updatedTimeline);
   };
 
   const navToStartTest = function (item) {
