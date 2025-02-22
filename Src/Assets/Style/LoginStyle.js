@@ -55,6 +55,7 @@ const Styles = StyleSheet.create({
   form_input: {
     marginLeft: moderateScale(12),
     width: '80%',
+    color: Colors.BLACK,
   },
   forgot_password: {
     alignSelf: 'flex-end',

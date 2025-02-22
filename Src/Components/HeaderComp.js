@@ -33,13 +33,28 @@ const HeaderComp = ({
     <SafeAreaView style={{...styles.headerView, ...headerStyles}}>
       <StatusBar backgroundColor={Colors.THEME} barStyle="light-content" />
       <TouchableOpacity
-        style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}
+        style={{
+          flex: 1,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
         onPress={!!onPressBack ? onPressBack : () => goBack()}>
-        <Image source={imagePaths.BACK} style={styles.image} />
-        <Text style={{color: Colors.WHITE, fontSize: 18, marginLeft: 12}}>
-          {headerTitle}
+        <View style={{flexDirection: 'row'}}>
+          <Image source={imagePaths.BACK} style={styles.image} />
+          <Text style={{color: Colors.WHITE, fontSize: 18, marginLeft: 12}}>
+            {headerTitle}
+          </Text>
+        </View>
+        <Text
+          style={{
+            marginRight: 10,
+            backgroundColor: Colors.IDLE,
+            paddingHorizontal: 5,
+            opacity: 0.5,
+          }}>
+          {global.USER_ID || 'A'}
         </Text>
-        <Text></Text>
       </TouchableOpacity>
     </SafeAreaView>
   );

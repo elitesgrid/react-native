@@ -100,6 +100,7 @@ export const OtpVerification = props => {
               placeholder={'Enter OTP'}
               onChangeText={text => setOTP(text)}
               autoCapitalize={'none'}
+              placeholderTextColor={Colors.IDLE}
             />
           </View>
           {params?.password === true && (
@@ -112,6 +113,7 @@ export const OtpVerification = props => {
                 onChangeText={text => setNewPassword(text)}
                 editable={true}
                 autoCapitalize={'none'}
+                placeholderTextColor={Colors.IDLE}
               />
             </View>
           )}

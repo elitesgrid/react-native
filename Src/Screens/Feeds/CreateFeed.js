@@ -80,6 +80,10 @@ export const CreateFeed = props => {
       Alert.alert('Error', 'Please type atleast 10 character in query input.');
       return;
     }
+    if (courseId === 0) {
+      Alert.alert('Error', 'Please select course first.');
+      return;
+    }
     setIsLoading(true);
     let payload = {
       text: query,
@@ -238,7 +242,9 @@ export const CreateFeed = props => {
             onChangeText={text => setQuery(text)}
             autoCapitalize={'none'}
             multiline={true}
-            textAlignVertical="top"></TextInput>
+            textAlignVertical="top"
+            placeholderTextColor={Colors.IDLE}
+          />
         </View>
         <View>
           {imageUri1 && (

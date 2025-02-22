@@ -70,6 +70,7 @@ export const ForgotPassword = () => {
                 placeholder={'Enter Email/Mobile'}
                 onChangeText={text => setUsername(text)}
                 autoCapitalize={'none'}
+                placeholderTextColor={Colors.IDLE}
               />
             </View>
             <TouchableOpacity onPress={() => doUserLogIn()}>
