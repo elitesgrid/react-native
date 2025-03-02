@@ -12,6 +12,7 @@ import {
   Alert,
   TextInput,
 } from 'react-native';
+import {Dropdown} from 'react-native-element-dropdown';
 
 import imagePaths from '../../Constants/imagePaths';
 import CustomHelper from '../../Constants/CustomHelper';
@@ -28,6 +29,7 @@ export const FeedList = props => {
   const [isLoading, setIsLoading] = useState(true);
   const [feedList, setFeedList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchFilter, setSearchFilter] = useState(0);
   const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
   const [postBottomSheetPayload, setPostBottomSheetPayload] = useState({});
   const [bottomSheetOpenPost, setBottomSheetOpenPost] = useState(false);
@@ -37,7 +39,11 @@ export const FeedList = props => {
   const [modalImageUrl, setModalImageUrl] = useState('');
 
   const getFeeds = async function () {
-    return await FeedService.get_feed_list({page: currentPage, id: 0})
+    return await FeedService.get_feed_list({
+      page: currentPage,
+      search: searchFilter,
+      id: 0,
+    })
       .then(async data => {
         setIsLoading(false);
         if (data.status === true) {
@@ -238,6 +244,36 @@ export const FeedList = props => {
             />
           </TouchableOpacity>
         </View>
+      </View>
+      <View>
+        <Dropdown
+          style={{
+            borderWidth: 0.2,
+            height: 45,
+            borderColor: Colors.IDLE,
+            paddingHorizontal: 5,
+            marginHorizontal: 5,
+            marginVertical: 10,
+            borderRadius: 5,
+          }}
+          placeholderStyle={{fontSize: 16}}
+          selectedTextStyle={{fontSize: 16, marginLeft: 10}}
+          inputSearchStyle={{height: 40, fontSize: 16}}
+          iconStyle={{width: 20, height: 20, marginTop: 2, marginRight: 10}}
+          data={global.FEED_FILTERS || []}
+          //search
+          maxHeight={300}
+          labelField="value"
+          valueField="key"
+          placeholder={'Select Filter'}
+          //searchPlaceholder="Search..."
+          // value={courseId}
+          onChange={item => {
+            setSearchFilter(item.value);
+            setCurrentPage(1);
+            fetchData();
+          }}
+        />
       </View>
       <FlatList
         data={feedList}
