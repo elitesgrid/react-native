@@ -21,6 +21,7 @@ import Colors from '../../Constants/Colors';
 import navigationStrings from '../../Constants/navigationStrings';
 import BottomSheet, {BottomSheetFlatList} from '@gorhom/bottom-sheet';
 import Styles from '../../Assets/Style/LoginStyle';
+import HomeService from '../../Services/apis/HomeService';
 
 export const FeedList = props => {
   const {navigation} = props;
@@ -28,6 +29,8 @@ export const FeedList = props => {
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [feedList, setFeedList] = useState([]);
+  const [courseList, setCourseList] = useState([]);
+  const [courseId, setCourseId] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchFilter, setSearchFilter] = useState(0);
   const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
@@ -38,11 +41,19 @@ export const FeedList = props => {
   const sheetRef = useRef(null);
   const [modalImageUrl, setModalImageUrl] = useState('');
 
+  let is_courses_loaded = false;
   const getFeeds = async function () {
+    if (is_courses_loaded === false) {
+      is_courses_loaded = true;
+      console.log('Courses Server Loaded');
+      getMyOrder();
+    }
+
     return await FeedService.get_feed_list({
       page: currentPage,
       search: searchFilter,
       id: 0,
+      course_id: courseId,
     })
       .then(async data => {
         setIsLoading(false);
@@ -99,6 +110,36 @@ export const FeedList = props => {
       feed_id: obj.feed_id,
     };
     let index = obj.index;
+  };
+
+  const getMyOrder = async function () {
+    if (global.myCourses) {
+      console.log('Courses Local Loaded');
+      setCourseList(global.myCourses);
+      return;
+    } else {
+      return await HomeService.get_my_courses({})
+        .then(async data => {
+          setIsLoading(false);
+          //console.log(data);
+          if (data.status === true) {
+            data = data.data;
+            let dropdownData = [{value: 0, label: 'Select item'}];
+            data.forEach(element => {
+              if (element.is_doubt_avail === '1') {
+                dropdownData.push({label: element.title, value: element.id});
+              }
+            });
+            setCourseList(dropdownData);
+            global.myCourses = dropdownData;
+          }
+          return true;
+        })
+        .catch(error => {
+          Alert.alert('Error!', error.message);
+          return false;
+        });
+    }
   };
 
   const openBottomSheet = function (obj) {
@@ -245,11 +286,41 @@ export const FeedList = props => {
           </TouchableOpacity>
         </View>
       </View>
-      <View>
+      <View style={{flexDirection: 'row'}}>
         <Dropdown
           style={{
             borderWidth: 0.2,
             height: 45,
+            width: '47%',
+            borderColor: Colors.IDLE,
+            paddingHorizontal: 5,
+            marginHorizontal: 5,
+            marginVertical: 10,
+            borderRadius: 5,
+          }}
+          placeholderStyle={{fontSize: 16}}
+          selectedTextStyle={{fontSize: 16}}
+          inputSearchStyle={{height: 40, fontSize: 16}}
+          iconStyle={{width: 20, height: 20, marginTop: 10, marginRight: 10}}
+          data={courseList}
+          //search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={'Select item'}
+          //searchPlaceholder="Search..."
+          value={courseId}
+          onChange={item => {
+            setCourseId(item.value);
+            setCurrentPage(1);
+            fetchData();
+          }}
+        />
+        <Dropdown
+          style={{
+            borderWidth: 0.2,
+            height: 45,
+            width: '47%',
             borderColor: Colors.IDLE,
             paddingHorizontal: 5,
             marginHorizontal: 5,
