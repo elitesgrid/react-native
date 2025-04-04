@@ -1,6 +1,6 @@
 //import liraries
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, Alert} from 'react-native';
+import {View, StyleSheet, Alert, BackHandler} from 'react-native';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import {WebView} from 'react-native-webview';
 import Video from 'react-native-video';
@@ -29,9 +29,13 @@ export const Player = props => {
             event.stopImmediatePropagation();
           });
         });}setInterval(function () {hide_ctrls();}, 2000);`;
+      global.ZOOM_SCRIPT === ''
+        ? ''
+        : (js = 'var seek_to=' + currentTime + ';' + global.ZOOM_SCRIPT);
     } else if (loadUrl.includes('yout')) {
       js = `let interval = null; let arr = ["ytp-chrome-top-buttons", "ytp-title", "ytp-youtube-button ytp-button yt-uix-sessionlink", "ytp-button ytp-endscreen-next", "ytp-button ytp-endscreen-previous", "ytp-show-cards-title", "ytp-endscreen-content", "ytp-chrome-top", "ytp-share-button", "ytp-watch-later-button", "ytp-pause-overlay", "ytp-subtitles-button", "ytp-fullscreen-button"]; arr.forEach(function(str) { if (document.getElementsByClassName(str).length > 0) { document.getElementsByClassName(str)[0].style.display = 'none'; } });
        arr.forEach(function(str) { var elements = document.getElementsByClassName(str); while (elements.length > 0) { elements[0].parentNode.removeChild(elements[0]); } }); var content = document.getElementById("content"); if (content !== null) { var headers = content.querySelectorAll("header"); headers.forEach(function(header) { header.style.display = "none"; }); } var css = document.createElement('style'); css.type = 'text/css'; var styles = '.ytp-contextmenu { width: 0px !important}'; if (css.styleSheet) { css.styleSheet.cssText = styles; } else { css.appendChild(document.createTextNode(styles)); } document.getElementsByTagName('head')[0].appendChild(css); if (interval !== null) { clearInterval(interval); interval = null; } function hide_buttons() { var settingsMenu = document.querySelector('.ytp-settings-menu'); if (settingsMenu) { var menu = settingsMenu.querySelector('.ytp-panel-menu'); if (menu) { console.log("Hide Classes"); var lastChild = menu.lastElementChild; if (lastChild) { lastChild.style.display = 'none'; } } } let is_exist = document.getElementsByClassName('ytp-settings-button'); if (is_exist.length > 0) { is_exist[0].style.display = 'inline' } is_exist = document.getElementsByClassName('ytp-button'); if (is_exist.length > 0) { is_exist[0].style.display = 'inline' } is_exist = document.getElementsByClassName('ytp-iv-player-content'); if (is_exist.length > 0) { is_exist[0].style.display = 'none' } is_exist = document.getElementsByClassName('iv-branding'); if (is_exist.length > 0) { is_exist[0].style.display = 'none' } is_exist = document.getElementsByClassName('ytp-unmute-animated'); if (is_exist.length > 0) { is_exist[0].style.display = 'none' } is_exist = document.querySelectorAll('.ytp-menuitem-toggle-checkbox'); for (var i = 0; i < is_exist.length; i++) { var parent = is_exist[i].parentNode.parentNode; parent.style.display = 'none'; } document.addEventListener('contextmenu', event => event.preventDefault()); document.querySelectorAll("video").forEach(function(video) { video.addEventListener("contextmenu", function(ev) { ev.preventDefault(); }); }); } interval = setInterval(function() { hide_buttons(); }, 2000); setTimeout(function() { hide_buttons(); }, 500); setTimeout(function() { hide_buttons(); }, 1000); hide_buttons(); document.getElementsByClassName('ytp-play-button ytp-button')[0].click(); document.addEventListener('contextmenu', event => event.preventDefault());`;
+      global.YOUTUBE_SCRIPT === '' ? '' : (js = global.YOUTUBE_SCRIPT);
     }
     webViewRef.current.injectJavaScript(js);
     setIsLoading(false);
@@ -117,6 +121,12 @@ export const Player = props => {
           javaScriptEnabled={true}
           allowsInlineMediaPlayback={true}
           mediaPlaybackRequiresUserAction={true}
+          onMessage={event => {
+            console.log(
+              'Received message from WebView:',
+              event.nativeEvent.data,
+            );
+          }}
         />
       );
     } else if (!isNaN(parseInt(url))) {
@@ -167,6 +177,28 @@ export const Player = props => {
     setIsLoading(false);
   }
 
+  // Function to handle the back press
+  const handleBackPress = () => {
+    const jsFunction = 'get_current_time();';
+    webViewRef.current.injectJavaScript(jsFunction);
+    webViewRef.current.postMessage('backButtonPressed');
+    //console.log('Back Pressed');
+    navigation.goBack(null);
+    return true;
+  };
+
+  // Adding listener for back press on Android
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      handleBackPress,
+    );
+
+    return () => {
+      backHandler.remove();
+    };
+  }, []);
+
   useEffect(
     function () {
       const unsubscribe = navigation.addListener('focus', () => {
@@ -189,7 +221,10 @@ export const Player = props => {
         <LoadingComp />
       ) : (
         <View style={[styles.container]}>
-          <HeaderComp headerTitle={params.title} />
+          <HeaderComp
+            onPressBack={handleBackPress}
+            headerTitle={params.title}
+          />
           {videoType}
         </View>
       )}

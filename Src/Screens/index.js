@@ -14,6 +14,7 @@ export {Profile} from './Profile/Profile';
 export {Timeline} from './Timeline/Timeline';
 export {ChangePassword} from './Profile/ChangePassword';
 export {ContactUS} from './Profile/ContactUs';
+export {Bookmark} from './Bookmark/Bookmark';
 
 export {PastPaperDetail} from './PastPaper/PastPaperDetail';
 export {Player} from './Player/Player';

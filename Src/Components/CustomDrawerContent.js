@@ -102,12 +102,17 @@ function CustomDrawerContent(props) {
         onPress={() => {
           navigation.navigate(navigationStrings.PROFILE);
         }}></DrawerItem>
-      {/* <DrawerItem 
-        labelStyle={styles.drawerLabel} 
-        icon={() => <Image source={imagePaths.BOOK_MARK} style={styles.drawerIcon}></Image>}
-        label={"Bookmark"} 
-        onPress={() => { navigation.navigate(navigationStrings.MY_PORTAL) }}>
-      </DrawerItem> */}
+      <DrawerItem
+        labelStyle={styles.drawerLabel}
+        icon={() => (
+          <Image
+            source={imagePaths.BOOK_MARK}
+            style={styles.drawerIcon}></Image>
+        )}
+        label={'Bookmark'}
+        onPress={() => {
+          navigation.navigate(navigationStrings.BOOK_MARK);
+        }}></DrawerItem>
       <DrawerItem
         labelStyle={styles.drawerLabel}
         icon={() => (

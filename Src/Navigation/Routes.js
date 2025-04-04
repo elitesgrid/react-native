@@ -41,7 +41,7 @@ export default function Routes() {
     global.FEED_FILTERS = [];
     try {
       let min_version = parseFloat(versions.data.ios_version || 2.5);
-      //console.log('min_version', currentVersion, min_version);
+      // console.log('min_version', currentVersion, versions.data.zoom_script);
       if (currentVersion < min_version && session.id) {
         session = {};
         await StorageManager.remove_key('JWT');
@@ -69,6 +69,8 @@ export default function Routes() {
     }
 
     global.USER_ID = session.id || '';
+    global.ZOOM_SCRIPT = versions?.data?.zoom_script || '';
+    global.YOUTUBE_SCRIPT = versions?.data?.yt_script || '';
     Object.keys(session).length > 0
       ? setIsLoggedIn(true)
       : setIsLoggedIn(false);

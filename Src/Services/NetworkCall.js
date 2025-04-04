@@ -29,6 +29,7 @@ const api_list = {
   SUBMIT_TEST_DETAIL: 'test/submit_detail_test',
   GET_TEST_RESULT: 'test/result_test',
   GET_BOOKMARKED_QUESTIONS: 'test/get_bookmarked_questions',
+  REMOVE_BOOKMARKED_QUESTIONS: 'test/manage_bookmark',
   GET_NOTIFICATION: 'courses/get_notifications',
   READ_NOTIFICATION: 'user/read_notification',
   GET_NOTICES: 'courses/get_notices',

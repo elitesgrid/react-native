@@ -6,6 +6,7 @@ export default {
   OTP_VERIFICATION: 'OTP Verification',
   CHANGE_PASSWORD: 'Change Password',
   CONTACT_US: 'Contact Us',
+  BOOK_MARK: 'Bookmark',
 
   TAB_ROUTES: 'Tab Routes',
   STACK_NAV: 'Stack Navigation',
