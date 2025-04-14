@@ -39,6 +39,7 @@ export default function Routes() {
     let versions = await VersionService.get_version({});
 
     global.FEED_FILTERS = [];
+    global.BOOKMARK_FILTERS = [];
     try {
       let min_version = parseFloat(versions.data.ios_version || 2.5);
       // console.log('min_version', currentVersion, versions.data.zoom_script);
@@ -63,7 +64,8 @@ export default function Routes() {
       }
       global.CONTACT_DETAILS = versions.data.contact_details || {};
       global.FEED_FILTERS = versions.data.feed_filter || [];
-      //console.log(global.FEED_FILTERS);
+      global.BOOKMARK_FILTERS = versions.data.bookmark_filter || [];
+      // console.log(global.BOOKMARK_FILTERS);
     } catch (e) {
       console.log('Routes.js', e);
     }

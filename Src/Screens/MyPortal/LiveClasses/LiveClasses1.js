@@ -77,7 +77,11 @@ export const LiveClasses1 = props => {
               renderItem={({item, index}) => (
                 <TouchableOpacity
                   onPress={() =>
-                    navToPlayer({title: item.title, url: item.url})
+                    navToPlayer({
+                      title: item.title,
+                      url: item.url,
+                      video_type: item.video_type,
+                    })
                   }
                   key={index}
                   style={{

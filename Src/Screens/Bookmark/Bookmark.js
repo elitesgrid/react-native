@@ -34,6 +34,7 @@ export const Bookmark = props => {
   const {width: windowWidth} = useWindowDimensions();
   const [isPopupVisible, setPopupVisible] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
+  const [activeFilterTab, setActiveFilterTab] = useState('0');
 
   const loadQuestion = index => {
     setActiveIndex(index);
@@ -44,14 +45,19 @@ export const Bookmark = props => {
   };
 
   async function fetchData() {
-    return await TestServices.get_bookmarked_question({})
+    console.log({
+      bookmark_type: activeFilterTab,
+    });
+    return await TestServices.get_bookmarked_question({
+      bookmark_type: activeFilterTab,
+    })
       .then(async data => {
         setIsLoading(false);
-        if (data.status === true) {
-          data = data.data;
-          setTotalNumbers(data.length);
-          setQuestionList(data);
-        }
+        data = data.data;
+        // console.log(data);
+        setTotalNumbers(data.length);
+        setQuestionList(data);
+
         return true;
       })
       .catch(error => {
@@ -129,6 +135,14 @@ export const Bookmark = props => {
     fetchData();
   }, []);
 
+  useEffect(
+    function () {
+      console.log('API Called');
+      fetchData();
+    },
+    [activeFilterTab],
+  );
+
   return (
     <View style={{flex: 1}}>
       <HeaderComp headerTitle={'Bookmarked Questions'} />
@@ -142,6 +156,39 @@ export const Bookmark = props => {
         <LoadingComp />
       ) : (
         <View style={{flex: 1}}>
+          <View
+            style={{
+              flex: 0.062,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              backgroundColor: Colors.THEME,
+            }}>
+            {global.BOOKMARK_FILTERS.map((_, index) => (
+              <TouchableOpacity
+                onPress={() => setActiveFilterTab(_.key)}
+                key={index}
+                style={{
+                  borderBottomWidth: 4,
+                  borderBlockColor:
+                    activeFilterTab == _.key ? Colors.WHITE : Colors.THEME,
+                  width: '25%',
+                  height: 40,
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    color:
+                      activeFilterTab == _.key
+                        ? Colors.WHITE
+                        : Colors.BACKGROUND,
+                    fontSize: 15,
+                    alignSelf: 'center',
+                  }}>
+                  {_.value}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
           {questionsList.length === 0 ? (
             <NoDataFound
               pageTitle={'No Bookmarked Question Found'}

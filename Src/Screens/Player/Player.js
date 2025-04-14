@@ -1,6 +1,6 @@
 //import liraries
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, Alert, BackHandler} from 'react-native';
+import {View, StyleSheet, Alert, BackHandler, Linking} from 'react-native';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import {WebView} from 'react-native-webview';
 import Video from 'react-native-video';
@@ -72,6 +72,26 @@ export const Player = props => {
     // console.log(response);
   }
 
+  const launchZoomApp = async url => {
+    const supported = await Linking.canOpenURL(url);
+    if (supported) {
+      Linking.openURL(url);
+    } else {
+      Alert.alert(
+        'Zoom Not Installed',
+        'Please install the Zoom app to join the meeting.',
+        [
+          {
+            text: 'Install Zoom',
+            onPress: () =>
+              Linking.openURL('https://apps.apple.com/app/id546505307'),
+          },
+          {text: 'Cancel', style: 'cancel'},
+        ],
+      );
+    }
+  };
+
   async function identifyVideoType(url) {
     console.log(url);
     let content = '';
@@ -109,6 +129,12 @@ export const Player = props => {
           url = zoom_meeting_url.play_url;
         }
         loadUrl = url;
+      }
+      console.log('params?.video_type', params.video_type);
+      if (params.video_type === '6') {
+        launchZoomApp(params.url);
+        navigation.goBack(null);
+        return;
       }
       content = (
         <WebView

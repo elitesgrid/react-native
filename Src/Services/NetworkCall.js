@@ -78,7 +78,7 @@ async function network_call(API, payload) {
   };
   Object.keys(payload).length > 0 ? (refreshOptions.data = payload) : '';
   //   console.log(refreshOptions.headers);
-  //   console.log(payload);
+  console.log(payload);
 
   try {
     const response = await axios(refreshOptions);
