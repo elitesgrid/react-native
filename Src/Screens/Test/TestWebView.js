@@ -108,36 +108,41 @@ export const TestWebView = props => {
           {/* <HeaderComp headerTitle={params.title} /> */}
           <SafeAreaView style={{backgroundColor: Colors.THEME}}></SafeAreaView>
           <View style={{flex: 1}}>
-            <WebView
-              key={'shortDesc'}
-              originWhitelist={['*']}
-              source={{uri: testUrl}}
-              style={{
-                flex: 1,
-                //marginTop:30 + getStatusBarHeight(),
-                //backgroundColor:Colors.THEME
-              }}
-              onMessage={event => {
-                console.log(
-                  'Test Webview Callback received: ' + event.nativeEvent.data,
-                );
-                const message = JSON.parse(event.nativeEvent.data);
-                switch (message.call_type) {
-                  case 'back':
-                    setIsNavigatingToPlayer(false);
-                    navigation.goBack(null);
-                    break;
-                  case 'player':
-                    let item = {
-                      url: message.file_url,
-                      title: 'Solution Video',
-                    };
-                    setIsNavigatingToPlayer(true);
-                    navigation.navigate(navigationStrings.PLAYER, item);
-                    break;
-                }
-              }}
-            />
+            {
+              testUrl && <WebView
+                key={'shortDesc'}
+                originWhitelist={['*']}
+                source={{uri: testUrl}}
+                style={{
+                  flex: 1,
+                  //marginTop:30 + getStatusBarHeight(),
+                  //backgroundColor:Colors.THEME
+                }}
+                onMessage={event => {
+                  console.log(
+                    'Test Webview Callback received: ' + event.nativeEvent.data,
+                  );
+                  const message = JSON.parse(event.nativeEvent.data);
+                  switch (message.call_type) {
+                    case 'back':
+                      setIsNavigatingToPlayer(false);
+                      navigation.goBack(null);
+                      break;
+                    case 'player':
+                      let item = {
+                        url: message.file_url,
+                        title: 'Solution Video',
+                      };
+                      setIsNavigatingToPlayer(true);
+                      navigation.navigate(navigationStrings.PLAYER, item);
+                      break;
+                  }
+                }}
+                onError={(e)=>{
+                  console.log('TWebView Error:', testUrl, e.nativeEvent);
+                }}
+              />
+            }
           </View>
           <SafeAreaView style={{backgroundColor: Colors.THEME}}></SafeAreaView>
         </View>

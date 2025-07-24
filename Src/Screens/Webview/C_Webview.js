@@ -9,9 +9,7 @@ import HeaderComp from '../../Components/HeaderComp';
 export const C_Webview = (props) => {
     const { route, navigation } = props;
     var params = route.params;
-
-    console.log(params);
-
+    
     return (
         <View style={styles.container}>
             <HeaderComp headerTitle={params.title} />

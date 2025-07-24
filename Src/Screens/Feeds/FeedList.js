@@ -45,22 +45,27 @@ export const FeedList = props => {
   const getFeeds = async function () {
     if (is_courses_loaded === false) {
       is_courses_loaded = true;
-      console.log('Courses Server Loaded');
+      //console.log('Courses Server Loaded');
       getMyOrder();
     }
 
-    return await FeedService.get_feed_list({
+    let payload = {
       page: currentPage,
       search: searchFilter,
       id: 0,
       course_id: courseId,
-    })
+    };
+    console.log("Request Payload",payload);
+
+    return await FeedService.get_feed_list(payload)
       .then(async data => {
         setIsLoading(false);
         if (data.status === true) {
           data = data.data;
           //console.log(data[0]);
           setFeedList(data);
+        } else {
+          setFeedList([]);
         }
         return true;
       })
@@ -100,7 +105,7 @@ export const FeedList = props => {
     let payload = {
       feed_id: obj.feed_id,
     };
-    console.log(payload);
+    //console.log(payload);
     let index = obj.index;
   };
 
@@ -114,7 +119,7 @@ export const FeedList = props => {
 
   const getMyOrder = async function () {
     if (global.myCourses) {
-      console.log('Courses Local Loaded');
+      //console.log('Courses Local Loaded');
       setCourseList(global.myCourses);
       return;
     } else {
@@ -172,7 +177,7 @@ export const FeedList = props => {
   async function fetchData() {
     // You can await here
     const response = await getFeeds();
-    console.log(response);
+    //console.log(response);
   }
 
   const onRefresh = async () => {
@@ -181,6 +186,17 @@ export const FeedList = props => {
     await fetchData();
     setRefreshing(false);
   };
+
+
+  useEffect(function(){
+    setCurrentPage(1);
+    fetchData();
+  }, [courseId]);
+
+  useEffect(function(){
+    setCurrentPage(1);
+    fetchData();
+  }, [searchFilter]);
 
   useEffect(
     function () {
@@ -196,7 +212,9 @@ export const FeedList = props => {
   const renderLoader = () => {
     return (
       <View>
-        <ActivityIndicator size="large" color="red" />
+        {
+          isLoading && <ActivityIndicator size="large" color="red" />
+        }
       </View>
     );
   };
@@ -312,8 +330,6 @@ export const FeedList = props => {
           value={courseId}
           onChange={item => {
             setCourseId(item.value);
-            setCurrentPage(1);
-            fetchData();
           }}
         />
         <Dropdown
@@ -340,13 +356,13 @@ export const FeedList = props => {
           //searchPlaceholder="Search..."
           // value={courseId}
           onChange={item => {
-            setSearchFilter(item.value);
-            setCurrentPage(1);
-            fetchData();
+            //console.log("Item",item);
+            setSearchFilter(item.key);
           }}
         />
       </View>
-      <FlatList
+      {
+        feedList && <FlatList
         data={feedList}
         renderItem={item => {
           let index = item.index;
@@ -492,6 +508,16 @@ export const FeedList = props => {
         onScrollToTop={loadItemsPrev}
         onEndReachedThreshold={0.5}
       />
+      }
+      {
+        feedList.length === 0 && <View style={{
+          flex: 1,
+          backgroundColor: '#FFFFFF',
+          alignItems:"center",
+        }}>
+          <Text style={{fontSize:20}}>No Post Found</Text>
+        </View>
+      }
 
       {bottomSheetOpen === true && (
         <BottomSheet

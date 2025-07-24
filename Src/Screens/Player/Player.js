@@ -4,6 +4,7 @@ import {View, StyleSheet, Alert, BackHandler, Linking} from 'react-native';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import {WebView} from 'react-native-webview';
 import Video from 'react-native-video';
+import DeviceInfo from 'react-native-device-info';
 
 import HeaderComp from '../../Components/HeaderComp';
 import PortalService from '../../Services/apis/PortalService';
@@ -16,6 +17,8 @@ export const Player = props => {
   const [isLoading, setIsLoading] = useState(true);
   const [videoType, setVideoType] = useState('');
   var currentTime = params.watched_time || 0;
+  const isTablet = DeviceInfo.isTablet();
+  const isIpad = isTablet && DeviceInfo.getDeviceType() === 'Tablet' && DeviceInfo.getModel().toLowerCase().includes('ipad');
 
   var loadUrl = '';
 
@@ -29,9 +32,7 @@ export const Player = props => {
             event.stopImmediatePropagation();
           });
         });}setInterval(function () {hide_ctrls();}, 2000);`;
-      global.ZOOM_SCRIPT === ''
-        ? ''
-        : (js = 'var seek_to=' + currentTime + ';' + global.ZOOM_SCRIPT);
+      global.ZOOM_SCRIPT === '' ? '' : (js = 'var seek_to=' + currentTime + ';' + global.ZOOM_SCRIPT);
     } else if (loadUrl.includes('yout')) {
       js = `let interval = null; let arr = ["ytp-chrome-top-buttons", "ytp-title", "ytp-youtube-button ytp-button yt-uix-sessionlink", "ytp-button ytp-endscreen-next", "ytp-button ytp-endscreen-previous", "ytp-show-cards-title", "ytp-endscreen-content", "ytp-chrome-top", "ytp-share-button", "ytp-watch-later-button", "ytp-pause-overlay", "ytp-subtitles-button", "ytp-fullscreen-button"]; arr.forEach(function(str) { if (document.getElementsByClassName(str).length > 0) { document.getElementsByClassName(str)[0].style.display = 'none'; } });
        arr.forEach(function(str) { var elements = document.getElementsByClassName(str); while (elements.length > 0) { elements[0].parentNode.removeChild(elements[0]); } }); var content = document.getElementById("content"); if (content !== null) { var headers = content.querySelectorAll("header"); headers.forEach(function(header) { header.style.display = "none"; }); } var css = document.createElement('style'); css.type = 'text/css'; var styles = '.ytp-contextmenu { width: 0px !important}'; if (css.styleSheet) { css.styleSheet.cssText = styles; } else { css.appendChild(document.createTextNode(styles)); } document.getElementsByTagName('head')[0].appendChild(css); if (interval !== null) { clearInterval(interval); interval = null; } function hide_buttons() { var settingsMenu = document.querySelector('.ytp-settings-menu'); if (settingsMenu) { var menu = settingsMenu.querySelector('.ytp-panel-menu'); if (menu) { console.log("Hide Classes"); var lastChild = menu.lastElementChild; if (lastChild) { lastChild.style.display = 'none'; } } } let is_exist = document.getElementsByClassName('ytp-settings-button'); if (is_exist.length > 0) { is_exist[0].style.display = 'inline' } is_exist = document.getElementsByClassName('ytp-button'); if (is_exist.length > 0) { is_exist[0].style.display = 'inline' } is_exist = document.getElementsByClassName('ytp-iv-player-content'); if (is_exist.length > 0) { is_exist[0].style.display = 'none' } is_exist = document.getElementsByClassName('iv-branding'); if (is_exist.length > 0) { is_exist[0].style.display = 'none' } is_exist = document.getElementsByClassName('ytp-unmute-animated'); if (is_exist.length > 0) { is_exist[0].style.display = 'none' } is_exist = document.querySelectorAll('.ytp-menuitem-toggle-checkbox'); for (var i = 0; i < is_exist.length; i++) { var parent = is_exist[i].parentNode.parentNode; parent.style.display = 'none'; } document.addEventListener('contextmenu', event => event.preventDefault()); document.querySelectorAll("video").forEach(function(video) { video.addEventListener("contextmenu", function(ev) { ev.preventDefault(); }); }); } interval = setInterval(function() { hide_buttons(); }, 2000); setTimeout(function() { hide_buttons(); }, 500); setTimeout(function() { hide_buttons(); }, 1000); hide_buttons(); document.getElementsByClassName('ytp-play-button ytp-button')[0].click(); document.addEventListener('contextmenu', event => event.preventDefault());`;
@@ -112,6 +113,11 @@ export const Player = props => {
           javaScriptEnabled={true}
           allowsInlineMediaPlayback={true}
           mediaPlaybackRequiresUserAction={true}
+          userAgent={
+            isIpad
+              ? "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1"
+              : undefined // use default on other devices
+          }
         />
       );
     } else if (
@@ -153,6 +159,11 @@ export const Player = props => {
               event.nativeEvent.data,
             );
           }}
+          userAgent={
+            isIpad
+              ? "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1"
+              : undefined // use default on other devices
+          }
         />
       );
     } else if (!isNaN(parseInt(url))) {
