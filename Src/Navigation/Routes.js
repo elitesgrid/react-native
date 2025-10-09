@@ -24,6 +24,11 @@ import {
 mkdir android/app/src/main/assets
 react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res
 react-native run-android
+keytool -list -v -keystore app/elites.jks -alias key0 -storepass 12341234 -keypass 12341234
+./gradlew assembleRelease
+./gradlew bundleRelease
+./gradlew clean
+./gradlew signingReport
 
 xcrun xctrace list devices
 XCode-> Product -> Destination -> Select Phone/Simulators
