@@ -1,0 +1,101 @@
+{
+  "project_info": {
+    "project_number": "774589068399",
+    "firebase_url": "https://elites-grid-app-default-rtdb.firebaseio.com",
+    "project_id": "elites-grid-app",
+    "storage_bucket": "elites-grid-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:774589068399:android:4ccbab08cb2f88479a499a",
+        "android_client_info": {
+          "package_name": "com.elearning.elite"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "774589068399-htqrrn0a6o0gchk702qrvr2ugj3v7c7t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.elearning.elite",
+            "certificate_hash": "a5b4f11942a6f325f0b1eb025a95657d3c5b3b9c"
+          }
+        },
+        {
+          "client_id": "774589068399-gh3e23jj603pcrbij5tgbs7lmo0ehu0k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPcOMD6Iyl21JwyUo9PTjUtXFmtMIqNlI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "774589068399-gh3e23jj603pcrbij5tgbs7lmo0ehu0k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:774589068399:android:11361ece1e25e86b9a499a",
+        "android_client_info": {
+          "package_name": "com.elitesgrid.main.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "774589068399-5eqvlh23br2bcmraajn4g6fo67g196un.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.elitesgrid.main.app",
+            "certificate_hash": "0485487ee592a8b4e0ac06ea90fe04beae71f392"
+          }
+        },
+        {
+          "client_id": "774589068399-p41jm1ddh4efhs3t6biram085mg5b75v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.elitesgrid.main.app",
+            "certificate_hash": "becc00fec008599bc528b8dc433b364ba7327180"
+          }
+        },
+        {
+          "client_id": "774589068399-rflddacas76dqfhmf8a1ecjhbsktullh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.elitesgrid.main.app",
+            "certificate_hash": "2f8e6bc8d596dc47b7d9faf67409046558591ac0"
+          }
+        },
+        {
+          "client_id": "774589068399-gh3e23jj603pcrbij5tgbs7lmo0ehu0k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPcOMD6Iyl21JwyUo9PTjUtXFmtMIqNlI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "774589068399-gh3e23jj603pcrbij5tgbs7lmo0ehu0k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
