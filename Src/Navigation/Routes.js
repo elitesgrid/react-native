@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 
 import {NavigationContainer} from '@react-navigation/native';
-import DeviceInfo from 'react-native-device-info';
 import {Alert} from 'react-native';
 import RNRestart from 'react-native-restart';
 
@@ -19,6 +18,7 @@ import {
   onMessage,
   setBackgroundMessageHandler,
 } from '@react-native-firebase/messaging';
+import envVariables from '../Constants/envVariables';
 
 /*
 mkdir android/app/src/main/assets
@@ -34,8 +34,6 @@ xcrun xctrace list devices
 XCode-> Product -> Destination -> Select Phone/Simulators
 */
 
-const currentVersion = DeviceInfo.getVersion();
-
 export default function Routes() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -48,7 +46,7 @@ export default function Routes() {
     try {
       let min_version = parseFloat(versions.data.ios_version || 2.5);
       // console.log('min_version', currentVersion, versions.data.zoom_script);
-      if (currentVersion < min_version && session.id) {
+      if (envVariables.VERSION < min_version && session.id) {
         session = {};
         await StorageManager.remove_key('JWT');
         await StorageManager.remove_session();
@@ -164,7 +162,7 @@ export default function Routes() {
     const messaging = getMessaging();
 
     // This will be triggered when the app is in the background or terminated
-    const unsubscribeBackground = setBackgroundMessageHandler(
+    setBackgroundMessageHandler(
       messaging,
       async remoteMessage => {
         var payload = {
@@ -177,7 +175,7 @@ export default function Routes() {
         // Handle the background message, for example, show a notification
       },
     );
-    return unsubscribeBackground; // Return the cleanup function for background messages
+    //return unsubscribeBackground; // Return the cleanup function for background messages
   }
 
   useEffect(() => {

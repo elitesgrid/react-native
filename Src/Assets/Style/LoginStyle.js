@@ -29,8 +29,10 @@ const Styles = StyleSheet.create({
   },
   title: {
     fontWeight: '400',
-    fontSize: scale(24),
+    fontSize: scale(20),
     color: '#120D26',
+    textAlign: 'center',
+    marginTop: 20
   },
   form: {
     marginTop: moderateVerticalScale(20),

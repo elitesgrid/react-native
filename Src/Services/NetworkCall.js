@@ -4,7 +4,6 @@
 import axios from 'axios';
 import StorageManager from './StorageManager';
 import envVariables from '../Constants/envVariables';
-import DeviceInfo from 'react-native-device-info';
 import {Alert} from 'react-native';
 import RNRestart from 'react-native-restart';
 
@@ -51,8 +50,6 @@ const api_list = {
   HIDE_POST: 'feeds/hide_post',
 };
 
-const currentVersion = DeviceInfo.getVersion();
-
 async function network_call(API, payload) {
   let user_id = 0;
   let last_login = 0;
@@ -72,13 +69,13 @@ async function network_call(API, payload) {
       LastLogin: last_login,
       Devicetype: envVariables.DEVICE_TYPE,
       Lang: '1',
-      Version: currentVersion,
+      Version: envVariables.VERSION,
       Authorization: 'Bearer ' + envVariables.BEARER_TOKEN,
     },
   };
   Object.keys(payload).length > 0 ? (refreshOptions.data = payload) : '';
-  //   console.log(refreshOptions.headers);
-  console.log(payload);
+  // console.log(refreshOptions.headers);
+  // console.log(payload);
 
   try {
     const response = await axios(refreshOptions);

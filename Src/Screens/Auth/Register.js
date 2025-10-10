@@ -6,6 +6,9 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  ScrollView,
+  KeyboardAvoidingView,
+  SafeAreaView,
   View,
 } from 'react-native';
 
@@ -64,107 +67,137 @@ export const Register = () => {
   };
 
   return (
-    <View style={Styles.container}>
+    <SafeAreaView style={[Styles.container, {backgroundColor: Colors.WHITE}]}>
       <HeaderComp headerTitle="Sign Up" />
-      <View style={Styles.containerChild}>
-        <View>
-          <View style={[Styles.title_master, {marginTop: 10, marginBottom: 0}]}>
-            <Text style={Styles.title}>Create an account!</Text>
-          </View>
-          <View style={Styles.form}>
-            <View style={Styles.inputSection}>
-              <Image source={imagePaths.USER} />
-              <TextInput
-                style={Styles.form_input}
-                value={name}
-                placeholder={'Enter Your Name'}
-                onChangeText={text => setName(text)}
-                autoCapitalize={'none'}
-                placeholderTextColor={Colors.IDLE}
-              />
-            </View>
-            <View style={Styles.inputSection}>
-              <Image source={imagePaths.EMAIL} />
-              <TextInput
-                style={Styles.form_input}
-                value={email}
-                placeholder={'Enter Email Address'}
-                onChangeText={text => setEmail(text)}
-                autoCapitalize={'none'}
-                keyboardType={'email-address'}
-                placeholderTextColor={Colors.IDLE}
-              />
-            </View>
-            <View style={Styles.inputSection}>
-              <Image source={imagePaths.MOBILE} />
-              <TextInput
-                style={Styles.form_input}
-                value={mobile}
-                placeholder={'Enter Mobile'}
-                onChangeText={text => setMobile(text)}
-                autoCapitalize={'none'}
-                placeholderTextColor={Colors.IDLE}
-              />
-            </View>
-            <View style={Styles.inputSection}>
-              <Image source={imagePaths.PASSWORD} />
 
-              <TextInput
-                style={Styles.form_input}
-                value={password}
-                placeholder={'Password'}
-                secureTextEntry={isVisible}
-                onChangeText={text => setPassword(text)}
-                placeholderTextColor={Colors.IDLE}
-              />
-              <TouchableOpacity
-                style={Styles.imageRightStyle}
-                onPress={() => showHidePassword()}>
-                <Image
-                  source={
-                    !isVisible ? imagePaths.SHOW_EYE : imagePaths.HIDE_EYE
-                  }
-                />
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity onPress={() => doUserSignUp()}>
-              <View style={Styles.button}>
-                <Text style={Styles.button_label}>{'Sign Up'}</Text>
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+        <ScrollView
+          contentContainerStyle={{flexGrow: 1, justifyContent: 'space-between'}}
+          keyboardShouldPersistTaps="handled">
+          <View style={Styles.containerChild}>
+            <View>
+              {/* Title */}
+              <View
+                style={[Styles.title_master, {marginTop: 10, marginBottom: 0}]}>
+                <Text style={Styles.title}>Create an account!</Text>
               </View>
-            </TouchableOpacity>
-            <View style={{marginTop: 5, marginHorizontal: 20}}>
-              <Text style={{textAlign: 'center'}}>
-                {"By tapping 'Sign Up' you agree to the "}
-              </Text>
+
+              {/* Form */}
+              <View style={Styles.form}>
+                {/* Name */}
+                <View style={Styles.inputSection}>
+                  <Image source={imagePaths.USER} />
+                  <TextInput
+                    style={Styles.form_input}
+                    value={name}
+                    placeholder="Enter Your Name"
+                    onChangeText={setName}
+                    autoCapitalize="words"
+                    placeholderTextColor={Colors.IDLE}
+                  />
+                </View>
+
+                {/* Email */}
+                <View style={Styles.inputSection}>
+                  <Image source={imagePaths.EMAIL} />
+                  <TextInput
+                    style={Styles.form_input}
+                    value={email}
+                    placeholder="Enter Email Address"
+                    onChangeText={setEmail}
+                    autoCapitalize="none"
+                    keyboardType="email-address"
+                    placeholderTextColor={Colors.IDLE}
+                  />
+                </View>
+
+                {/* Mobile */}
+                <View style={Styles.inputSection}>
+                  <Image source={imagePaths.MOBILE} />
+                  <TextInput
+                    style={Styles.form_input}
+                    value={mobile}
+                    placeholder="Enter Mobile"
+                    onChangeText={setMobile}
+                    keyboardType="phone-pad"
+                    autoCapitalize="none"
+                    placeholderTextColor={Colors.IDLE}
+                  />
+                </View>
+
+                {/* Password */}
+                <View style={Styles.inputSection}>
+                  <Image source={imagePaths.PASSWORD} />
+                  <TextInput
+                    style={Styles.form_input}
+                    value={password}
+                    placeholder="Password"
+                    secureTextEntry={isVisible}
+                    onChangeText={setPassword}
+                    placeholderTextColor={Colors.IDLE}
+                  />
+                  <TouchableOpacity
+                    style={Styles.imageRightStyle}
+                    onPress={showHidePassword}>
+                    <Image
+                      source={
+                        !isVisible ? imagePaths.SHOW_EYE : imagePaths.HIDE_EYE
+                      }
+                    />
+                  </TouchableOpacity>
+                </View>
+
+                {/* Sign Up Button */}
+                <TouchableOpacity onPress={doUserSignUp}>
+                  <View style={Styles.button}>
+                    <Text style={Styles.button_label}>Sign Up</Text>
+                  </View>
+                </TouchableOpacity>
+
+                {/* Terms & Conditions */}
+                <View style={{marginTop: 5, marginHorizontal: 20}}>
+                  <Text style={{textAlign: 'center', color: Colors.DARK_TEXT}}>
+                    {"By tapping 'Sign Up' you agree to the "}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navToWebView({
+                        title: 'Terms & Conditions',
+                        url: envVariables.PRIVACY_POLICY_URL,
+                      })
+                    }>
+                    <Text
+                      style={{
+                        color: Colors.THEME,
+                        textAlign: 'center',
+                        textDecorationLine: 'underline',
+                        marginTop: 4,
+                      }}>
+                      terms & conditions
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+
+            {/* Footer */}
+            <View style={[Styles.bottomView, {marginBottom: 20}]}>
               <TouchableOpacity
                 onPress={() =>
-                  navToWebView({
-                    title: 'Terms & Conditions',
-                    url: envVariables.PRIVACY_POLICY_URL,
-                  })
+                  navigation.navigate(navigationStrings.LOGIN)
                 }>
-                <Text
-                  style={{
-                    color: Colors.THEME,
-                    textAlign: 'center',
-                    textDecorationLine: 'underline',
-                  }}>
-                  {'terms & conditions'}
+                <Text style={Styles.login_footer_text}>
+                  {'Already have an account? '}
+                  <Text style={Styles.login_footer_link}>Sign In</Text>
                 </Text>
               </TouchableOpacity>
             </View>
           </View>
-        </View>
-        <View style={Styles.bottomView}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate(navigationStrings.LOGIN)}>
-            <Text style={Styles.login_footer_text}>
-              {'Already have an account? '}
-              <Text style={Styles.login_footer_link}>{'Sign In'}</Text>
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };

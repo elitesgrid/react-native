@@ -82,7 +82,9 @@ export const Home = (props) => {
           (
             <View style={Styles.container}>
               <HomeHeaderComp onPressBack={() => { navigation.openDrawer(); }} headingText="Home" />
-              <ScrollView>
+              <ScrollView
+                nestedScrollEnabled={true}
+                >
                 <View>
                   <BannerSlider imagesList={bannerList} />
                 </View>
@@ -94,7 +96,10 @@ export const Home = (props) => {
                     </TouchableOpacity>
                   </View>
                   <View>
-                    <ScrollView horizontal={true}>
+                    <ScrollView 
+                      horizontal={true}
+                      showsHorizontalScrollIndicator={false}
+                      >
                       {
                         pastPaperList
                           .filter((item, index, self) => self.findIndex(t => t.id === item.id) === index)
@@ -119,7 +124,10 @@ export const Home = (props) => {
                       </TouchableOpacity>
                     </View>
                     <View>
-                      <ScrollView horizontal={true}>
+                      <ScrollView 
+                        horizontal={true}
+                        showsHorizontalScrollIndicator={false}
+                        >
                         {courseList.map((item, index) => {
                           let price_after_dis = item.price;
                           if (parseInt(item.discount_percent) > 0) {
@@ -176,7 +184,10 @@ export const Home = (props) => {
                     </TouchableOpacity>
                   </View>
                   <View>
-                    <ScrollView horizontal={true}>
+                    <ScrollView 
+                      horizontal={true}
+                      showsHorizontalScrollIndicator={false}
+                      >
                       {classes.map((item, index) => {
                         return (<TouchableOpacity onPress={()=>{navToPlayer({url:item.url,title:item.title})}} key={index} style={CommonStyles.courseListCard}>
                           <View style={CommonStyles.videoListCardSize}>
@@ -201,7 +212,11 @@ export const Home = (props) => {
                     </TouchableOpacity>
                   </View>
                   <View style={{ marginBottom: 20 }}>
-                    <ScrollView horizontal={true}>
+                    <ScrollView 
+                      nestedScrollEnabled={true}
+                      showsHorizontalScrollIndicator={false}
+                      horizontal={true}
+                      >
                       {testimonial.map((item, index) => {
                         return (<TouchableOpacity key={index} style={CommonStyles.reviewListCard}>
                           <View style={CommonStyles.reviewListCardSize}>
@@ -226,8 +241,12 @@ export const Home = (props) => {
                               </View>
                             </View>
                             <View style={{ position: "relative", flex: 0.8 }}>
-                              <ScrollView contentContainerStyle={{ flexGrow: 1, marginTop: 25 }}>
-                                <Text style={{}}>{item.description}</Text>
+                              <ScrollView 
+                                contentContainerStyle={{ paddingVertical: 10 }}
+                                nestedScrollEnabled={true}
+                                showsVerticalScrollIndicator={false}
+                                >
+                                <Text style={{lineHeight: 18}}>{item.description}</Text>
                               </ScrollView>
                             </View>
                           </View>

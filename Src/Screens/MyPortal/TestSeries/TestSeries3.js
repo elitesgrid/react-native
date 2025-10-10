@@ -68,8 +68,8 @@ export const TestSeries3 = props => {
   };
 
   const navToStartTest = function (item) {
-    navigation.navigate(navigationStrings.TEST_WEBVIEW, item);
-    //navigation.navigate(navigationStrings.TEST_INSTRUCTIONS, item);
+    // navigation.navigate(navigationStrings.TEST_WEBVIEW, item);
+    navigation.navigate(navigationStrings.TEST_INSTRUCTIONS, item);
   };
 
   useEffect(

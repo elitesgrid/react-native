@@ -12,9 +12,8 @@ import {
   Alert,
   Image,
 } from 'react-native';
-import DeviceInfo from 'react-native-device-info';
 
-import {MyPortal} from '../Screens';
+//import {MyPortal} from '../Screens';
 import navigationStrings from '../Constants/navigationStrings';
 import imagePaths from '../Constants/imagePaths';
 import Colors from '../Constants/Colors';
@@ -162,7 +161,7 @@ function CustomDrawerContent(props) {
         }}></DrawerItem>
       <View style={{alignItems: 'center'}}>
         <Text style={{fontSize: 10, color: 'gray', opacity: 0.5}}>
-          {'V-' + DeviceInfo.getVersion()}
+          {'V-' + envVariables.VERSION}
         </Text>
       </View>
       {/* <DrawerItemList {...props} /> */}

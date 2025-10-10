@@ -17,16 +17,16 @@ export const ListTestemonials = (props) => {
     return (
         <View style={styles.container}>
             <HeaderComp headerTitle={"Our Student Expressions"} />
-            <View style={{ flex: 1 }}>
-                <ScrollView>
+            <View style={{  }}>
+                <ScrollView style={{}}>
                     {testimonial.map((item, index) => {
                         return (<TouchableOpacity key={index} style={{...CommonStyles.reviewListCard,...{marginTop:10}}}>
-                            <View style={{...CommonStyles.reviewListCardSize,...{width:"98%"}}}>
-                                <View style={{ flex: 0.2, flexDirection: "row", position: "relative" }}>
-                                    <View style={{ flex: 0.2, justifyContent: "center", alignItems: "center" }}>
+                            <View style={{ margin: 15, marginHorizontal: 10}}>
+                                <View style={{ flex: 1, flexDirection: "row" }}>
+                                    <View style={{  }}>
                                         <Image source={{ uri: item.image }} style={[CommonStyles.playIcon, { borderRadius: 50, borderColor: Colors.BLACK, borderWidth: 1 }]} />
                                     </View>
-                                    <View style={{ flex: 0.8 }}>
+                                    <View style={{ marginLeft: 15 }}>
                                         <View>
                                             <Text style={[CommonStyles.sectionHeaderTitle, { fontWeight: "500", fontSize: 14 }]}>{(item.title.substring(0, 30)) + "..."}</Text>
                                         </View>
@@ -42,8 +42,8 @@ export const ListTestemonials = (props) => {
                                         </View>
                                     </View>
                                 </View>
-                                <View style={{ position: "relative", flex: 0.8 }}>
-                                    <ScrollView contentContainerStyle={{ flexGrow: 1, marginTop: 25 }}>
+                                <View style={{ position: "relative", }}>
+                                    <ScrollView contentContainerStyle={{  marginTop: 5 }}>
                                         <Text style={{}}>{item.description}</Text>
                                     </ScrollView>
                                 </View>

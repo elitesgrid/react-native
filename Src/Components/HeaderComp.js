@@ -1,9 +1,7 @@
 //import liraries
-import React, {Component} from 'react';
+import React, {  } from 'react';
 import {
-  ifIphoneX,
   getStatusBarHeight,
-  getBottomSpace,
 } from 'react-native-iphone-x-helper';
 import {
   View,
@@ -12,6 +10,7 @@ import {
   TouchableOpacity,
   StatusBar,
   SafeAreaView,
+  Platform
 } from 'react-native';
 import {Image} from 'react-native-elements';
 import imagePaths from '../Constants/imagePaths';
@@ -30,32 +29,22 @@ const HeaderComp = ({
     navigation.goBack(null);
   };
   return (
-    <SafeAreaView style={{...styles.headerView, ...headerStyles}}>
+    <SafeAreaView style={[styles.headerView, headerStyles]}>
       <StatusBar backgroundColor={Colors.THEME} barStyle="light-content" />
-      <TouchableOpacity
-        style={{
-          flex: 1,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-        onPress={!!onPressBack ? onPressBack : () => goBack()}>
-        <View style={{flexDirection: 'row'}}>
+      <View style={styles.headerContainer}>
+        {/* LEFT: Back button */}
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={onPressBack ? onPressBack : () => goBack()}>
           <Image source={imagePaths.BACK} style={styles.image} />
-          <Text style={{color: Colors.WHITE, fontSize: 18, marginLeft: 12}}>
-            {headerTitle}
-          </Text>
-        </View>
-        <Text
-          style={{
-            marginRight: 10,
-            backgroundColor: Colors.IDLE,
-            paddingHorizontal: 5,
-            opacity: 0.5,
-          }}>
-          {global.USER_ID || 'A'}
-        </Text>
-      </TouchableOpacity>
+        </TouchableOpacity>
+
+        {/* CENTER: Title */}
+        <Text style={styles.headerTitle}>{headerTitle}</Text>
+
+        {/* RIGHT: User ID */}
+        <Text style={styles.userId}>{global.USER_ID || 'A'}</Text>
+      </View>
     </SafeAreaView>
   );
 };
@@ -63,16 +52,46 @@ const HeaderComp = ({
 // define your styles
 const styles = StyleSheet.create({
   headerView: {
-    height: 80 + getStatusBarHeight(),
+    paddingTop: Platform.select({
+      ios: 0,
+      android: 20,
+    }),
+    height:
+      Platform.select({
+        ios: 80,
+        android: 40,
+      }) + getStatusBarHeight(),
     width: '100%',
     justifyContent: 'center',
     backgroundColor: Colors.THEME,
   },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+  },
+  backButton: {
+    padding: 8,
+  },
   image: {
     height: 20,
     width: 20,
-    marginLeft: 20,
     tintColor: Colors.WHITE,
+  },
+  headerTitle: {
+    color: Colors.WHITE,
+    fontSize: 18,
+    fontWeight: '600',
+    // textAlign: 'center',
+    flex: 1,
+  },
+  userId: {
+    color: Colors.WHITE,
+    fontSize: 14,
+    backgroundColor: Colors.IDLE,
+    paddingHorizontal: 5,
+    opacity: 0.5,
   },
 });
 

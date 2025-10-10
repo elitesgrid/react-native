@@ -74,7 +74,7 @@ const CommonStyles = StyleSheet.create({
   },
   courseListCardSize: {
     width: 246,
-    height: 223,
+    height: 200,
   },
   CourseListInfo: {marginLeft: 5, marginVertical: 10},
   courseListCardImage: {width: 246, height: 105, resizeMode: 'stretch'},
@@ -123,7 +123,7 @@ const CommonStyles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     marginHorizontal: 5,
-    marginTop: 30,
+    marginTop: 10,
   },
   reviewListCardSize: {width: 246, height: 250, margin: 15},
 

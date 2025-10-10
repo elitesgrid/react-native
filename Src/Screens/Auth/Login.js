@@ -8,21 +8,21 @@ import {
   TouchableOpacity,
   View,
   Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView
 } from 'react-native';
 import {
-  scale,
-  verticalScale,
-  moderateScale,
   moderateVerticalScale,
 } from 'react-native-size-matters';
 import RNRestart from 'react-native-restart';
-import DeviceInfo from 'react-native-device-info';
 
 import Auth from '../../Services/apis/AuthService';
 import Styles from '../../Assets/Style/LoginStyle';
 import navigationStrings from '../../Constants/navigationStrings';
 import imagePaths from '../../Constants/imagePaths';
 import Colors from '../../Constants/Colors';
+import envVariables from '../../Constants/envVariables';
 
 export const Login = ({navigation}) => {
   const [username, setUsername] = useState('');
@@ -71,85 +71,103 @@ export const Login = ({navigation}) => {
 
   return (
     <SafeAreaView style={Styles.container}>
-      <View
-        style={[
-          Styles.containerChild,
-          {paddingTop: moderateVerticalScale(120 - keyBoardHeight)},
-        ]}>
-        <View>
-          <View style={Styles.logo_bg_parent}>
-            <Image
-              source={imagePaths.LOGIN_WITH_TITLE}
-              style={Styles.logo_bg}
-            />
-          </View>
-          <View style={Styles.title_master}>
-            <Text style={Styles.title}>Sign In</Text>
-          </View>
-          <View style={Styles.form}>
-            <View style={Styles.inputSection}>
-              <Image source={imagePaths.EMAIL} />
-              <TextInput
-                style={Styles.form_input}
-                value={username}
-                placeholder={'Username'}
-                onChangeText={text => setUsername(text)}
-                autoCapitalize={'none'}
-                keyboardType={'email-address'}
-                placeholderTextColor={Colors.IDLE}
-              />
-            </View>
-            <View style={Styles.inputSection}>
-              <Image source={imagePaths.PASSWORD} />
-
-              <TextInput
-                style={Styles.form_input}
-                value={password}
-                placeholder={'Password'}
-                secureTextEntry={isVisible}
-                onChangeText={text => setPassword(text)}
-                placeholderTextColor={Colors.IDLE}
-              />
-              <TouchableOpacity
-                style={Styles.imageRightStyle}
-                onPress={() => showHidePassword()}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{flex: 1}}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+        <ScrollView
+          contentContainerStyle={{flexGrow: 1}}
+          keyboardShouldPersistTaps="handled">
+          <View
+            style={[
+              Styles.containerChild,
+              {paddingTop: moderateVerticalScale(120)},
+            ]}>
+            <View>
+              <View style={Styles.logo_bg_parent}>
                 <Image
-                  source={
-                    !isVisible ? imagePaths.SHOW_EYE : imagePaths.HIDE_EYE
-                  }
+                  source={imagePaths.LOGIN_WITH_TITLE}
+                  style={Styles.logo_bg}
                 />
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate(navigationStrings.FORGOT_PASSWORD)
-              }>
-              <Text style={Styles.forgot_password}>{'Forgot Password? '}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => doUserLogIn()}>
-              <View style={Styles.button}>
-                <Text style={Styles.button_label}>{'Sign in'}</Text>
               </View>
-            </TouchableOpacity>
-          </View>
-        </View>
-        {Platform.OS === 'android' && (
-          <View style={Styles.bottomView}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate(navigationStrings.REGISTER)}>
-              <Text style={Styles.login_footer_text}>
-                {"Don't have an account? "}
-                <Text style={Styles.login_footer_link}>{'Sign up'}</Text>
+              <View style={Styles.title_master}>
+                <Text style={Styles.title}>Sign In</Text>
+              </View>
+              <View style={Styles.form}>
+                {/* Email input */}
+                <View style={Styles.inputSection}>
+                  <Image source={imagePaths.EMAIL} />
+                  <TextInput
+                    style={Styles.form_input}
+                    value={username}
+                    placeholder={'Username'}
+                    onChangeText={text => setUsername(text)}
+                    autoCapitalize={'none'}
+                    keyboardType={'email-address'}
+                    placeholderTextColor={Colors.IDLE}
+                  />
+                </View>
+
+                {/* Password input */}
+                <View style={Styles.inputSection}>
+                  <Image source={imagePaths.PASSWORD} />
+                  <TextInput
+                    style={Styles.form_input}
+                    value={password}
+                    placeholder={'Password'}
+                    secureTextEntry={isVisible}
+                    onChangeText={text => setPassword(text)}
+                    placeholderTextColor={Colors.IDLE}
+                  />
+                  <TouchableOpacity
+                    style={Styles.imageRightStyle}
+                    onPress={showHidePassword}>
+                    <Image
+                      source={
+                        !isVisible ? imagePaths.SHOW_EYE : imagePaths.HIDE_EYE
+                      }
+                    />
+                  </TouchableOpacity>
+                </View>
+
+                {/* Forgot Password */}
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate(navigationStrings.FORGOT_PASSWORD)
+                  }>
+                  <Text style={Styles.forgot_password}>Forgot Password?</Text>
+                </TouchableOpacity>
+
+                {/* Sign In */}
+                <TouchableOpacity onPress={doUserLogIn}>
+                  <View style={Styles.button}>
+                    <Text style={Styles.button_label}>Sign in</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Footer */}
+            {Platform.OS === 'android' && (
+              <View style={Styles.bottomView}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate(navigationStrings.REGISTER)}>
+                  <Text style={Styles.login_footer_text}>
+                    {"Don't have an account? "}
+                    <Text style={Styles.login_footer_link}>Sign up</Text>
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            <View style={{alignItems: 'center'}}>
+              <Text style={{color: Colors.IDLE}}>
+                {'Version ' + envVariables.VERSION}
               </Text>
-            </TouchableOpacity>
+            </View>
           </View>
-        )}
-        <View style={{alignItems: 'center'}}>
-          <Text style={{color: Colors.IDLE}}>
-            {'Version ' + DeviceInfo.getVersion()}
-          </Text>
-        </View>
-      </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

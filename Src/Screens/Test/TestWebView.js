@@ -2,11 +2,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, SafeAreaView, StatusBar, Alert} from 'react-native';
 import {WebView} from 'react-native-webview';
-import {
-  ifIphoneX,
-  getStatusBarHeight,
-  getBottomSpace,
-} from 'react-native-iphone-x-helper';
 
 //import TestHeaderComp from '../../Components/TestHeaderComp';
 //import HeaderComp from '../../Components/HeaderComp';
@@ -106,7 +101,7 @@ export const TestWebView = props => {
           {/* <StatusBar backgroundColor={Colors.THEME} barStyle="light-content" /> */}
           {/* <TestHeaderComp headerTitle={params.title} /> */}
           {/* <HeaderComp headerTitle={params.title} /> */}
-          <SafeAreaView style={{backgroundColor: Colors.THEME}}></SafeAreaView>
+          <SafeAreaView style={{backgroundColor: Colors.THEME, paddingTop: 20}}></SafeAreaView>
           <View style={{flex: 1}}>
             {
               testUrl && <WebView
@@ -144,7 +139,7 @@ export const TestWebView = props => {
               />
             }
           </View>
-          <SafeAreaView style={{backgroundColor: Colors.THEME}}></SafeAreaView>
+          <SafeAreaView style={{backgroundColor: Colors.THEME, paddingBottom: 10}}></SafeAreaView>
         </View>
       )}
     </>
