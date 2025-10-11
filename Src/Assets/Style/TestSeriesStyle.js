@@ -107,16 +107,16 @@ const TestSeriesStyle = StyleSheet.create({
     height: '100%',
   },
   pallete_header: {
-    flexDirection: 'row',
-    borderBottomColor: 'black',
-    borderBottomWidth: 1,
-    height: 60,
-    alignItems: 'center',
+    flexDirection: "row", 
+    alignItems: "center", 
+    paddingVertical: 12, 
+    paddingHorizontal: 16, 
+    backgroundColor: Colors.THEME 
   },
   pallete_symbol_card: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '45%',
+    width: '45%'
   },
   pallete_symblo_card_image: {
     height: 30,

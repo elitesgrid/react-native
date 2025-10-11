@@ -26,12 +26,18 @@ const TestHeaderComp = ({
         <SafeAreaView style={{ ...styles.headerView, ...headerStyles }}>
             <StatusBar backgroundColor={Colors.THEME} barStyle="light-content" />
             <View style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                <TouchableOpacity style={{ flex: 1, flexDirection: "row", alignItems: "center" }} onPress={!!onPressBack ? onPressBack : () => goBack()}>
+                <TouchableOpacity 
+                 style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
+                 onPress={!!onPressBack ? onPressBack : () => goBack()}>
                     <Image
                         source={imagePaths.BACK}
                         style={styles.image}
                     />
-                    <Text style={{ color: Colors.WHITE, fontSize: 18, marginLeft: 12 }}>{headerTitle}</Text>
+                    <Text 
+                        style={{ color: Colors.WHITE, fontSize: 18, marginLeft: 12 }}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                    >{headerTitle}</Text>
                 </TouchableOpacity>
                 <View style={{height:45}}>
                     <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
@@ -54,7 +60,15 @@ const TestHeaderComp = ({
 // define your styles
 const styles = StyleSheet.create({
     headerView: {
-        height:70 + getStatusBarHeight(),
+        paddingTop: Platform.select({
+              ios: 0,
+              android: 20,
+            }),
+        height:
+            Platform.select({
+            ios: 80,
+            android: 40,
+            }) + getStatusBarHeight(),
         width: "100%",
         justifyContent: "center",
         backgroundColor: Colors.THEME

@@ -9,7 +9,7 @@ import { View,
     SafeAreaView,
     Alert,
     StyleSheet,
-    Dimensions,
+    TextInput,
     ImageBackground
 } from 'react-native';
 //import { WebView } from 'react-native-webview';
@@ -52,7 +52,7 @@ function useExamTimer(initialRemainSeconds = 0) {
     remainSeconds,
     formattedRemainTime,
     resetQuestionTime: () => setQuestionTime(0),
-    setRemainSeconds, // 👈 allow changing from outside
+    setRemainSeconds, //allow changing from outside
     stopTimer: () => clearInterval(intervalRef.current),
   };
 }
@@ -78,9 +78,17 @@ export const AttemptTest = (props) => {
         remainSeconds,
         formattedRemainTime,
         resetQuestionTime,
-        setRemainSeconds, // 👈 new
+        setRemainSeconds, // new
         stopTimer
     } = useExamTimer(0);
+    const [fibActiveAnswers, setFibActiveAnswers] = useState(['', '', '', '']);
+    const [drawerLegend, setDrawerLegend] = useState([
+        { label: "Answered", key: "answered", count: 0 },
+        { label: "Not Answered", key: "not_answered", count: 0 },
+        { label: "Not Visited", key: "not_visited", count: 0 },
+        { label: "Marked for Review", key: "marked_for_review", count: 0 },
+        { label: "Answered & Marked for Review", key: "answered_marked_for_review", count: 0 },
+    ]);
 
     useEffect(function(){
         if(remainSeconds > 0){
@@ -89,39 +97,45 @@ export const AttemptTest = (props) => {
     }, [remainSeconds]);
 
     async function load_question(index) {
-        //console.log("sdfg",finalJson[currentQuestionsIndex], finalJson);
+        console.log("sdfg",finalJson[index].answers);
         //console.log(testQuestions[index].section_id, testSections);
-
-        if(finalJson[currentQuestionsIndex] == undefined || finalJson[currentQuestionsIndex] == "" || finalJson[currentQuestionsIndex].que_id == undefined){
-            finalJson[currentQuestionsIndex].answers = [];
-            finalJson[currentQuestionsIndex].spent_time = questionTime;
-            setFinalJson(finalJson);
+        let currentQuestion = testQuestions[index];
+        if(!currentQuestion){
+            return;
         }
-        setCurrentQuestions(testQuestions[index]);
+        if(currentQuestion.question_type == "FIB" && finalJson[index].answers) {
+            setFibActiveAnswers(finalJson[index].answers)
+        } else if (currentQuestion.question_type == "FIB") {
+            //console.log(Object.keys(finalJson[index]));
+            setFibActiveAnswers(['', '', '', ''])
+        }
+        currentQuestion.answers = finalJson[index].answers;
+        setCurrentQuestions(currentQuestion);
         setCurrentQuestionsIndex(index);
         resetQuestionTime(finalJson[index]?.spent_time ?? 0);
-
+        
         isOpen ? togglePallete() : "";
     }
 
     function chooseOption(optionIndex){
-        if(finalJson[currentQuestionsIndex].answers == undefined || finalJson[currentQuestionsIndex].answers.length < 1){
-            finalJson[currentQuestionsIndex].answers = ["0","0","0","0"];
+        if (currentQuestions.question_type == "FIB") {
+            currentQuestions.answers = optionIndex;
+        } else {
+            let x = ['0', '0', '0', '0'];
+            x[optionIndex] = '1';
+            currentQuestions.answers = x;
         }
-        currentQuestions.answers == undefined || currentQuestions.question_type === 'SC' ? currentQuestions.answers = ["0","0","0","0"] : "";
-        
-        currentQuestions.answers[optionIndex] = "1";
         finalJson[currentQuestionsIndex].answers = currentQuestions.answers;
         setCurrentQuestions(currentQuestions);
 
         const countOfZero = finalJson[currentQuestionsIndex].answers.filter(item => item === "0").length;
         const countOfNonZero = finalJson[currentQuestionsIndex].answers.filter(item => item === "1").length;
-        if(finalJson[currentQuestionsIndex].answers.length === countOfZero-1){
+        if (finalJson[currentQuestionsIndex].answers.length === countOfZero-1) {
             finalJson[currentQuestionsIndex].state = "not_answered";
-        }else if(countOfNonZero > 0){
+        } else if (countOfNonZero > 0) {
             finalJson[currentQuestionsIndex].state = "answered";
         }
-
+        console.log("On write answers", finalJson[currentQuestionsIndex].answers);
         setFinalJson(finalJson);
     }
 
@@ -131,9 +145,15 @@ export const AttemptTest = (props) => {
         load_question(index);
     }
 
-    function clearResponse(){
-        finalJson[currentQuestionsIndex].answers = ["0","0","0","0"];
-        currentQuestions.answers = ["0","0","0","0"];
+    function clearResponse() {
+        if (currentQuestions.question_type == "FIB") {
+            finalJson[currentQuestionsIndex].answers = [];
+            currentQuestions.answers = [];
+            setFibActiveAnswers(currentQuestions.answers);
+        } else {
+            finalJson[currentQuestionsIndex].answers = ["0","0","0","0"];
+            currentQuestions.answers = ["0","0","0","0"];
+        }
         finalJson[currentQuestionsIndex].state = "not-answered";
         setCurrentQuestions(currentQuestions);
         setFinalJson(finalJson);
@@ -157,7 +177,11 @@ export const AttemptTest = (props) => {
     }
 
     const nextQuestion = async function (){
-        load_question(currentQuestionsIndex+1)
+        load_question(currentQuestionsIndex + 1)
+    }
+
+    const prevQuestion = async function (){
+        load_question(currentQuestionsIndex - 1)
     }
 
     const submitTest = async function(){
@@ -181,6 +205,10 @@ export const AttemptTest = (props) => {
                 data.questions.forEach(element => {
                     element.questions.forEach((que, ind) => {
                         switch(que.question_type) {
+                            case "3":
+                                element.questions[ind].question_type = "FIB";
+                                element.questions[ind].question = que.question.replace('FIB', '')
+                                break;
                             case "0":
                                 element.questions[ind].question_type = "SC";
                                 break;
@@ -191,7 +219,8 @@ export const AttemptTest = (props) => {
                             section_id:que.section_id,
                             index:index,
                             state:"not-visited",
-                            spent_time:0
+                            spent_time:0,
+                            answers : que.question_type === "FIB" ? ['', '', '', ''] : ['0', '0', '0', '0']
                         })
                         ++index;
                     });
@@ -199,7 +228,7 @@ export const AttemptTest = (props) => {
                     questions.push(...element.questions);
                     total_sec += (parseInt(element.section_timing) * 60);
                 });
-                console.log("Total Question lenght"+ questions.length);
+                //console.log("Total Question lenght"+ questions.length);
                 setFinalJson(user_answers);
                 setTestSections(sections);
                 setTestQuestions(questions);
@@ -242,54 +271,45 @@ export const AttemptTest = (props) => {
 
     }, [navigation, params]);
 
-    function pallete_highlighers(type,value,index){
-        switch(type){
-            case "answered":
-                return (
-                    <TouchableOpacity  onPress={()=>index!==""? load_question(index):""}>
-                        <ImageBackground source={imagePaths.ANSWERED} style={TestSeriesStyle.pallete_symblo_card_image}>
-                                <Text style={{color:Colors.WHITE}}>{value}</Text>
-                        </ImageBackground>
-                    </TouchableOpacity>
-                )
-                break;
-            case "not_answered":
-                return (
-                    <TouchableOpacity  onPress={()=>index!==""? load_question(index):""}>
-                        <ImageBackground source={imagePaths.NOT_ANSWERED} style={TestSeriesStyle.pallete_symblo_card_image}>
-                                <Text style={{color:Colors.WHITE}}>{value}</Text>
-                        </ImageBackground>
-                    </TouchableOpacity>
-                )
-                break;
-            case "not_visited":
-                return (
-                    <TouchableOpacity  onPress={()=>index!==""? load_question(index):""}>
-                        <ImageBackground source={imagePaths.NOT_VISITED} style={TestSeriesStyle.pallete_symblo_card_image}>
-                                <Text style={{color:Colors.BLACK}}>{value}</Text>
-                        </ImageBackground>
-                    </TouchableOpacity>
-                )
-                break;
-            case "marked_for_review":
-                return (
-                    <TouchableOpacity  onPress={()=>index!==""? load_question(index):""}>
-                        <ImageBackground source={imagePaths.MARK_FOR_REVIEW} style={TestSeriesStyle.pallete_symblo_card_image}>
-                                <Text style={{color:Colors.WHITE}}>{value}</Text>
-                        </ImageBackground>                                
-                    </TouchableOpacity>
-                )
-                break;
-            case "answered_marked_for_review":
-                return (
-                    <TouchableOpacity  onPress={()=>index!==""? load_question(index):""}>
-                        <ImageBackground source={imagePaths.ANSWERED_MARK_FOR_REVIEW} style={{height:30,width:34,alignItems:"center",justifyContent:"center",margin:5}}>
-                                <Text style={{color:Colors.WHITE}}>{value}</Text>
-                        </ImageBackground>
-                    </TouchableOpacity>
-                )
-                break;
-        }
+    function pallete_highlighers(type, value, index) {
+        const config = {
+            answered: {
+                image: imagePaths.ANSWERED,
+                textColor: Colors.WHITE,
+                style: TestSeriesStyle.pallete_symblo_card_image,
+            },
+            not_answered: {
+                image: imagePaths.NOT_ANSWERED,
+                textColor: Colors.WHITE,
+                style: TestSeriesStyle.pallete_symblo_card_image,
+            },
+            not_visited: {
+                image: imagePaths.NOT_VISITED,
+                textColor: Colors.BLACK,
+                style: TestSeriesStyle.pallete_symblo_card_image,
+            },
+            marked_for_review: {
+                image: imagePaths.MARK_FOR_REVIEW,
+                textColor: Colors.WHITE,
+                style: TestSeriesStyle.pallete_symblo_card_image,
+            },
+            answered_marked_for_review: {
+                image: imagePaths.ANSWERED_MARK_FOR_REVIEW,
+                textColor: Colors.WHITE,
+                style: { height: 30, width: 34, alignItems: "center", justifyContent: "center", margin: 5 },
+            },
+        };
+
+        const selected = config[type];
+        if (!selected) return null;
+
+        return (
+            <TouchableOpacity onPress={() => index !== "" && load_question(index)}>
+                <ImageBackground source={selected.image} style={selected.style}>
+                    <Text style={{ color: selected.textColor }}>{value}</Text>
+                </ImageBackground>
+            </TouchableOpacity>
+        );
     }
 
 
@@ -307,77 +327,93 @@ export const AttemptTest = (props) => {
                             onChange={(open) => setIsOpen(open)}
                             onClose={togglePallete}
                             drawerContent={
-                                <SafeAreaView style={TestSeriesStyle.pallete_container}>
-                                    <View style={TestSeriesStyle.pallete_header}>
-                                        <View style={{flex:0.2}}>
-                                            <Image style={{maxWidth:"100%",height:"100%"}} resizeMode='stretch' source={imagePaths.LOGO}></Image>
-                                        </View>
-                                        <View style={{flex:0.8,paddingLeft:10}}>
-                                            <Text>{"Ninja Chaudhary"}</Text>
-                                        </View>
-                                    </View>
-                                    <View style={{flex:0.30}}>
-                                        <View style={{flex:1,flexDirection:"row"}}>
-                                            <View style={TestSeriesStyle.pallete_symbol_card}>
-                                                {pallete_highlighers("answered","0","")}
-                                                <Text>{"Answered"}</Text>
-                                            </View>
-                                            <View style={TestSeriesStyle.pallete_symbol_card}>
-                                                {pallete_highlighers("not_answered","0","")}
-                                                <Text>{"Not Answered"}</Text>
-                                            </View>
-                                        </View>
-                                        <View style={{flex:1,flexDirection:"row"}}>
-                                            <View style={TestSeriesStyle.pallete_symbol_card}>
-                                                {pallete_highlighers("not_visited","0","")}
-                                                <Text>{"Not Visited"}</Text>
-                                            </View>
-                                            <View style={TestSeriesStyle.pallete_symbol_card}>
-                                                {pallete_highlighers("marked_for_review","0","")}
-                                                <Text>{"Marked For Review"}</Text>
-                                            </View>
-                                        </View>
-                                        <View style={{flex:1,flexDirection:"row"}}>
-                                            <View style={{...TestSeriesStyle.pallete_symbol_card,...{width:"90%"}}}>
-                                                {pallete_highlighers("answered_marked_for_review","0","")}
-                                                <Text>{"Answered & Marked For Review"}</Text>
-                                            </View>
-                                        </View>
-                                    </View>
-                                    <View style={{backgroundColor:Colors.THEME,padding:8}}>
-                                        <Text style={{color:Colors.WHITE,fontWeight:"500"}}>{"Choose Question"}</Text>
-                                    </View>
-                                    <ScrollView>
-                                        <View style={{flex:1,flexDirection:"row",maxWidth:"100%",flexWrap:"wrap"}}>
-                                            {
-                                                finalJson.map((item,rowIndex) =>{
-                                                    return (
-                                                        <View key={rowIndex} style={{width:"14%"}}>
-                                                            {item.state === "not-visited" ? pallete_highlighers("not_visited",item.index +1,item.index) : ""}
-                                                            {item.state === "review" ? pallete_highlighers("marked_for_review",item.index +1,item.index) : ""}
-                                                            {item.state === "review-marked" ? pallete_highlighers("answered_marked_for_review",item.index +1,item.index) : ""}
-                                                            {item.state === "not-answered" ? pallete_highlighers("not_answered",item.index +1,item.index) : ""}
-                                                            {item.state === "answered" ? pallete_highlighers("answered",item.index +1,item.index) : ""}
-                                                        </View>
-                                                    )
-                                                })
-                                            }
-                                        </View>
-                                    </ScrollView>
-                                    {
-                                        isOpen && <TouchableOpacity 
-                                            onPress={() => setIsOpen(false)}
-                                            style={styles.navCloseBtn}
+                                <SafeAreaView style={[TestSeriesStyle.pallete_container, { backgroundColor: Colors.WHITE }]}>
+      
+                                {/* Header */}
+                                <View style={TestSeriesStyle.pallete_header}>
+                                    <Image
+                                    style={{ width: 48, height: 48, borderRadius: 24 }}
+                                    resizeMode="contain"
+                                    source={imagePaths.LOGO}
+                                    />
+                                    <Text
+                                    style={{
+                                        color: Colors.WHITE,
+                                        fontSize: 18,
+                                        fontWeight: "600",
+                                        marginLeft: 12,
+                                    }}
+                                    numberOfLines={1}
+                                    ellipsizeMode="tail"
+                                    >
+                                    Ninja Chaudhary
+                                    </Text>
+                                </View>
+
+                                {/* Legend Section */}
+                                <View style={{ padding: 16 }}>
+                                    <Text style={{ fontSize: 16, fontWeight: "600", marginBottom: 10, color: Colors.DARK }}>
+                                        Question Legend
+                                    </Text>
+                                    <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" }}>
+                                    {drawerLegend.map((item, idx) => (
+                                        <View
+                                        key={idx}
+                                        style={{
+                                            width: idx == 4 ? "95%" : (idx % 2 === 0 ? "40%" : "60%"),
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                        }}
                                         >
-                                            <Text style={{
-                                                fontSize:18,
-                                                color:Colors.WHITE
-                                            }}>{">"}</Text>
-                                        </TouchableOpacity>
-                                    }
-                                    <View style={{backgroundColor:Colors.THEME,padding:8,marginVertical:10,borderTopWidth:1,borderTopColor:Colors.IDLE,alignItems:"center"}}>
-                                        <Text style={{color:Colors.WHITE,fontWeight:"600"}}>{"Submit"}</Text>
+                                        {pallete_highlighers(item.key, item.count, "0")}
+                                        <Text style={{ marginLeft: 8, fontSize: 14, color: Colors.DARK }}>
+                                            {item.label}
+                                        </Text>
+                                        </View>
+                                    ))}
                                     </View>
+                                </View>
+
+                                {/* Choose Question Header */}
+                                <View style={{ backgroundColor: Colors.THEME, paddingVertical: 10, paddingHorizontal: 16 }}>
+                                    <Text style={{ color: Colors.WHITE, fontWeight: "600", fontSize: 16 }}>
+                                    Choose Question
+                                    </Text>
+                                </View>
+
+                                {/* Question Palette */}
+                                <ScrollView contentContainerStyle={{ padding: 12 }}>
+                                    <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+                                    {finalJson.map((item, index) => (
+                                        <View key={index} style={{ width: "14.28%", padding: 4 }}>
+                                        {item.state === "not-visited" && pallete_highlighers("not_visited", item.index + 1, item.index)}
+                                        {item.state === "review" && pallete_highlighers("marked_for_review", item.index + 1, item.index)}
+                                        {item.state === "review-marked" && pallete_highlighers("answered_marked_for_review", item.index + 1, item.index)}
+                                        {item.state === "not-answered" && pallete_highlighers("not_answered", item.index + 1, item.index)}
+                                        {item.state === "answered" && pallete_highlighers("answered", item.index + 1, item.index)}
+                                        </View>
+                                    ))}
+                                    </View>
+                                </ScrollView>
+
+                                {/* Close Button */}
+                                {isOpen && (
+                                    <TouchableOpacity
+                                    onPress={() => setIsOpen(false)}
+                                    style={styles.navCloseBtn}
+                                    >
+                                    <Text style={{ color: Colors.WHITE, fontSize: 18 }}>{'>'}</Text>
+                                    </TouchableOpacity>
+                                )}
+
+                                {/* Submit Button */}
+                                <TouchableOpacity
+                                    style={styles.navSubmitBtn}
+                                >
+                                    <Text style={{ color: Colors.WHITE, fontWeight: "700", fontSize: 16 }}>
+                                    Submit Test
+                                    </Text>
+                                </TouchableOpacity>
                                 </SafeAreaView>
                             }
                             drawerPercentage={80}
@@ -386,7 +422,7 @@ export const AttemptTest = (props) => {
                         >
                         <TestHeaderComp headerTitle={params.title} headerTestTime={testFormatRemainTime} togglePallete={togglePallete} />
                         <View style={{ backgroundColor: Colors.THEME }}>
-                            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 10 }}>
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{  }}>
                                 {testSections.length && currentQuestions && testSections.map((section, idx) => (
                                     <TouchableOpacity 
                                     key={idx} 
@@ -429,25 +465,57 @@ export const AttemptTest = (props) => {
                                                 return (
                                                     <TouchableOpacity 
                                                         key={i} 
-                                                        onPress={() => chooseOption(i)}
+                                                        onPress={() => {
+                                                            if (currentQuestions.question_type === "FIB") {
+
+                                                            } else {
+                                                                chooseOption(i);
+                                                            }
+                                                        } }
+                                                        activeOpacity={currentQuestions.question_type === "FIB" ? 1 : 0.7}
                                                         style={{
                                                             ...TestSeriesStyle.optionsCard,
                                                             borderColor: selected ? "#0274BA" : "#222222",
                                                             width: '100%',          // full width
                                                             flexDirection: 'row',   // icon + text side by side
-                                                            flexWrap: 'wrap',       // wrap long text
-                                                            alignItems: 'flex-start', 
                                                             padding: 8,
+                                                            ...(currentQuestions.question_type !== "FIB" && {
+                                                                flexWrap: "wrap",
+                                                                alignItems: "flex-start",
+                                                            })
                                                         }}
                                                     >
                                                         <View style={{ paddingRight: 8 }}>
                                                             <Image source={imagePaths[`TEST_OPTION_${String.fromCharCode(64 + opt)}`]} />
                                                         </View>
                                                         <View style={{ flex: 1 }}>
-                                                            <HTML 
-                                                                contentWidth={windowWidth - 60} // subtract padding + image width
-                                                                source={{ html: optionText }} 
+                                                            {
+                                                                currentQuestions.question_type === "FIB" && <TextInput
+                                                                    placeholder="Enter Answer"
+                                                                    value={fibActiveAnswers[i] || ""}
+                                                                    onChangeText={(text) => {
+                                                                        const updatedAnswers = [...fibActiveAnswers];
+                                                                        updatedAnswers[i] = text;
+                                                                        setFibActiveAnswers(updatedAnswers);
+                                                                        chooseOption(updatedAnswers);
+                                                                    }}
+                                                                    style={{
+                                                                        borderWidth: 1,
+                                                                        borderColor: "#ccc",
+                                                                        borderRadius: 6,
+                                                                        paddingHorizontal: 10,
+                                                                        paddingVertical: 6,
+                                                                        fontSize: 16,
+                                                                        color: "#222",
+                                                                    }}
                                                             />
+                                                            }
+                                                            {
+                                                                currentQuestions.question_type !== "FIB" && <HTML 
+                                                                    contentWidth={windowWidth - 60} // subtract padding + image width
+                                                                    source={{ html: optionText }} 
+                                                                />
+                                                            }
                                                         </View>
                                                     </TouchableOpacity>
                                                 );
@@ -465,6 +533,14 @@ export const AttemptTest = (props) => {
                                     </View>
                                 </ScrollView>
                                 <View style={{ flexDirection:"row",justifyContent:"space-between", height:50,padding:10,backgroundColor:Colors.WHITE }}>
+                                    {
+                                        currentQuestionsIndex > 0 &&
+                                        <View>
+                                            <TouchableOpacity onPress={() => prevQuestion()} style={{ borderWidth: 1, borderColor: Colors.THEME, borderRadius: 5 }}>
+                                                <Text style={{ paddingHorizontal: 5, paddingVertical: 5, backgroundColor: Colors.THEME, color: Colors.WHITE }}>{"Prev"}</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    }
                                     <View>
                                         <TouchableOpacity onPress={()=>markForReviewAndNext()} style={{ borderWidth: 1, borderColor: "#0000006b", borderRadius: 5 }}>
                                             <Text style={{ paddingHorizontal: 5, paddingVertical: 5 }}>{"Mark for Review & Next"}</Text>
@@ -511,7 +587,24 @@ const styles = StyleSheet.create({
         width: 20,
         paddingLeft: 5,
         justifyContent: "center",
+        alignItems: "center",
         borderTopLeftRadius: 5,
         borderBottomLeftRadius: 5,
+        shadowColor: "#000",
+        shadowOpacity: 0.2,
+        shadowOffset: { width: 0, height: 2 },
+        elevation: 3,
+    },
+    navSubmitBtn:{
+        backgroundColor: Colors.THEME,
+        paddingVertical: 12,
+        marginHorizontal: 16,
+        marginVertical: 20,
+        borderRadius: 8,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: 2 },
+        shadowRadius: 3,
     }
 });
