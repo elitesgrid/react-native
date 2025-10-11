@@ -89,16 +89,17 @@ export const AttemptTest = (props) => {
     }, [remainSeconds]);
 
     async function load_question(index) {
-        console.log("sdfg",updatedFinalJson[index]);
+        //console.log("sdfg",finalJson[currentQuestionsIndex], finalJson);
+        //console.log(testQuestions[index].section_id, testSections);
+
         if(finalJson[currentQuestionsIndex] == undefined || finalJson[currentQuestionsIndex] == "" || finalJson[currentQuestionsIndex].que_id == undefined){
             finalJson[currentQuestionsIndex].answers = [];
             finalJson[currentQuestionsIndex].spent_time = questionTime;
             setFinalJson(finalJson);
         }
-        questionTime = finalJson[index].spent_time;
         setCurrentQuestions(testQuestions[index]);
         setCurrentQuestionsIndex(index);
-        resetQuestionTime(updatedFinalJson[index]?.spent_time ?? 0);
+        resetQuestionTime(finalJson[index]?.spent_time ?? 0);
 
         isOpen ? togglePallete() : "";
     }
@@ -106,9 +107,8 @@ export const AttemptTest = (props) => {
     function chooseOption(optionIndex){
         if(finalJson[currentQuestionsIndex].answers == undefined || finalJson[currentQuestionsIndex].answers.length < 1){
             finalJson[currentQuestionsIndex].answers = ["0","0","0","0"];
-            
         }
-        currentQuestions.answers == undefined || currentQuestions.question_type === '0' ? currentQuestions.answers = ["0","0","0","0"] : "";
+        currentQuestions.answers == undefined || currentQuestions.question_type === 'SC' ? currentQuestions.answers = ["0","0","0","0"] : "";
         
         currentQuestions.answers[optionIndex] = "1";
         finalJson[currentQuestionsIndex].answers = currentQuestions.answers;
@@ -123,6 +123,12 @@ export const AttemptTest = (props) => {
         }
 
         setFinalJson(finalJson);
+    }
+
+    function chooseSection(secId) {
+        const index = testQuestions.findIndex(item => item.section_id === secId);
+        //console.log("index", index);
+        load_question(index);
     }
 
     function clearResponse(){
@@ -164,7 +170,6 @@ export const AttemptTest = (props) => {
             type: 0
         }
         return await TestServices.get_test_detail(payload).then(async (data) => {
-            setIsLoading(false);
             if (data.status === true) {
                 data = data.data;
                 setTestSeries(data);
@@ -174,11 +179,13 @@ export const AttemptTest = (props) => {
                 let index = 0;
                 let total_sec = remainSeconds;
                 data.questions.forEach(element => {
-                    sections.push({ key: element.subject, title: element.subject });
-                    questions.push(...element.questions);
-                    total_sec += (parseInt(element.section_timing) * 60);
+                    element.questions.forEach((que, ind) => {
+                        switch(que.question_type) {
+                            case "0":
+                                element.questions[ind].question_type = "SC";
+                                break;
+                        }
 
-                    element.questions.forEach(que => {
                         user_answers.push({
                             que_id:que.id,
                             section_id:que.section_id,
@@ -187,19 +194,18 @@ export const AttemptTest = (props) => {
                             spent_time:0
                         })
                         ++index;
-                    })
+                    });
+                    sections.push({ key: element.id, title: element.subject });
+                    questions.push(...element.questions);
+                    total_sec += (parseInt(element.section_timing) * 60);
                 });
                 console.log("Total Question lenght"+ questions.length);
                 setFinalJson(user_answers);
                 setTestSections(sections);
                 setTestQuestions(questions);
                 setRemainSeconds(total_sec);
-                setTimeout(async function () {
-                    await load_question(0);
-                    setTimeout(async function () {
-                        console.log(Object.keys(currentQuestions));
-                    }, 300)
-                }, 1000)
+                setIsLoading(false);
+            } else {
                 setIsLoading(false);
             }
             return true;
@@ -208,6 +214,12 @@ export const AttemptTest = (props) => {
             return false;
         });
     }
+
+    useEffect(function(){
+        if(finalJson.length > 0){
+            load_question(0);
+        }
+    }, [testQuestions, finalJson])
 
     useEffect(function () {
         // const unsubscribe = navigation.addListener('focus', () => {
@@ -234,7 +246,7 @@ export const AttemptTest = (props) => {
         switch(type){
             case "answered":
                 return (
-                    <TouchableOpacity  onPress={()=>index!==""?load_question(index):""}>
+                    <TouchableOpacity  onPress={()=>index!==""? load_question(index):""}>
                         <ImageBackground source={imagePaths.ANSWERED} style={TestSeriesStyle.pallete_symblo_card_image}>
                                 <Text style={{color:Colors.WHITE}}>{value}</Text>
                         </ImageBackground>
@@ -243,7 +255,7 @@ export const AttemptTest = (props) => {
                 break;
             case "not_answered":
                 return (
-                    <TouchableOpacity  onPress={()=>index!==""?load_question(index):""}>
+                    <TouchableOpacity  onPress={()=>index!==""? load_question(index):""}>
                         <ImageBackground source={imagePaths.NOT_ANSWERED} style={TestSeriesStyle.pallete_symblo_card_image}>
                                 <Text style={{color:Colors.WHITE}}>{value}</Text>
                         </ImageBackground>
@@ -252,7 +264,7 @@ export const AttemptTest = (props) => {
                 break;
             case "not_visited":
                 return (
-                    <TouchableOpacity  onPress={()=>index!==""?load_question(index):""}>
+                    <TouchableOpacity  onPress={()=>index!==""? load_question(index):""}>
                         <ImageBackground source={imagePaths.NOT_VISITED} style={TestSeriesStyle.pallete_symblo_card_image}>
                                 <Text style={{color:Colors.BLACK}}>{value}</Text>
                         </ImageBackground>
@@ -261,7 +273,7 @@ export const AttemptTest = (props) => {
                 break;
             case "marked_for_review":
                 return (
-                    <TouchableOpacity  onPress={()=>index!==""?load_question(index):""}>
+                    <TouchableOpacity  onPress={()=>index!==""? load_question(index):""}>
                         <ImageBackground source={imagePaths.MARK_FOR_REVIEW} style={TestSeriesStyle.pallete_symblo_card_image}>
                                 <Text style={{color:Colors.WHITE}}>{value}</Text>
                         </ImageBackground>                                
@@ -270,7 +282,7 @@ export const AttemptTest = (props) => {
                 break;
             case "answered_marked_for_review":
                 return (
-                    <TouchableOpacity  onPress={()=>index!==""?load_question(index):""}>
+                    <TouchableOpacity  onPress={()=>index!==""? load_question(index):""}>
                         <ImageBackground source={imagePaths.ANSWERED_MARK_FOR_REVIEW} style={{height:30,width:34,alignItems:"center",justifyContent:"center",margin:5}}>
                                 <Text style={{color:Colors.WHITE}}>{value}</Text>
                         </ImageBackground>
@@ -374,9 +386,12 @@ export const AttemptTest = (props) => {
                         >
                         <TestHeaderComp headerTitle={params.title} headerTestTime={testFormatRemainTime} togglePallete={togglePallete} />
                         <View style={{ backgroundColor: Colors.THEME }}>
-                            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginVertical: 10 }}>
-                                {testSections.map((section, idx) => (
-                                    <TouchableOpacity key={idx} style={{ padding: 10, marginHorizontal: 5, backgroundColor: currentQuestions.section_id === section.key ? Colors.THEME : Colors.IDLE, borderRadius: 5 }}>
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 10 }}>
+                                {testSections.length && currentQuestions && testSections.map((section, idx) => (
+                                    <TouchableOpacity 
+                                    key={idx} 
+                                    onPress={()=> chooseSection(section.key)}
+                                    style={{ padding: 10, marginHorizontal: 5, borderBottomColor: currentQuestions.section_id === section.key ? Colors.WHITE : Colors.THEME, borderBottomWidth: 3, borderRadius: 5 }}>
                                         <Text style={{ color: Colors.WHITE }}>{section.title}</Text>
                                     </TouchableOpacity>
                                 ))}

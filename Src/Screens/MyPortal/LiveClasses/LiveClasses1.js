@@ -83,7 +83,7 @@ export const LiveClasses1 = props => {
                       video_type: item.video_type,
                     })
                   }
-                  key={index}
+                  // key={index}
                   style={{
                     borderColor: '#EEEEEE',
                     backgroundColor: 'white',
