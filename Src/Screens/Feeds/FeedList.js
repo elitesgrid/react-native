@@ -12,7 +12,7 @@ import {
   Alert,
   TextInput,
 } from 'react-native';
-import {Dropdown} from 'react-native-element-dropdown';
+import { Dropdown } from 'react-native-element-dropdown';
 
 import imagePaths from '../../Constants/imagePaths';
 import CustomHelper from '../../Constants/CustomHelper';
@@ -316,9 +316,9 @@ export const FeedList = props => {
             marginVertical: 10,
             borderRadius: 5,
           }}
-          placeholderStyle={{fontSize: 16}}
-          selectedTextStyle={{fontSize: 16}}
-          inputSearchStyle={{height: 40, fontSize: 16}}
+          placeholderStyle={{fontSize: 16, color: Colors.BLACK}}
+          selectedTextStyle={{fontSize: 16, color: Colors.BLACK}}
+          inputSearchStyle={{height: 40, fontSize: 16, color: Colors.BLACK}}
           iconStyle={{width: 20, height: 20, marginTop: 10, marginRight: 10}}
           data={courseList}
           //search
@@ -343,9 +343,9 @@ export const FeedList = props => {
             marginVertical: 10,
             borderRadius: 5,
           }}
-          placeholderStyle={{fontSize: 16}}
-          selectedTextStyle={{fontSize: 16, marginLeft: 10}}
-          inputSearchStyle={{height: 40, fontSize: 16}}
+          placeholderStyle={{fontSize: 16, color: Colors.BLACK}}
+          selectedTextStyle={{fontSize: 16, marginLeft: 10, color: Colors.BLACK}}
+          inputSearchStyle={{height: 40, fontSize: 16, color: Colors.BLACK}}
           iconStyle={{width: 20, height: 20, marginTop: 2, marginRight: 10}}
           data={global.FEED_FILTERS || []}
           //search
@@ -372,10 +372,10 @@ export const FeedList = props => {
               style={{
                 flex: 1,
                 marginHorizontal: 10,
-                backgroundColor: '#FFFFFF',
+                backgroundColor: Colors.WHITE,
                 borderRadius: 10,
                 marginTop: 6,
-                borderColor: '#FFFFFF',
+                borderColor: Colors.WHITE,
                 borderWidth: 1,
               }}>
               <TouchableOpacity
@@ -399,7 +399,7 @@ export const FeedList = props => {
                     }}
                   />
                 </View>
-                <View style={{flex: 0.8, marginHorizontal: 10}}>
+                <View style={{flex: 0.8}}>
                   <Text
                     style={{fontSize: 12, color: '#0274BA', marginVertical: 3}}>
                     {item.name}
@@ -419,7 +419,7 @@ export const FeedList = props => {
               </TouchableOpacity>
               <View style={{marginVertical: 8}}>
                 <View>
-                  <Text style={{fontSize: 13, opacity: 0.6}}>{item.text}</Text>
+                  <Text style={{fontSize: 13, opacity: 0.6, color: Colors.BLACK}}>{item.text}</Text>
                 </View>
                 {item.meta_url !== '' && (
                   <TouchableOpacity
@@ -493,7 +493,7 @@ export const FeedList = props => {
                     style={{width: 15, height: 15}}
                     source={imagePaths.FEED_COMMENT}
                   />
-                  <Text>{' ' + item.total_comments + ' Comment'}</Text>
+                  <Text style={{color: Colors.BLACK}}>{' ' + item.total_comments + ' Comment'}</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -512,10 +512,10 @@ export const FeedList = props => {
       {
         feedList.length === 0 && <View style={{
           flex: 1,
-          backgroundColor: '#FFFFFF',
+          backgroundColor: Colors.WHITE,
           alignItems:"center",
         }}>
-          <Text style={{fontSize:20}}>No Post Found</Text>
+          <Text style={{fontSize:20,color: Colors.FADDED_COLOR}}>No Post Found</Text>
         </View>
       }
 

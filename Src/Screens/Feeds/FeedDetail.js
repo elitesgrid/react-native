@@ -213,7 +213,7 @@ export const FeedDetail = props => {
         </View>
         <View style={{marginVertical: 8}}>
           <View style={{marginHorizontal: 5}}>
-            <Text style={{fontSize: 13, opacity: 0.6}}>{feedDetail.text}</Text>
+            <Text style={{fontSize: 13, opacity: 0.6, color: Colors.BLACK}}>{feedDetail.text}</Text>
           </View>
           {feedDetail.meta_url !== '' && (
             <View style={{marginTop: 10}}>
@@ -327,7 +327,7 @@ export const FeedDetail = props => {
               </View>
               <View style={{marginVertical: 8, marginHorizontal: 10}}>
                 <View>
-                  <Text style={{fontSize: 13, opacity: 0.6}}>
+                  <Text style={{fontSize: 13, opacity: 0.6, color: Colors.BLACK}}>
                     {item.comment}
                   </Text>
                 </View>

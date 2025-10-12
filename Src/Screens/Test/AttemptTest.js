@@ -25,7 +25,7 @@ import TestSeriesStyle from '../../Assets/Style/TestSeriesStyle';
 import imagePaths from '../../Constants/imagePaths';
 import TestServices from '../../Services/apis/TestServices';
 import CustomHelper from '../../Constants/CustomHelper';
-
+import StorageManager from '../../Services/StorageManager';
 
 function useExamTimer(initialRemainSeconds = 0) {
   const [questionTime, setQuestionTime] = useState(0); // counts UP
@@ -66,6 +66,8 @@ export const AttemptTest = (props) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const [isLoading, setIsLoading] = useState(true);
+    const [cusName, setCusName] = useState('');
+    const [profileImage, setProfileImage] = useState('');
     const [testFormatRemainTime,setTestFormatRemainTime] = useState("00:00:00");
     const [testSeries, setTestSeries] = useState({});
     const [testSections, setTestSections] = useState([]);
@@ -73,6 +75,7 @@ export const AttemptTest = (props) => {
     const [currentQuestions, setCurrentQuestions] = useState({});
     const [currentQuestionsIndex, setCurrentQuestionsIndex] = useState(0);
     const [finalJson, setFinalJson] = useState([]);
+    const [resumeSectionId, setResumeSectionId] = useState(0);
     const {
         questionTime,
         remainSeconds,
@@ -96,13 +99,42 @@ export const AttemptTest = (props) => {
         }
     }, [remainSeconds]);
 
+    async function getSessionData() {
+        let session = await StorageManager.get_session();
+        if (Object.keys(session).length > 0) {
+            setCusName(session.name);
+            setProfileImage(session.profile_image);
+        }
+    }
+
+    async function updateLengend(){
+        let dl = drawerLegend;
+        let fj = finalJson;
+        let localStatesTotal = {
+            answered: 0,
+            not_answered: 0,
+            not_visited: 0,
+            marked_for_review: 0,
+            answered_marked_for_review: 0
+        }
+        fj.forEach(val =>{
+            ++localStatesTotal[val.state];
+        });
+        
+        dl.forEach((val, ind) => {
+            dl[ind].count = localStatesTotal[val.key];
+        });
+        setDrawerLegend(dl);
+    }
+
     async function load_question(index) {
-        console.log("sdfg",finalJson[index].answers);
+        //console.log("sdfg",finalJson[index].answers);
         //console.log(testQuestions[index].section_id, testSections);
         let currentQuestion = testQuestions[index];
         if(!currentQuestion){
             return;
         }
+
         if(currentQuestion.question_type == "FIB" && finalJson[index].answers) {
             setFibActiveAnswers(finalJson[index].answers)
         } else if (currentQuestion.question_type == "FIB") {
@@ -125,18 +157,8 @@ export const AttemptTest = (props) => {
             x[optionIndex] = '1';
             currentQuestions.answers = x;
         }
-        finalJson[currentQuestionsIndex].answers = currentQuestions.answers;
+        //finalJson[currentQuestionsIndex].answers = currentQuestions.answers;
         setCurrentQuestions(currentQuestions);
-
-        const countOfZero = finalJson[currentQuestionsIndex].answers.filter(item => item === "0").length;
-        const countOfNonZero = finalJson[currentQuestionsIndex].answers.filter(item => item === "1").length;
-        if (finalJson[currentQuestionsIndex].answers.length === countOfZero-1) {
-            finalJson[currentQuestionsIndex].state = "not_answered";
-        } else if (countOfNonZero > 0) {
-            finalJson[currentQuestionsIndex].state = "answered";
-        }
-        console.log("On write answers", finalJson[currentQuestionsIndex].answers);
-        setFinalJson(finalJson);
     }
 
     function chooseSection(secId) {
@@ -154,37 +176,69 @@ export const AttemptTest = (props) => {
             finalJson[currentQuestionsIndex].answers = ["0","0","0","0"];
             currentQuestions.answers = ["0","0","0","0"];
         }
-        finalJson[currentQuestionsIndex].state = "not-answered";
+        finalJson[currentQuestionsIndex].state = "not_answered";
         setCurrentQuestions(currentQuestions);
         setFinalJson(finalJson);
-    }
-
-    function markForReviewAndNext(){
-        const countOfNonZero = finalJson[currentQuestionsIndex].answers!= undefined ? finalJson[currentQuestionsIndex].answers.filter(item => item === "1").length: 0;
-        if(countOfNonZero > 0){
-            finalJson[currentQuestionsIndex].state = "review-marked";
-        }else{
-            finalJson[currentQuestionsIndex].state = "review";
-        }
-        currentQuestions.answers = finalJson[currentQuestionsIndex].answers;
-        setCurrentQuestions(currentQuestions);
-        setFinalJson(finalJson);
-        nextQuestion();
     }
 
     async function togglePallete(){
         setIsOpen(!isOpen);
     }
 
+    async function saveAnswer(marked = false){
+        finalJson[currentQuestionsIndex].answers = currentQuestions.answers;
+        if(currentQuestions.question_type === "FIB") {
+            let count = currentQuestions.answers.filter(item => item !== '' && item !== '0').length;
+            if (count === 0) {
+                finalJson[currentQuestionsIndex].state = marked ? 'marked_for_review' : "not_answered";
+            } else {
+                finalJson[currentQuestionsIndex].state = marked ? 'answered_marked_for_review' : "answered";
+            }
+            console.log("FIB On write answers", finalJson[currentQuestionsIndex].answers, count, finalJson[currentQuestionsIndex].state);
+        } else {
+            const countOfZero = finalJson[currentQuestionsIndex].answers.filter(item => item === "0").length;
+            const countOfNonZero = finalJson[currentQuestionsIndex].answers.filter(item => item === "1").length;
+            if (finalJson[currentQuestionsIndex].answers.length === countOfZero) {
+                finalJson[currentQuestionsIndex].state = marked ? 'marked_for_review' : "not_answered";
+            } else if (countOfNonZero > 0) {
+                finalJson[currentQuestionsIndex].state = marked ? 'answered_marked_for_review' : "answered";
+            }
+            console.log("On write answers", finalJson[currentQuestionsIndex].answers, countOfZero, finalJson[currentQuestionsIndex].state);
+        }
+        finalJson[currentQuestionsIndex].spent_time = questionTime;
+        setFinalJson(finalJson);
+        updateLengend();
+    }
+
     const nextQuestion = async function (){
-        load_question(currentQuestionsIndex + 1)
+        await saveAnswer(false);
+        load_question(currentQuestionsIndex + 1);
+    }
+
+    async function markForReviewAndNext(){
+        await saveAnswer(true);
+        load_question(currentQuestionsIndex + 1);
     }
 
     const prevQuestion = async function (){
-        load_question(currentQuestionsIndex - 1)
+        load_question(currentQuestionsIndex - 1);
     }
 
-    const submitTest = async function(){
+    const submitTest = async function() {
+        console.log(finalJson);
+        let payload = {
+            test_id: params.id,
+            json: JSON.stringify(finalJson),
+            time_taken: remainSeconds,
+            section_sequence: resumeSectionId,
+            state: 2
+        }
+        TestServices.submit_test_detail(payload).then(async (data) => {
+            console.log("submit_test_detail", data);
+            if (data.status === true) {
+
+            }
+        });
         Alert.alert("Submit Test");
     }
 
@@ -196,7 +250,19 @@ export const AttemptTest = (props) => {
         return await TestServices.get_test_detail(payload).then(async (data) => {
             if (data.status === true) {
                 data = data.data;
+                
+                let resume_json = data.resume;
+                console.log(resume_json);
+                let resume_que_json = [];
+                let resume_time_taken = 0;
+                if(resume_json){
+                     resume_que_json = JSON.parse(resume_json.custom_json);
+                     resume_time_taken = resume_json.time_taken;
+                     setResumeSectionId(resume_json.active_section);
+                }
+
                 setTestSeries(data);
+
                 let sections = [];
                 let questions = [];
                 let user_answers = [];
@@ -214,13 +280,33 @@ export const AttemptTest = (props) => {
                                 break;
                         }
 
+                        let spent_time = 0;
+                        let answers = que.question_type === "FIB" ? ['', '', '', ''] : ['0', '0', '0', '0'];
+                        let state = "not_visited";
+                        
+                        let resume_que = resume_que_json.find(item => item.question_id === que.id);
+                        if(resume_que) {
+                            switch(resume_que.state){
+                                case "not-visited":
+                                    resume_que.state = "not_visited";
+                                    break;
+                                case "not-answered":
+                                    resume_que.state = "not_answered";
+                                    break;
+                            }
+
+                            spent_time = parseInt(resume_que.spent_time);
+                            answers = resume_que.given_answer;
+                            state = resume_que.state;
+                        }
+
                         user_answers.push({
                             que_id:que.id,
                             section_id:que.section_id,
                             index:index,
-                            state:"not-visited",
-                            spent_time:0,
-                            answers : que.question_type === "FIB" ? ['', '', '', ''] : ['0', '0', '0', '0']
+                            state: state,
+                            spent_time: spent_time,
+                            answers : answers
                         })
                         ++index;
                     });
@@ -232,7 +318,7 @@ export const AttemptTest = (props) => {
                 setFinalJson(user_answers);
                 setTestSections(sections);
                 setTestQuestions(questions);
-                setRemainSeconds(total_sec);
+                setRemainSeconds(total_sec - resume_time_taken);
                 setIsLoading(false);
             } else {
                 setIsLoading(false);
@@ -246,7 +332,11 @@ export const AttemptTest = (props) => {
 
     useEffect(function(){
         if(finalJson.length > 0){
-            load_question(0);
+            if(resumeSectionId) {
+                chooseSection(resumeSectionId);
+            } else {
+                load_question(0);
+            }
         }
     }, [testQuestions, finalJson])
 
@@ -254,6 +344,7 @@ export const AttemptTest = (props) => {
         // const unsubscribe = navigation.addListener('focus', () => {
             setTestSeries([]);
             async function fetchData() {
+                await getSessionData();
                 const response = await getTestDetail(params);
             }
             fetchData();
@@ -334,7 +425,7 @@ export const AttemptTest = (props) => {
                                     <Image
                                     style={{ width: 48, height: 48, borderRadius: 24 }}
                                     resizeMode="contain"
-                                    source={imagePaths.LOGO}
+                                    source={profileImage === '' ? imagePaths.LOGO : {uri: profileImage}}
                                     />
                                     <Text
                                     style={{
@@ -346,7 +437,7 @@ export const AttemptTest = (props) => {
                                     numberOfLines={1}
                                     ellipsizeMode="tail"
                                     >
-                                    Ninja Chaudhary
+                                    {cusName}
                                     </Text>
                                 </View>
 
@@ -386,11 +477,7 @@ export const AttemptTest = (props) => {
                                     <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
                                     {finalJson.map((item, index) => (
                                         <View key={index} style={{ width: "14.28%", padding: 4 }}>
-                                        {item.state === "not-visited" && pallete_highlighers("not_visited", item.index + 1, item.index)}
-                                        {item.state === "review" && pallete_highlighers("marked_for_review", item.index + 1, item.index)}
-                                        {item.state === "review-marked" && pallete_highlighers("answered_marked_for_review", item.index + 1, item.index)}
-                                        {item.state === "not-answered" && pallete_highlighers("not_answered", item.index + 1, item.index)}
-                                        {item.state === "answered" && pallete_highlighers("answered", item.index + 1, item.index)}
+                                        {pallete_highlighers(item.state, item.index + 1, item.index)}
                                         </View>
                                     ))}
                                     </View>
@@ -409,6 +496,7 @@ export const AttemptTest = (props) => {
                                 {/* Submit Button */}
                                 <TouchableOpacity
                                     style={styles.navSubmitBtn}
+                                    onPress={()=> submitTest()}
                                 >
                                     <Text style={{ color: Colors.WHITE, fontWeight: "700", fontSize: 16 }}>
                                     Submit Test
@@ -437,7 +525,7 @@ export const AttemptTest = (props) => {
                             currentQuestions && Object.keys(currentQuestions).length > 0 &&
                             <>
                                 <ScrollView>
-                                    <View style={{ flex: 1 }}>
+                                    <View style={{ flex: 1, marginBottom: 10 }}>
                                         <View style={TestSeriesStyle.questionTypeCard}>
                                             <Text style={TestSeriesStyle.questionTypeText}>{
                                                 "Type : " + currentQuestions.question_type 
@@ -451,16 +539,20 @@ export const AttemptTest = (props) => {
                                         <View style={TestSeriesStyle.questionCard}>
                                             {currentQuestions.passage !== "" &&
                                                 <View key={"passage"} style={{ flex: 1 }}>
+                                                    <Text>{"Passage"}</Text>
                                                     <HTML contentWidth={windowWidth} source={{ html: currentQuestions.passage }} />
                                                 </View>
                                             }
                                             <View key={"1"}>
+                                                {currentQuestions.passage !== "" &&
+                                                    <Text>{"Question"}</Text>
+                                                }
                                                 <HTML contentWidth={windowWidth} source={{ html: currentQuestions.question }} />
                                             </View>
                                             {[1, 2, 3, 4].map((opt, i) => {
                                                 const optionText = currentQuestions[`option_${opt}`];
                                                 if (!optionText) return null;
-                                                const selected = finalJson[currentQuestionsIndex].answers == undefined || finalJson[currentQuestionsIndex].answers.length < 1 || finalJson[currentQuestionsIndex].answers[i] == "0" ? false : true;
+                                                const selected = currentQuestions.answers == undefined || currentQuestions.answers.length < 1 || currentQuestions.answers[i] == "0" ? false : true;
 
                                                 return (
                                                     <TouchableOpacity 
@@ -542,7 +634,7 @@ export const AttemptTest = (props) => {
                                         </View>
                                     }
                                     <View>
-                                        <TouchableOpacity onPress={()=>markForReviewAndNext()} style={{ borderWidth: 1, borderColor: "#0000006b", borderRadius: 5 }}>
+                                        <TouchableOpacity onPress={()=> markForReviewAndNext()} style={{ borderWidth: 1, borderColor: "#0000006b", borderRadius: 5 }}>
                                             <Text style={{ paddingHorizontal: 5, paddingVertical: 5 }}>{"Mark for Review & Next"}</Text>
                                         </TouchableOpacity>
                                     </View>

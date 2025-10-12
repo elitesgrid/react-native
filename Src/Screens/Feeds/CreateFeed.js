@@ -174,6 +174,7 @@ export const CreateFeed = props => {
             flex: 1,
             flexDirection: 'row',
             justifyContent: 'space-between',
+            alignItems: 'center',
             marginRight: '4%',
           }}>
           <TouchableOpacity onPress={() => goBack()}>
@@ -185,14 +186,14 @@ export const CreateFeed = props => {
           <TouchableOpacity
             style={{
               backgroundColor: Colors.WHITE,
-              height: 20,
+              height: 25,
               paddingHorizontal: 10,
               justifyContent: 'center',
               borderRadius: 4,
             }}
             onPress={() => submitPost()}>
             <Text
-              style={{color: Colors.THEME, fontSize: 15, fontWeight: '500'}}>
+              style={{color: Colors.THEME, fontSize: 18, fontWeight: '500'}}>
               {'Post'}
             </Text>
           </TouchableOpacity>
@@ -208,10 +209,10 @@ export const CreateFeed = props => {
             marginVertical: 3,
             borderRadius: 5,
           }}
-          placeholderStyle={{fontSize: 16}}
-          selectedTextStyle={{fontSize: 16}}
-          inputSearchStyle={{height: 40, fontSize: 16}}
-          iconStyle={{width: 20, height: 20, marginTop: 10, marginRight: 10}}
+          placeholderStyle={{fontSize: 16, color: Colors.BLACK}}
+          selectedTextStyle={{fontSize: 16, color: Colors.BLACK}}
+          inputSearchStyle={{height: 40, fontSize: 16, color: Colors.BLACK}}
+          iconStyle={{width: 20, height: 30, marginTop: 10, marginRight: 10}}
           data={courseList}
           //search
           maxHeight={300}
@@ -224,7 +225,7 @@ export const CreateFeed = props => {
             setCourseId(item.value);
           }}
         />
-        <View>
+        <View style={{marginTop: 10}}>
           <Text style={{color: Colors.TAG_COLOR}}>
             {'Write your doubt/query, Community Members will help you soon.'}
           </Text>
@@ -368,7 +369,14 @@ export const CreateFeed = props => {
 // define your styles
 const styles = StyleSheet.create({
   headerView: {
-    height: 70 + getStatusBarHeight(),
+    paddingTop: Platform.select({
+      ios: 0,
+      android: 20,
+    }),
+    height: Platform.select({
+      ios: 80,
+      android: 40,
+    }) + getStatusBarHeight(),
     width: '100%',
     justifyContent: 'center',
     backgroundColor: Colors.THEME,

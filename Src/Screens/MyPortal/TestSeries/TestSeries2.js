@@ -81,7 +81,7 @@ export const TestSeries2 = (props) => {
                                             <Image source={imagePaths.DEFAULT_TEST} resizeMode='stretch' style={{ height: 48, width: 48, marginHorizontal: 5 }} />
                                             <View style={{ flex: 1, flexDirection: "column", justifyContent: "center", marginLeft: 10 }}>
                                                 <Text style={PortalStyles.SubjectTopicInfoTitle}>{item.title}</Text>
-                                                <Text style={{ opacity: 0.5, fontSize: 12 }}>{"Completed:" + item.complete_count + ", Total:" + item.count}</Text>
+                                                <Text style={PortalStyles.SubjectTopicInfoMeta}>{"Completed:" + item.complete_count + ", Total:" + item.count}</Text>
                                             </View>
                                         </View>
                                     </TouchableOpacity>

@@ -246,7 +246,7 @@ export const Home = (props) => {
                                 nestedScrollEnabled={true}
                                 showsVerticalScrollIndicator={false}
                                 >
-                                <Text style={{lineHeight: 18}}>{item.description}</Text>
+                                <Text style={{lineHeight: 18, color: Colors.TAG_COLOR}}>{item.description}</Text>
                               </ScrollView>
                             </View>
                           </View>

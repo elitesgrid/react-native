@@ -5,17 +5,18 @@ import {
   ActivityIndicator,
   Image,
   TouchableOpacity,
+  useWindowDimensions,
   FlatList,
   Alert,
 } from 'react-native';
 
 import HeaderComp from '../../Components/HeaderComp';
-import Styles from '../../Assets/Style/LoginStyle';
 import imagePaths from '../../Constants/imagePaths';
 import CustomHelper from '../../Constants/CustomHelper';
 import NotificationService from '../../Services/apis/NotificationService';
 import navigationStrings from '../../Constants/navigationStrings';
 import Colors from '../../Constants/Colors';
+import HTML from 'react-native-render-html';
 
 export const Notification = props => {
   const {route, navigation} = props;
@@ -24,6 +25,7 @@ export const Notification = props => {
   const [isLoading, setIsLoading] = useState(true);
   const [notificationList, setNotificationList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const {width: windowWidth} = useWindowDimensions();
 
   const getNotification = async function () {
     return await NotificationService.get_notifications({
@@ -61,7 +63,7 @@ export const Notification = props => {
     try {
       let letter = message.charAt(0);
       letter = letter.toUpperCase();
-      return imagePaths.LETTERS[letter];
+      return imagePaths.LETTERS[letter] || imagePaths.LOGO;
     } catch (e) {
       return imagePaths.DEFAULT_16_9;
     }
@@ -150,14 +152,10 @@ export const Notification = props => {
                     paddingTop: 6,
                     maxWidth: '82%',
                   }}>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: '#05030D',
-                      marginVertical: 10,
-                    }}>
-                    {item.message}
-                  </Text>
+                  <HTML
+                    contentWidth={windowWidth}
+                    source={{html: item.message}}
+                  />
                   <View
                     style={{
                       flex: 1,
