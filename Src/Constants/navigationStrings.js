@@ -41,7 +41,7 @@ export default {
   TEST_SERIES3: 'Test List',
   TEST_INSTRUCTIONS: 'Test Instructions',
   TEST_ATTEMPT: 'Test Attempt',
-  //TEST_VIEW_RESULT:"Test View Result",
+  TEST_VIEW_RESULT:"Test View Result",
   //TEST_RANKERS:"Test Rankers",
   TEST_WEBVIEW: 'Tet Webview',
 

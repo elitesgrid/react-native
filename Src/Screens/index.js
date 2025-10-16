@@ -1,4 +1,5 @@
 //Auth Screens
+
 // export {UserRegistrationScreen, UserLogInScreen} from "./Masters/AuthMaster";
 export {Login} from './Auth/Login';
 export {Logout} from './Auth/Logout';
@@ -35,6 +36,8 @@ export {TestSeries2} from './MyPortal/TestSeries/TestSeries2';
 export {TestSeries3} from './MyPortal/TestSeries/TestSeries3';
 export {Instructions} from './Test/Instructions';
 export {AttemptTest} from './Test/AttemptTest';
+export { ViewResult } from './Test/ViewResult';
+
 
 export {TestWebView} from './Test/TestWebView';
 

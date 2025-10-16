@@ -164,126 +164,109 @@ export const RecordedClasses3 = props => {
         <View style={styles.container}>
           <HeaderComp headerTitle={payloadPrevScreen.title} />
           <FlatList
-            data={recordedClasses}
-            numColumns={1}
-            renderItem={({item, index}) => (
-              <TouchableOpacity
-                onPress={() =>
-                  item.url_2
-                    ? choosePlayer({
-                        url: item.url,
-                        url_2: item.url_2,
-                        id: item.id,
-                        length: item.length,
-                        watched_time: item.watched_time,
-                        title: item.title,
-                      })
-                    : navToPlayer({
-                        url: item.url,
-                        id: item.id,
-                        length: item.length,
-                        watched_time: item.watched_time,
-                        title: item.title,
-                      })
-                }
-                key={index}
-                style={PortalStyles.SubjectTopicCard}>
-                <View
-                  style={{
-                    minHeight: 200,
-                    paddingVertical: 20,
-                    paddingHorizontal: 10,
-                  }}>
-                  <View style={{flex: 1, flexDirection: 'row'}}>
-                    <View>
-                      <ImageBackground
-                        source={{uri: item.thumbnail}}
-                        resizeMode="contain"
-                        style={{
-                          ...CommonStyles.videoListCardSize,
-                          ...{height: 90, width: 90, marginHorizontal: 5},
-                        }}
-                        blurRadius={1}>
-                        <View style={CommonStyles.overlay}>
-                          <Image
-                            source={imagePaths.PLAY}
-                            style={{
-                              ...CommonStyles.playIcon,
-                              ...{height: 35, width: 35},
-                            }}
-                          />
-                        </View>
-                      </ImageBackground>
-                    </View>
-                    <View
-                      style={{
-                        flex: 1,
-                        flexDirection: 'column',
-                        marginLeft: 10,
-                      }}>
-                      <Text style={PortalStyles.SubjectTopicInfoTitle}>
-                        {item.title}
-                      </Text>
-                      <Text style={PortalStyles.SubjectTopicInfoMeta}>
-                        {'Total Time:' + CustomHelper.secFormat(item.length)}
-                      </Text>
-                      <Text style={PortalStyles.SubjectTopicInfoMeta}>
-                        {'Watched Time:' +
-                          CustomHelper.secFormat(item.watched_time)}
-                      </Text>
-                      <Text style={PortalStyles.SubjectTopicInfoMeta}>
-                        {'Remaining Time:' +
-                          CustomHelper.secFormat(
-                            item.length - item.watched_time,
-                          )}
-                      </Text>
-                      <Text style={PortalStyles.SubjectTopicInfoMeta}>
-                        {'Desc: ' + item.description}
-                      </Text>
-                    </View>
-                  </View>
-                  <View style={{marginBottom: 10, marginTop: 4}}>
-                    <Progress.Bar
-                      progress={
-                        calculatePercentage(item.watched_time, item.length) /
-                        100
+              data={recordedClasses}
+              numColumns={1}
+              renderItem={({ item, index }) => {
+                  const isCompletedOrOpen = item.is_completed === '1' || item.is_open === '1';
+
+                  // Consolidated onPress logic for cleaner JSX
+                  const handlePress = () => {
+                      const navParams = {
+                          url: item.url,
+                          id: item.id,
+                          length: item.length,
+                          watched_time: item.watched_time,
+                          title: item.title,
+                      };
+
+                      if (item.url_2) {
+                          choosePlayer({ ...navParams, url_2: item.url_2 });
+                      } else {
+                          navToPlayer(navParams);
                       }
-                      width={null}
-                      color={Colors.WARNING}
-                    />
-                  </View>
-                  <View>
-                    <TouchableOpacity
-                      onPress={() => {
-                        update_video_time(item);
-                      }}
-                      style={{
-                        alignItems: 'center',
-                        borderRadius: 5,
-                        backgroundColor:
-                          item.is_completed === '1' || item.is_open === '1'
-                            ? Colors.SUCCESS
-                            : Colors.WARNING,
-                      }}>
-                      <Text
-                        style={{
-                          marginVertical: 8,
-                          fontSize: 16,
-                          fontWeight: '600',
-                          color: Colors.WHITE,
-                        }}>
-                        {'Marked As '}
-                        {item.is_completed === '1' || item.is_open === '1'
-                          ? 'Completed'
-                          : 'Pending'}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            )}
-            keyExtractor={item => item.id}
-            contentContainerStyle={{marginHorizontal: 5, marginTop: 10}}
+                  };
+
+                  return (
+                      <TouchableOpacity
+                          onPress={handlePress}
+                          key={index}
+                          style={[PortalStyles.SubjectTopicCard, styles.videoCardContainer]}>
+                          
+                          <View style={styles.cardInnerContent}>
+                              
+                              {/* --- 1. Thumbnail and Info Row --- */}
+                              <View style={styles.infoRow}>
+                                  
+                                  {/* Thumbnail Container */}
+                                  <View style={styles.thumbnailWrapper}>
+                                      <ImageBackground
+                                          source={{ uri: item.thumbnail }}
+                                          resizeMode="cover" // Changed to 'cover' for better visual fill
+                                          style={[CommonStyles.videoListCardSize, styles.thumbnailImage]}
+                                          blurRadius={1}>
+                                          <View style={CommonStyles.overlay}>
+                                              <Image
+                                                  source={imagePaths.PLAY}
+                                                  style={styles.playIcon}
+                                              />
+                                          </View>
+                                      </ImageBackground>
+                                  </View>
+                                  
+                                  {/* Text Metadata Column */}
+                                  <View style={styles.metaColumn}>
+                                      <Text style={PortalStyles.SubjectTopicInfoTitle} numberOfLines={2}>
+                                          {item.title}
+                                      </Text>
+                                      <Text style={PortalStyles.SubjectTopicInfoMeta}>
+                                          {'Total Time: ' + CustomHelper.secFormat(item.length)}
+                                      </Text>
+                                      <Text style={PortalStyles.SubjectTopicInfoMeta}>
+                                          {'Watched Time: ' + CustomHelper.secFormat(item.watched_time)}
+                                      </Text>
+                                      <Text style={PortalStyles.SubjectTopicInfoMeta}>
+                                          {'Remaining Time: ' + CustomHelper.secFormat(item.length - item.watched_time)}
+                                      </Text>
+                                      {/* Shortened Description line for better fit */}
+                                      <Text style={PortalStyles.SubjectTopicInfoMeta} numberOfLines={1}>
+                                          {'Desc: ' + item.description}
+                                      </Text>
+                                  </View>
+                              </View>
+                              
+                              {/* --- 2. Progress Bar --- */}
+                              <View style={styles.progressBarWrapper}>
+                                  <Progress.Bar
+                                      progress={
+                                          calculatePercentage(item.watched_time, item.length) / 100
+                                      }
+                                      width={null}
+                                      color={Colors.WARNING}
+                                  />
+                              </View>
+                              
+                              {/* --- 3. Action Button (Mark As Complete/Pending) --- */}
+                              <View>
+                                  <TouchableOpacity
+                                      onPress={() => update_video_time(item)}
+                                      style={[
+                                          styles.actionButtonBase,
+                                          {
+                                              backgroundColor: isCompletedOrOpen ? Colors.SUCCESS : Colors.WARNING,
+                                          },
+                                      ]}>
+                                      <Text style={styles.actionButtonText}>
+                                          {'Marked As '}
+                                          {isCompletedOrOpen ? 'Completed' : 'Pending'}
+                                      </Text>
+                                  </TouchableOpacity>
+                              </View>
+                          </View>
+                      </TouchableOpacity>
+                  );
+              }}
+              keyExtractor={item => item.id}
+              contentContainerStyle={styles.flatListContent}
           />
           <Modal
             animationType="slide"
@@ -386,4 +369,73 @@ const styles = StyleSheet.create({
   buttonClose: {
     marginVertical: 10,
   },
+  flatListContent: { 
+        marginHorizontal: 10, // Increased margin to 10 for better spacing
+        marginTop: 10,
+        paddingBottom: 20, // Ensure content isn't cut off at the bottom
+    },
+    // --- Card Styles ---
+    videoCardContainer: {
+        marginBottom: 15, // Space between cards
+        borderRadius: 10,
+        overflow: 'hidden',
+        // Added shadow for a modern card lift effect
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    cardInnerContent: {
+        minHeight: 200, 
+        paddingVertical: 15, // Reduced padding for a less bulky card
+        paddingHorizontal: 15, 
+    },
+    infoRow: { 
+        flex: 1, 
+        flexDirection: 'row',
+        marginBottom: 10, // Added margin below the info block
+    },
+    // --- Thumbnail Styles ---
+    thumbnailWrapper: {
+        // Defines the fixed area for the image
+        height: 90, 
+        width: 90, 
+        marginRight: 15, // Clear separation from text
+        borderRadius: 8,
+        overflow: 'hidden',
+    },
+    thumbnailImage: {
+        // Overrides the spread inline style for clearer intent
+        height: '100%', 
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    playIcon: {
+        height: 35, 
+        width: 35,
+    },
+    // --- Metadata Styles ---
+    metaColumn: {
+        flex: 1,
+        flexDirection: 'column',
+        // Removes marginLeft: 10 as it's handled by thumbnailWrapper's marginRight
+    },
+    // --- Progress Bar ---
+    progressBarWrapper: { 
+        marginBottom: 15, // Increased space below bar
+        marginTop: 4 
+    },
+    // --- Action Button Styles ---
+    actionButtonBase: {
+        alignItems: 'center',
+        borderRadius: 6, 
+        paddingVertical: 10, // Standardized padding
+    },
+    actionButtonText: {
+        fontSize: 15, 
+        fontWeight: '700',
+        color: Colors.WHITE,
+    },
 });

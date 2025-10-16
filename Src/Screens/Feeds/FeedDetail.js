@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  StyleSheet
 } from 'react-native';
 
 import imagePaths from '../../Constants/imagePaths';
@@ -167,109 +168,114 @@ export const FeedDetail = props => {
   return (
     <View style={{flex: 1}}>
       <HeaderComp headerTitle="Feed Details" />
-      <View
-        style={{
-          marginHorizontal: 10,
-          backgroundColor: '#FFFFFF',
-          borderRadius: 10,
-          marginTop: 6,
-          borderColor: '#FFFFFF',
-          borderWidth: 1,
-        }}>
-        <View style={{flexDirection: 'row', height: 40}}>
-          <View
-            style={{
-              flex: 0.15,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Image
-              source={fixImageUrl(feedDetail.profile_image, feedDetail.name)}
-              resizeMode="stretch"
-              style={{
-                height: 30,
-                width: 30,
-                borderRadius: 20,
-                borderWidth: 0.2,
-                borderColor: '#9096B4',
-              }}
-            />
+      <View style={styles.feedDetailCard}>
+    
+          {/* --- 1. Header (User Info and Options) --- */}
+          <View style={styles.feedHeaderRow}>
+              
+              {/* Profile Image */}
+              <View style={styles.profileImageWrapper}>
+                  <Image
+                      source={fixImageUrl(feedDetail.profile_image, feedDetail.name)}
+                      resizeMode="cover" // 'cover' is standard for profile images
+                      style={styles.profileImage}
+                  />
+              </View>
+              
+              {/* Name and Timestamp */}
+              <View style={styles.headerMeta}>
+                  <Text style={styles.userNameText}>{feedDetail.name}</Text>
+                  <Text style={styles.timestampText}>
+                      {CustomHelper.tsToDate(feedDetail.created, 'd-m-Y h:i A')}
+                  </Text>
+              </View>
+              
+              {/* More Options Icon (No onPress, as this is a detail view) */}
+              <View style={styles.moreOptionsContainer}>
+                  <Image
+                      style={styles.moreOptionsIcon}
+                      resizeMode="contain"
+                      source={imagePaths.FEED_MORE_GRAY}
+                  />
+              </View>
           </View>
-          <View style={{flex: 0.8, marginHorizontal: 10}}>
-            <Text style={{fontSize: 12, color: '#0274BA', marginVertical: 3}}>
-              {feedDetail.name}
-            </Text>
-            <Text style={{color: '#9096B4', fontSize: 10}}>
-              {CustomHelper.tsToDate(feedDetail.created, 'd-m-Y h:i A')}
-            </Text>
+          
+          {/* --- 2. Content Body (Text and Media) --- */}
+          <View style={styles.contentBody}>
+              
+              {/* Post Text */}
+              <View style={styles.postTextWrapper}>
+                  <Text style={styles.postText}>{feedDetail.text}</Text>
+              </View>
+              
+              {/* Media Display (meta_url) */}
+              {feedDetail.meta_url !== '' && (
+                  <View style={styles.mediaContainer}>
+                      <Image
+                          style={styles.mediaImage}
+                          source={{uri: feedDetail.meta_url}}
+                          resizeMode="cover" // Changed to 'cover' for better filling
+                      />
+                  </View>
+              )}
+              
+              {/* Media Display (meta_url_1) */}
+              {feedDetail.meta_url_1 !== '' && (
+                  <View style={styles.mediaContainer}>
+                      <Image
+                          style={styles.mediaImage}
+                          source={{uri: feedDetail.meta_url_1}}
+                          resizeMode="cover"
+                      />
+                  </View>
+              )}
           </View>
-          <View>
-            <Image
-              style={{width: 4, height: 16, marginHorizontal: 5}}
-              resizeMode="stretch"
-              source={imagePaths.FEED_MORE_GRAY}
-            />
+          
+          {/* --- 3. Action Bar (Like/Comment) --- */}
+          <View style={styles.actionBar}>
+              
+              {/* Like/Unlike Button */}
+              <TouchableOpacity
+                  onPress={() =>
+                      likeUnlikeFeed({
+                          my_like: feedDetail.my_like,
+                          feed_id: feedDetail.id,
+                      })
+                  }
+                  style={styles.actionButton}>
+                  <Image
+                      style={styles.actionIcon}
+                      source={
+                          feedDetail.my_like === '0'
+                              ? imagePaths.FEED_LIKE
+                              : imagePaths.FEED_UNLIKE
+                      }
+                  />
+                  <Text
+                      style={[
+                          styles.actionText,
+                          {
+                              color: feedDetail.my_like === '0' ? Colors.BLACK : Colors.THEME,
+                          },
+                      ]}>
+                      {' ' +
+                          feedDetail.total_likes +
+                          ' ' +
+                          (feedDetail.my_like === '0' ? 'Like' : 'Unlike')}
+                  </Text>
+              </TouchableOpacity>
+              
+              {/* Comment Button (Action is assumed to be handled elsewhere, this is for display) */}
+              <TouchableOpacity style={styles.actionButton}>
+                  <Image
+                      style={styles.commentIcon}
+                      source={imagePaths.FEED_COMMENT}
+                  />
+                  <Text style={styles.actionText}>
+                      {' ' + feedDetail.total_comments + ' Comment'}
+                  </Text>
+              </TouchableOpacity>
           </View>
-        </View>
-        <View style={{marginVertical: 8}}>
-          <View style={{marginHorizontal: 5}}>
-            <Text style={{fontSize: 13, opacity: 0.6, color: Colors.BLACK}}>{feedDetail.text}</Text>
-          </View>
-          {feedDetail.meta_url !== '' && (
-            <View style={{marginTop: 10}}>
-              <Image
-                style={{width: '100%', height: 200}}
-                source={{uri: feedDetail.meta_url}}
-                resizeMode="stretch"
-              />
-            </View>
-          )}
-          {feedDetail.meta_url_1 !== '' && (
-            <View style={{marginTop: 10}}>
-              <Image
-                style={{width: '100%', height: 200}}
-                source={{uri: feedDetail.meta_url_1}}
-                resizeMode="stretch"
-              />
-            </View>
-          )}
-        </View>
-        <View style={{flexDirection: 'row', height: 30, marginLeft: 5}}>
-          <TouchableOpacity
-            onPress={() =>
-              likeUnlikeFeed({
-                my_like: feedDetail.my_like,
-                feed_id: feedDetail.id,
-              })
-            }
-            style={{flexDirection: 'row', width: '30%', alignItems: 'center'}}>
-            <Image
-              style={{width: 20, height: 20}}
-              source={
-                feedDetail.my_like === '0'
-                  ? imagePaths.FEED_LIKE
-                  : imagePaths.FEED_UNLIKE
-              }
-            />
-            <Text
-              style={{
-                color: feedDetail.my_like === '0' ? Colors.BLACK : Colors.THEME,
-              }}>
-              {' ' +
-                feedDetail.total_likes +
-                ' ' +
-                (feedDetail.my_like === '0' ? 'Like' : 'Unlike')}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{flexDirection: 'row', width: '30%', alignItems: 'center'}}>
-            <Image
-              style={{width: 15, height: 15}}
-              source={imagePaths.FEED_COMMENT}
-            />
-            <Text>{' ' + feedDetail.total_comments + ' Comment'}</Text>
-          </TouchableOpacity>
-        </View>
       </View>
       <FlatList
         data={commentList}
@@ -375,3 +381,119 @@ export const FeedDetail = props => {
     </View>
   );
 };
+
+
+const styles = StyleSheet.create({
+    // --- Card Container ---
+    feedDetailCard: {
+        marginHorizontal: 10,
+        backgroundColor: Colors.WHITE,
+        borderRadius: 10,
+        marginTop: 10,
+        overflow: 'hidden',
+        // Shadow for a clean card lift
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 4,
+    },
+    
+    // --- Header Styles ---
+    feedHeaderRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        minHeight: 45, // Ensures a minimum height
+    },
+    profileImageWrapper: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 10,
+    },
+    profileImage: {
+        height: 38, // Slightly larger profile image
+        width: 38,
+        borderRadius: 19,
+        borderWidth: 1, 
+        borderColor: '#9096B4', // Used the original color here
+        resizeMode: 'cover',
+    },
+    headerMeta: {
+        flex: 1,
+        justifyContent: 'center',
+    },
+    userNameText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: Colors.THEME || '#0274BA',
+        marginBottom: 2,
+    },
+    timestampText: {
+        color: '#9096B4',
+        fontSize: 11,
+    },
+    moreOptionsContainer: {
+        padding: 5,
+        marginLeft: 10,
+    },
+    moreOptionsIcon: {
+        width: 4,
+        height: 16,
+    },
+
+    // --- Content Body Styles ---
+    contentBody: {
+        paddingHorizontal: 15, // Consistent padding
+        paddingBottom: 10,
+    },
+    postTextWrapper: {
+        marginBottom: 8,
+    },
+    postText: {
+        fontSize: 13,
+        opacity: 0.8, // Increased opacity for better readability
+        color: Colors.BLACK,
+        lineHeight: 18,
+    },
+    mediaContainer: {
+        marginTop: 10,
+        borderRadius: 8, // Rounded corners for media
+        overflow: 'hidden',
+    },
+    mediaImage: {
+        width: '100%',
+        height: 200,
+    },
+
+    // --- Action Bar Styles ---
+    actionBar: {
+        flexDirection: 'row',
+        height: 40, // Standardized height
+        borderTopWidth: 1,
+        borderTopColor: Colors.BORDER_COLOR || '#F0F0F0',
+        paddingHorizontal: 10,
+    },
+    actionButton: {
+        flexDirection: 'row',
+        paddingHorizontal: 10,
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        marginRight: 15, // Space between buttons
+    },
+    actionIcon: {
+        width: 20,
+        height: 20,
+        marginRight: 4,
+    },
+    commentIcon: {
+        width: 16,
+        height: 16,
+        marginRight: 6,
+    },
+    actionText: {
+        fontSize: 12,
+        color: Colors.BLACK,
+    },
+});

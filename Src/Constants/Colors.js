@@ -11,5 +11,11 @@ export default {
     FADDED_COLOR:"#9096B4",
     TEST:{
         FADDED:"#D9D9D9"
-    }
+    },
+    CORRECT: '#4CAF50', 
+    INCORRECT: '#E53935', 
+    SKIPPED: '#FFB300', 
+    TEXT: '#212121', 
+    LIGHT_GRAY: '#F5F5F5', 
+    HEADER_TEXT: '#1A237E', 
 }

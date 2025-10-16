@@ -100,7 +100,7 @@ export const Login = ({navigation}) => {
                   <TextInput
                     style={Styles.form_input}
                     value={username}
-                    placeholder={'Username'}
+                    placeholder={'Your email id'}
                     onChangeText={text => setUsername(text)}
                     autoCapitalize={'none'}
                     keyboardType={'email-address'}

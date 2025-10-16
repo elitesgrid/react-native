@@ -69,7 +69,11 @@ export const TestSeries3 = props => {
 
   const navToStartTest = function (item) {
     // navigation.navigate(navigationStrings.TEST_WEBVIEW, item);
-    navigation.navigate(navigationStrings.TEST_INSTRUCTIONS, item);
+    if(item.internal_type == "View Result"){
+      navigation.navigate(navigationStrings.TEST_VIEW_RESULT, item);
+    } else {
+      navigation.navigate(navigationStrings.TEST_INSTRUCTIONS, item);
+    }
   };
 
   useEffect(
@@ -96,181 +100,131 @@ export const TestSeries3 = props => {
         <View style={styles.container}>
           <HeaderComp headerTitle={payloadPrevScreen.title} />
           <FlatList
-            data={testSeries}
-            numColumns={1}
-            showsVerticalScrollIndicator={false}
-            renderItem={({item, index}) => (
-              <View
-                style={{
-                  ...TestSeriesStyle.container,
-                  ...TestSeriesStyle.testListContainer,
-                }}>
-                <View style={TestSeriesStyle.testListCart1}>
-                  <View style={{justifyContent: 'center'}}>
-                    <Image
-                      resizeMode="stretch"
-                      source={{uri: item.thumbnail}}
-                      style={{height: 50, width: 50}}
-                    />
-                  </View>
-                  <View style={TestSeriesStyle.testListCartTitle}>
-                    <View>
-                      <Text style={TestSeriesStyle.testListTitle}>
-                        {item.title}
-                      </Text>
-                      <Text style={TestSeriesStyle.testListMeta}>
-                        {'No Of Questions: ' +
-                          item.total_questions +
-                          ' | Time: ' +
-                          CustomHelper.secFormat(item.length)}
-                      </Text>
-                      <Text style={TestSeriesStyle.testListMeta}>
-                        {'Desc: ' + item.description}
-                      </Text>
-                      {item.report_id &&
-                        item.state == '2' &&
-                        item.res_seq_attempt == '1' && (
-                          <Text
-                            style={{
-                              ...TestSeriesStyle.testListMeta,
-                              ...TestSeriesStyle.testAttemptMarksLabel,
-                            }}>
-                            {'Marks: ' + item.marks}
-                          </Text>
-                        )}
-                      {item.report_id && item.state == '2' && (
-                        <Text
-                          style={{
-                            ...TestSeriesStyle.testListMeta,
-                            ...TestSeriesStyle.testAttemptMarksLabel,
-                          }}>
-                          {'Marks: ' + item.marks + '/' + item.total_marks}
+    data={testSeries}
+    numColumns={1}
+    showsVerticalScrollIndicator={false}
+    renderItem={({ item, index }) => {
+        // Prepare boolean flags for cleaner rendering logic
+        const isCompleted = item.report_id && item.state === '2';
+        const isResumable = item.report_id && item.state !== '2';
+        const isAttemptable = !item.report_id;
+        const showMarks1 = isCompleted && item.res_seq_attempt === '1'; // First Marks format
+        const showMarks2 = isCompleted; // Second Marks format
+        const showRankers = item.report_id && item.view_rankers_count !== '0';
+        const showPractice = isCompleted && item.practice === '0';
+
+        return (
+            <View style={styles.cardContainer}>
+                <View style={styles.cardContent}>
+                    
+                    {/* --- 1. Thumbnail and Title --- */}
+                    <View style={styles.cardHeader}>
+                        <Image
+                            resizeMode="stretch"
+                            source={{ uri: item.thumbnail }}
+                            style={styles.thumbnail}
+                        />
+                        <View style={styles.titleMetaContainer}>
+                            <Text style={styles.testTitle}>
+                                {item.title}
+                            </Text>
+                            <Text style={styles.testDescription} numberOfLines={1}>
+                                {'Desc: ' + item.description}
+                            </Text>
+                        </View>
+                    </View>
+
+                    {/* --- 2. Metadata Block (Questions | Time) --- */}
+                    <View style={styles.metaContainer}>
+                        <Text style={styles.testMeta}>
+                            {'Questions: ' + item.total_questions}
                         </Text>
-                      )}
+                        <Text style={styles.testMeta}>
+                            {'Time: ' + CustomHelper.secFormat(item.length)}
+                        </Text>
                     </View>
-                    <View>
-                      <View style={TestSeriesStyle.testListCart2}>
-                        {item.report_id && item.state == '2' && (
-                          <LinearGradient
-                            colors={['#37B6F1', '#0274BA']}
-                            style={TestSeriesStyle.testListButton}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                navToStartTest({
-                                  ...item,
-                                  ...{internal_type: 'View Result'},
-                                });
-                              }}>
-                              <Text
-                                style={{
-                                  marginVertical: 1,
-                                  fontSize: 12,
-                                  color: Colors.WHITE,
-                                }}>
-                                {'View Result'}
-                              </Text>
-                            </TouchableOpacity>
-                          </LinearGradient>
+
+                    {/* --- 3. Marks & Status Block --- */}
+                    <View style={styles.marksContainer}>
+                        {showMarks1 && (
+                            <Text style={styles.testAttemptMarksLabel}>
+                                {/* Note: This line seems redundant with the one below but is preserved from the original logic */}
+                                {'Marks: ' + item.marks} 
+                            </Text>
                         )}
-                        {item.report_id && item.state !== '2' && (
-                          <LinearGradient
-                            colors={['#37B6F1', '#0274BA']}
-                            style={TestSeriesStyle.testListButton}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                navToStartTest({
-                                  ...item,
-                                  ...{internal_type: 'Resume Test'},
-                                });
-                              }}>
-                              <Text
-                                style={{
-                                  marginVertical: 1,
-                                  fontSize: 12,
-                                  color: Colors.WHITE,
-                                }}>
-                                {'Resume'}
-                              </Text>
-                            </TouchableOpacity>
-                          </LinearGradient>
+                        {showMarks2 && (
+                            <Text style={styles.testAttemptMarksLabel}>
+                                {'Marks: ' + item.marks + '/' + item.total_marks}
+                            </Text>
                         )}
-                        {!item.report_id && (
-                          <LinearGradient
-                            colors={['#37B6F1', '#0274BA']}
-                            style={TestSeriesStyle.testListButton}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                navToStartTest({
-                                  ...item,
-                                  ...{internal_type: 'Start Test'},
-                                });
-                              }}>
-                              <Text
-                                style={{
-                                  marginVertical: 1,
-                                  fontSize: 12,
-                                  color: Colors.WHITE,
-                                }}>
-                                {'Attempt Now'}
-                              </Text>
-                            </TouchableOpacity>
-                          </LinearGradient>
-                        )}
-                        {item.report_id && item.view_rankers_count !== '0' && (
-                          <LinearGradient
-                            colors={['#37B6F1', '#0274BA']}
-                            style={TestSeriesStyle.testListButton}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                navToStartTest({
-                                  ...item,
-                                  ...{internal_type: 'View Rankers'},
-                                });
-                              }}>
-                              <Text
-                                style={{
-                                  marginVertical: 1,
-                                  fontSize: 12,
-                                  color: Colors.WHITE,
-                                }}>
-                                {'View Rankers'}
-                              </Text>
-                            </TouchableOpacity>
-                          </LinearGradient>
-                        )}
-                        {item.report_id &&
-                          item.state == '2' &&
-                          item.practice == '0' && (
+                    </View>
+
+                    {/* --- 4. Action Buttons --- */}
+                    <View style={styles.buttonRow}>
+                        
+                        {/* 4a. View Result Button */}
+                        {isCompleted && (
                             <LinearGradient
-                              colors={['#37B6F1', '#0274BA']}
-                              style={TestSeriesStyle.testListButton}>
-                              <TouchableOpacity
-                                onPress={() => {
-                                  navToStartTest({
-                                    ...item,
-                                    ...{internal_type: 'Start Practice'},
-                                  });
-                                }}>
-                                <Text
-                                  style={{
-                                    marginVertical: 1,
-                                    fontSize: 12,
-                                    color: Colors.WHITE,
-                                  }}>
-                                  {'Practice'}
-                                </Text>
-                              </TouchableOpacity>
+                                colors={['#37B6F1', '#0274BA']}
+                                style={styles.actionButtonGradient}>
+                                <TouchableOpacity onPress={() => navToStartTest({...item, internal_type: 'View Result'})}>
+                                    <Text style={styles.actionButtonText}>{'View Result'}</Text>
+                                </TouchableOpacity>
                             </LinearGradient>
-                          )}
-                      </View>
+                        )}
+
+                        {/* 4b. Resume Button */}
+                        {isResumable && (
+                            <LinearGradient
+                                colors={['#37B6F1', '#0274BA']}
+                                style={styles.actionButtonGradient}>
+                                <TouchableOpacity onPress={() => navToStartTest({...item, internal_type: 'Resume Test'})}>
+                                    <Text style={styles.actionButtonText}>{'Resume'}</Text>
+                                </TouchableOpacity>
+                            </LinearGradient>
+                        )}
+
+                        {/* 4c. Attempt Now Button */}
+                        {isAttemptable && (
+                            <LinearGradient
+                                colors={['#37B6F1', '#0274BA']}
+                                style={styles.actionButtonGradient}>
+                                <TouchableOpacity onPress={() => navToStartTest({...item, internal_type: 'Start Test'})}>
+                                    <Text style={styles.actionButtonText}>{'Attempt Now'}</Text>
+                                </TouchableOpacity>
+                            </LinearGradient>
+                        )}
+                        
+                        {/* 4d. View Rankers Button */}
+                        {showRankers && (
+                            <LinearGradient
+                                colors={['#37B6F1', '#0274BA']}
+                                style={styles.actionButtonGradient}>
+                                <TouchableOpacity onPress={() => navToStartTest({...item, internal_type: 'View Rankers'})}>
+                                    <Text style={styles.actionButtonText}>{'View Rankers'}</Text>
+                                </TouchableOpacity>
+                            </LinearGradient>
+                        )}
+
+                        {/* 4e. Practice Button */}
+                        {showPractice && (
+                            <LinearGradient
+                                colors={['#37B6F1', '#0274BA']}
+                                style={styles.actionButtonGradient}>
+                                <TouchableOpacity onPress={() => navToStartTest({...item, internal_type: 'Start Practice'})}>
+                                    <Text style={styles.actionButtonText}>{'Practice'}</Text>
+                                </TouchableOpacity>
+                            </LinearGradient>
+                        )}
                     </View>
-                  </View>
+
                 </View>
-              </View>
-            )}
-            keyExtractor={item => item.id}
-            contentContainerStyle={{marginHorizontal: 5, marginTop: 10}}
-          />
+            </View>
+        );
+    }}
+    keyExtractor={item => item.id}
+    contentContainerStyle={styles.flatListContent}
+/>
         </View>
       )}
     </>
@@ -282,4 +236,91 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  flatListContent: {
+        marginHorizontal: 10,
+        marginTop: 10,
+        paddingBottom: 20, // Add padding at bottom for better scrolling
+    },
+    cardContainer: {
+        marginBottom: 15,
+        borderRadius: 12,
+        backgroundColor: Colors.WHITE || '#FFFFFF',
+        // Modern shadow for better elevation
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 6,
+    },
+    cardContent: {
+        padding: 15,
+    },
+    cardHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: Colors.BORDER_COLOR || '#E0E0E0',
+        paddingBottom: 10,
+    },
+    thumbnail: {
+        height: 50,
+        width: 50,
+        borderRadius: 8,
+        marginRight: 10,
+    },
+    titleMetaContainer: {
+        flex: 1,
+        justifyContent: 'center',
+    },
+    testTitle: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: Colors.DARK || '#333333',
+        marginBottom: 2,
+    },
+    testDescription: {
+        fontSize: 12,
+        color: Colors.GRAY || '#757575',
+        marginTop: 2,
+    },
+    metaContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        flexWrap: 'wrap',
+        marginBottom: 10,
+    },
+    testMeta: {
+        fontSize: 12,
+        color: Colors.TEXT || '#555555',
+        marginRight: 15, // Space out meta items
+        fontWeight: '500',
+    },
+    marksContainer: {
+        marginBottom: 10,
+    },
+    testAttemptMarksLabel: {
+        fontSize: 13,
+        fontWeight: '600',
+        color: Colors.SUCCESS || '#4CAF50', // Use a success color for marks
+    },
+    buttonRow: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'flex-start',
+        marginTop: 10,
+        gap: 8, // New way to add spacing between buttons (requires React Native 0.71+)
+    },
+    actionButtonGradient: {
+        borderRadius: 6,
+        paddingHorizontal: 8, // Less padding to allow more buttons
+        paddingVertical: 6,
+        minWidth: 90, // Ensure a minimum width for small labels
+    },
+    actionButtonText: {
+        fontSize: 12,
+        fontWeight: '600',
+        color: Colors.WHITE,
+        textAlign: 'center',
+    },
 });

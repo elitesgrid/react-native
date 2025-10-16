@@ -187,12 +187,11 @@ export default function Routes() {
     const unsubscribeForeground = handleForegroundNotifications();
 
     // Handle background notifications
-    const unsubscribeBackground = handleBackgroundNotifications();
+    handleBackgroundNotifications()
 
     // Cleanup the listeners when the component unmounts
     return () => {
       unsubscribeForeground();
-      unsubscribeBackground();
     };
   }, []);
 

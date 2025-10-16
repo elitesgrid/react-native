@@ -26,6 +26,7 @@ import {
   PdfViewer,
   Instructions,
   AttemptTest,
+  ViewResult,
   TestWebView,
   Notification,
   FeedDetail,
@@ -102,6 +103,9 @@ const StackNavigator = () => (
     <Stack.Screen
       name={navigationStrings.TEST_ATTEMPT}
       component={AttemptTest}></Stack.Screen>
+    <Stack.Screen
+      name={navigationStrings.TEST_VIEW_RESULT}
+      component={ViewResult}></Stack.Screen>
     <Stack.Screen
       name={navigationStrings.TEST_WEBVIEW}
       component={TestWebView}></Stack.Screen>
