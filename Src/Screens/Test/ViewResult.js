@@ -1,30 +1,22 @@
 //import liraries
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View,
     Text,
-    ScrollView,
     useWindowDimensions,
-    Image,
     TouchableOpacity,
-    SafeAreaView,
     Alert,
     StyleSheet,
-    TextInput,
-    ImageBackground
 } from 'react-native';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 
-import TestHeaderComp from '../../Components/TestHeaderComp';
 import Colors from '../../Constants/Colors';
-import TestSeriesStyle from '../../Assets/Style/TestSeriesStyle';
-import imagePaths from '../../Constants/imagePaths';
 import TestServices from '../../Services/apis/TestServices';
-import CustomHelper from '../../Constants/CustomHelper';
 import HeaderComp from '../../Components/HeaderComp';
 
 import { TimeAnalysis } from './TestResulComp/TimeAnalysis';
 import { DifficultyAnalysis } from './TestResulComp/DifficultyAnalysis';
 import { ScoreCard } from './TestResulComp/ScoreCard';
+import navigationStrings from '../../Constants/navigationStrings';
 
 // create a component
 export const ViewResult = (props) => {
@@ -80,6 +72,10 @@ export const ViewResult = (props) => {
         });
     }
 
+    const navToViewSolution = function () {
+        navigation.navigate(navigationStrings.TEST_VIEW_SOLUTION, resultData);
+    }
+
     useEffect(function () {
         // const unsubscribe = navigation.addListener('focus', () => {
             getTestResult();
@@ -96,7 +92,7 @@ export const ViewResult = (props) => {
                     :
                     (
                     <View style={{ flex: 1 }}>
-                        <HeaderComp headerTitle={"Test Result"} />
+                        <HeaderComp headerTitle={params.title || "Test Result"} />
                         <TabView
                             navigation={navigation}
                             navigationState={{ index, routes }}
@@ -106,6 +102,36 @@ export const ViewResult = (props) => {
                             initialLayout={{ width: layout.width,backgroundColor:Colors.THEME }}
                             lazyPreloadDistance={1}
                         />
+                        <View
+                            style={{
+                            paddingHorizontal: 20,
+                            paddingBottom: 20,
+                            paddingTop: 10,
+                            backgroundColor: Colors.WHITE,
+                            borderTopWidth: 1,
+                            borderTopColor: Colors.LIGHT_GRAY,
+                            }}
+                        >
+                            <TouchableOpacity
+                            style={{
+                                backgroundColor: Colors.THEME,
+                                paddingVertical: 14,
+                                borderRadius: 30,
+                            }}
+                            onPress={() => navToViewSolution()}
+                            >
+                            <Text
+                                style={{
+                                color: Colors.WHITE,
+                                fontSize: 16,
+                                fontWeight: '600',
+                                textAlign: 'center',
+                                }}
+                            >
+                                View Solution
+                            </Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 )
             }

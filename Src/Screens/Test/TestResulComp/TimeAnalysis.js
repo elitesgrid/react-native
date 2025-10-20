@@ -182,7 +182,7 @@ export const TimeAnalysis = ({ resultData }) => {
             d[sectionName].data.push(data);
         });
         d = Object.values(d);
-        console.log(d);
+        // console.log(d);
         setSectionData(d);
     }, [resultData]);
 

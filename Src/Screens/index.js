@@ -37,6 +37,7 @@ export {TestSeries3} from './MyPortal/TestSeries/TestSeries3';
 export {Instructions} from './Test/Instructions';
 export {AttemptTest} from './Test/AttemptTest';
 export { ViewResult } from './Test/ViewResult';
+export { ViewSolution } from './Test/ViewSolution';
 
 
 export {TestWebView} from './Test/TestWebView';

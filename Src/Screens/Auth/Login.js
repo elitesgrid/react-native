@@ -96,7 +96,10 @@ export const Login = ({navigation}) => {
               <View style={Styles.form}>
                 {/* Email input */}
                 <View style={Styles.inputSection}>
-                  <Image source={imagePaths.EMAIL} />
+                  <Image 
+                    source={imagePaths.EMAIL}
+                    style={{ width: 24, height: 24, resizeMode: 'contain' }}
+                     />
                   <TextInput
                     style={Styles.form_input}
                     value={username}
@@ -110,7 +113,10 @@ export const Login = ({navigation}) => {
 
                 {/* Password input */}
                 <View style={Styles.inputSection}>
-                  <Image source={imagePaths.PASSWORD} />
+                  <Image 
+                    source={imagePaths.PASSWORD}
+                    style={{ width: 24, height: 24, resizeMode: 'contain' }}
+                     />
                   <TextInput
                     style={Styles.form_input}
                     value={password}
@@ -123,6 +129,7 @@ export const Login = ({navigation}) => {
                     style={Styles.imageRightStyle}
                     onPress={showHidePassword}>
                     <Image
+                      style={{ width: 24, height: 24, resizeMode: 'contain' }}
                       source={
                         !isVisible ? imagePaths.SHOW_EYE : imagePaths.HIDE_EYE
                       }

@@ -41,12 +41,14 @@ const TestHeaderComp = ({
                 </TouchableOpacity>
                 <View style={{height:45}}>
                     <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
-                        <View style={{ paddingHorizontal: 8, marginVertical: 8, marginHorizontal: 10, borderRadius: 20, backgroundColor: "#81BADD" }}>
-                            <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
-                                <Image style={{ width: 20, height: 20 }} source={imagePaths.TEST_TIMER_ICON} />
-                                <Text style={{ fontSize: 13, fontWeight: "400", color: Colors.BLACK, paddingLeft: 4 }}>{headerTestTime}</Text>
+                        {
+                            headerTestTime && <View style={{ paddingHorizontal: 8, marginVertical: 8, marginHorizontal: 10, borderRadius: 20, backgroundColor: "#81BADD" }}>
+                                <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+                                    <Image style={{ width: 20, height: 20 }} source={imagePaths.TEST_TIMER_ICON} />
+                                    <Text style={{ fontSize: 13, fontWeight: "400", color: Colors.BLACK, paddingLeft: 4 }}>{headerTestTime}</Text>
+                                </View>
                             </View>
-                        </View>
+                        }
                         <TouchableOpacity style={{ alignItems: "center", marginRight: 10 }} onPress={togglePallete}>
                             <Image style={{ height: 20, width: 20 }} source={imagePaths.TEST_HAMBURGER} />
                         </TouchableOpacity>

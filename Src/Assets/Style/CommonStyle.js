@@ -25,7 +25,15 @@ const CommonStyles = StyleSheet.create({
     marginRight: 5,
   },
   headerView: {
-    height: 80 + getStatusBarHeight(),
+     paddingTop: Platform.select({
+      ios: 0,
+      android: 20,
+    }),
+    height:
+      Platform.select({
+        ios: 80,
+        android: 40,
+      }) + getStatusBarHeight(),
     width: '100%',
     justifyContent: 'center',
     backgroundColor: Colors.THEME,

@@ -42,7 +42,7 @@ export default {
   TEST_INSTRUCTIONS: 'Test Instructions',
   TEST_ATTEMPT: 'Test Attempt',
   TEST_VIEW_RESULT:"Test View Result",
-  //TEST_RANKERS:"Test Rankers",
+  TEST_VIEW_SOLUTION:"View Solution",
   TEST_WEBVIEW: 'Tet Webview',
 
   PDF2: 'PDF Topic List',
