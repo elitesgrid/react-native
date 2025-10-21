@@ -1,5 +1,5 @@
 //import liraries
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { View,
     Text,
     ScrollView,
@@ -10,7 +10,8 @@ import { View,
     Alert,
     StyleSheet,
     TextInput,
-    ImageBackground
+    ImageBackground,
+    useColorScheme
 } from 'react-native';
 //import { WebView } from 'react-native-webview';
 import MenuDrawer from 'react-native-side-drawer'
@@ -79,6 +80,8 @@ export const AttemptTest = (props) => {
     const [finalJson, setFinalJson] = useState([]);
     const [resumeSectionId, setResumeSectionId] = useState(0);
     const {showConfirmDialog} = useConfirmDialog();
+    const colorScheme = useColorScheme();
+    const isNightMode = colorScheme === 'dark';
     const {
         questionTime,
         remainSeconds,
@@ -95,6 +98,19 @@ export const AttemptTest = (props) => {
         { label: "Marked for Review", key: "marked_for_review", count: 0 },
         { label: "Answered & Marked for Review", key: "answered_marked_for_review", count: 0 },
     ]);
+
+    const htmlTagsStyles = useMemo(() => {
+        if (isNightMode) {
+            return {
+                // Apply light text color to common tags when in dark mode
+                body: { color: Colors.DARK, whiteSpace: 'normal' },
+                p: { color: Colors.DARK, whiteSpace: 'normal' },
+                span: { color: Colors.DARK, whiteSpace: 'normal' },
+                li: { color: Colors.DARK, whiteSpace: 'normal' },
+            };
+        }
+        return {};
+    }, [isNightMode]);
 
     useEffect(function(){
         if(remainSeconds > 0){
@@ -281,8 +297,19 @@ export const AttemptTest = (props) => {
     }
 
     const prevQuestion = async function (){
-        // saveAnswer is NOT called here in the original flow, so we preserve that.
         load_question(currentQuestionsIndex - 1);
+    }
+
+    const pallete_jump_question = function(index){
+        let currentQuestion = testQuestions[currentQuestionsIndex];
+        let toBeCurrentQuestion = testQuestions[index];
+        if(params.allow_move_section === "0" && currentQuestion.section_id !== toBeCurrentQuestion.section_id){
+            togglePallete();
+            Alert.alert("Warning","Section switching not allowed");
+            return false;
+        }
+
+        load_question(index);
     }
 
     const submitTest = async function() {
@@ -473,7 +500,7 @@ export const AttemptTest = (props) => {
         if (!selected) return null;
 
         return (
-            <TouchableOpacity onPress={() => index !== "" && load_question(index)}>
+            <TouchableOpacity onPress={() => index !== "" && pallete_jump_question(index)}>
                 <ImageBackground source={selected.image} style={selected.style}>
                     <Text style={{ color: selected.textColor }}>{value}</Text>
                 </ImageBackground>
@@ -620,14 +647,21 @@ export const AttemptTest = (props) => {
                                             {currentQuestions.passage !== "" &&
                                                 <View key={"passage"} style={{ flex: 1 }}>
                                                     <Text style={{color: Colors.TEXT}}>{"Passage"}</Text>
-                                                    <HTML contentWidth={windowWidth} source={{ html: currentQuestions.passage }} />
+                                                    <HTML 
+                                                    contentWidth={windowWidth} 
+                                                    source={{ html: currentQuestions.passage }} 
+                                                    tagsStyles={htmlTagsStyles}
+                                                    />
                                                 </View>
                                             }
                                             <View key={"1"}>
                                                 {currentQuestions.passage !== "" &&
                                                     <Text style={{color: Colors.TEXT}}>{"Question"}</Text>
                                                 }
-                                                <HTML contentWidth={windowWidth} source={{ html: currentQuestions.question }} />
+                                                <HTML 
+                                                contentWidth={windowWidth} 
+                                                source={{ html: currentQuestions.question }} 
+                                                tagsStyles={htmlTagsStyles}/>
                                             </View>
                                             {[1, 2, 3, 4].map((opt, i) => {
                                                 const optionText = currentQuestions[`option_${opt}`];
@@ -675,6 +709,7 @@ export const AttemptTest = (props) => {
                                                                 currentQuestions.question_type !== "FIB" && <HTML 
                                                                     contentWidth={windowWidth - 60} // subtract padding + image width
                                                                     source={{ html: optionText }} 
+                                                                    tagsStyles={htmlTagsStyles}
                                                                 />
                                                             }
                                                         </View>

@@ -17,5 +17,6 @@ export default {
     SKIPPED: '#FFB300', 
     TEXT: '#212121', 
     LIGHT_GRAY: '#F5F5F5', 
-    HEADER_TEXT: '#1A237E', 
+    HEADER_TEXT: '#1A237E',
+    DARK: "#16151aff",
 }
