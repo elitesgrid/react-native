@@ -5,9 +5,9 @@ import YoutubePlayer from 'react-native-youtube-iframe';
 import {WebView} from 'react-native-webview';
 import Video from 'react-native-video';
 import DeviceInfo from 'react-native-device-info';
-
 import HeaderComp from '../../Components/HeaderComp';
 import PortalService from '../../Services/apis/PortalService';
+import LoadingComp from '../../Components/LoadingComp';
 // create a component
 export const Player = props => {
   const {route, navigation} = props;
@@ -217,8 +217,10 @@ export const Player = props => {
   // Function to handle the back press
   const handleBackPress = () => {
     const jsFunction = 'get_current_time();';
-    webViewRef.current.injectJavaScript(jsFunction);
-    webViewRef.current.postMessage('backButtonPressed');
+    if(webViewRef.current){
+      webViewRef.current.injectJavaScript(jsFunction);
+      webViewRef.current.postMessage('backButtonPressed');
+    }
     //console.log('Back Pressed');
     navigation.goBack(null);
     return true;

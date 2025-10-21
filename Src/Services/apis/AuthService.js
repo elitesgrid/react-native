@@ -47,7 +47,7 @@ async function registration(payload) {
   return result;
 }
 
-module.exports = {
+export default {
   login,
   forgot_password,
   update_password,

@@ -16,9 +16,6 @@ import { View,
 import MenuDrawer from 'react-native-side-drawer'
 
 import HTML from 'react-native-render-html';
-
-import LinearGradient from 'react-native-linear-gradient';
-
 import TestHeaderComp from '../../Components/TestHeaderComp';
 import Colors from '../../Constants/Colors';
 import TestSeriesStyle from '../../Assets/Style/TestSeriesStyle';
@@ -28,6 +25,7 @@ import CustomHelper from '../../Constants/CustomHelper';
 import StorageManager from '../../Services/StorageManager';
 import LoadingComp from '../../Components/LoadingComp'; // Assuming this is defined/used
 import navigationStrings from '../../Constants/navigationStrings';
+import { useConfirmDialog } from '../../Components/ConfirmDialogContext';
 
 function useExamTimer(initialRemainSeconds = 0) {
   const [questionTime, setQuestionTime] = useState(0); // counts UP
@@ -80,6 +78,7 @@ export const AttemptTest = (props) => {
     const [currentQuestionsIndex, setCurrentQuestionsIndex] = useState(0);
     const [finalJson, setFinalJson] = useState([]);
     const [resumeSectionId, setResumeSectionId] = useState(0);
+    const {showConfirmDialog} = useConfirmDialog();
     const {
         questionTime,
         remainSeconds,
@@ -294,18 +293,25 @@ export const AttemptTest = (props) => {
             last_question: parseInt(currentQuestionsIndex),
             active_section: currentQuestions.section_id
         }
-        TestServices.submit_test_detail(payload).then(async (data) => {
-            data = data.data;
-            if (data.id) {
-                testSeries.report_id = data.id;
-                delete testSeries.questions;
-                delete testSeries.resume;
-                //console.log(testSeries);
-                // Assuming navigationStrings.TEST_VIEW_RESULT is available globally
-                navigation.replace(navigationStrings.TEST_VIEW_RESULT, testSeries); 
-                console.log("Submit Test Success", testSeries);
-            }
-            console.log("Submit Test", data);
+
+        showConfirmDialog({
+            title: 'Elites Grid',
+            message: 'Are you sure want to submit test?',
+            onConfirm: () => {
+                TestServices.submit_test_detail(payload).then(async (data) => {
+                    data = data.data;
+                    if (data.id) {
+                        testSeries.report_id = data.id;
+                        delete testSeries.questions;
+                        delete testSeries.resume;
+                        //console.log(testSeries);
+                        // Assuming navigationStrings.TEST_VIEW_RESULT is available globally
+                        navigation.replace(navigationStrings.TEST_VIEW_RESULT, testSeries); 
+                        console.log("Submit Test Success", testSeries);
+                    }
+                    console.log("Submit Test", data);
+                }); 
+            },
         });
     }
 
@@ -395,7 +401,7 @@ export const AttemptTest = (props) => {
 
     useEffect(function(){
         if(finalJson.length > 0){
-            if(resumeSectionId) {
+            if(resumeSectionId > 0) {
                 chooseSection(resumeSectionId);
             } else {
                 load_question(0);

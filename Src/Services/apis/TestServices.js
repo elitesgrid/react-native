@@ -23,7 +23,7 @@ async function get_test_result(payload) {
   return await network_call('GET_TEST_RESULT', payload);
 }
 
-module.exports = {
+export default {
   get_instructions,
   get_test_detail,
   get_bookmarked_question,

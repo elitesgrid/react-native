@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Text, View, Image, ScrollView,TouchableOpacity,Alert } from 'react-native';
 
 import HeaderComp from '../../Components/HeaderComp';
-import Styles from '../../Assets/Style/LoginStyle';
 import HomeService from "../../Services/apis/HomeService";
 import imagePaths from '../../Constants/imagePaths';
 import CustomHelper from '../../Constants/CustomHelper';
+import LoadingComp from '../../Components/LoadingComp';
 
 
 export const MyOrder = (props) => {
@@ -50,26 +50,75 @@ export const MyOrder = (props) => {
   return (
     <View style={{ flex: 1, backgroundColor: "#F9F9F9" }}>
       <HeaderComp headerTitle={"My Order"} />
-      <View>
-        <ScrollView>
-          {courseList.map((item, index) => {
-            return (<TouchableOpacity onPress={()=>onItemClick(item.id)} key={index} style={{ marginHorizontal: 20, height: 260, backgroundColor: "#FFFFFF", borderRadius: 30, width: "90%", marginTop: 20, paddingBottom: 15, borderColor: "#FFFFFF", borderWidth: 1 }}>
-              <View>
-                <View>
-                  <Image source={fixImageUrl(item.cover_image)} resizeMode='stretch' style={{ height: 170, width: "100%", position: "relative" }} />
+      <View style={{ flex: 1 }}>
+        {isLoading ? (
+          <LoadingComp />
+        ) : (
+          <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+            {courseList.map((item, index) => (
+              <TouchableOpacity
+                onPress={() => onItemClick(item.id)}
+                key={index}
+                activeOpacity={0.9}
+                style={{
+                  marginHorizontal: 20,
+                  marginTop: 20,
+                  backgroundColor: "#FFFFFF",
+                  borderRadius: 20,
+                  overflow: "hidden",
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 6,
+                  elevation: 4,
+                }}
+              >
+                <View style={{ position: "relative" }}>
+                  <Image
+                    source={fixImageUrl(item.cover_image)}
+                    resizeMode={"stretch"}
+                    style={{ height: 160, width: "100%" }}
+                  />
+                  <View
+                    style={{
+                      position: "absolute",
+                      top: 10,
+                      left: 10,
+                      backgroundColor: "#29D697",
+                      paddingVertical: 4,
+                      paddingHorizontal: 10,
+                      borderRadius: 8,
+                    }}
+                  >
+                    <Text style={{ color: "white", fontSize: 12, fontWeight: "600" }}>
+                      Active
+                    </Text>
+                  </View>
                 </View>
-                <Text style={{ position: "absolute", backgroundColor: "#29D697", padding: 7, color: "white", borderBottomRightRadius: 12, borderTopLeftRadius: 12 }}>{"Active"}</Text>
-              </View>
-              <View style={{ marginHorizontal: 10 }}>
-                <Text style={{ fontSize: 18, fontWeight: "600", color: "#05030D", marginVertical: 10 }}>{item.title}</Text>
-                <View style={{ }}>
-                  <Text>{"Added Date: " + CustomHelper.tsToDate(item.valid_from, "d M Y")}</Text>
-                  <Text style={{ color: "red" }}>{"Expire Date: " + CustomHelper.tsToDate(item.valid_to, "d M Y")}</Text>
+                <View style={{ padding: 15 }}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "700",
+                      color: "#05030D",
+                      marginBottom: 6,
+                    }}
+                  >
+                    {item.title}
+                  </Text>
+                  <View>
+                    <Text style={{ fontSize: 14, color: "#555" }}>
+                      {"Added Date: " + CustomHelper.tsToDate(item.valid_from, "d M Y")}
+                    </Text>
+                    <Text style={{ fontSize: 14, color: "#E53935", marginTop: 2 }}>
+                      {"Expire Date: " + CustomHelper.tsToDate(item.valid_to, "d M Y")}
+                    </Text>
+                  </View>
                 </View>
-              </View>
-            </TouchableOpacity>)
-          })}
-        </ScrollView>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        )}
       </View>
     </View>
   );

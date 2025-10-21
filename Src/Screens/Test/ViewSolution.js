@@ -9,7 +9,9 @@ import { View,
     SafeAreaView,
     StyleSheet,
     TextInput,
-    ImageBackground
+    ImageBackground,
+    Modal,
+    Dimensions
 } from 'react-native';
 //import { WebView } from 'react-native-webview';
 import MenuDrawer from 'react-native-side-drawer'
@@ -23,6 +25,9 @@ import imagePaths from '../../Constants/imagePaths';
 import StorageManager from '../../Services/StorageManager';
 import LoadingComp from '../../Components/LoadingComp'; // Assuming this is defined/used
 import navigationStrings from '../../Constants/navigationStrings';
+import TestServices from '../../Services/apis/TestServices';
+
+const { width } = Dimensions.get('window');
 
 // create a component
 export const ViewSolution = (props) => {
@@ -33,6 +38,7 @@ export const ViewSolution = (props) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const [isLoading, setIsLoading] = useState(true);
+    const [bookmarkModalVisibility,setBookmarkModalVisibility] = useState(false);
     const [cusName, setCusName] = useState('');
     const [profileImage, setProfileImage] = useState('');
     const [testSections, setTestSections] = useState([]);
@@ -94,7 +100,7 @@ export const ViewSolution = (props) => {
     }
 
     async function getTestViewSolution(params) {
-        // console.log("View Solution", JSON.stringify(params))
+        //console.log("View Solution", JSON.stringify(params))
         let localStatesTotal = {
             answered: 0,
             not_answered: 0,
@@ -103,8 +109,23 @@ export const ViewSolution = (props) => {
             answered_marked_for_review: 0
         }
         
-        params.my_progress.questions.forEach(val =>{
-            ++localStatesTotal[val.custom_json.state];
+        params.my_progress.questions.forEach(question => {
+            let que_type;
+            switch (question.question_type) {
+                case "3":
+                    que_type = "FIB";
+                    break;
+                case "0":
+                    que_type = "SC";
+                    break;
+                default:
+                    que_type = "MC";
+                    break;
+            }
+
+            question.question_type = que_type;
+            const state = question.custom_json.state;
+            localStatesTotal[state] = (localStatesTotal[state] || 0) + 1;
         });
         
         const updatedDrawerLegend = drawerLegend.map(val => ({
@@ -132,20 +153,8 @@ export const ViewSolution = (props) => {
     }
 
     const getAnswerLetter = () => {
-        let que_type = "SC";
-        switch(currentQuestions.question_type) {
-            case "3":
-                que_type = "FIB";
-                break;
-            case "0":
-                que_type = "SC";
-                break;
-            default:
-                que_type = "MC";
-                break;
-        }
         let return_ = "N/A";
-        if(que_type == "SC" || que_type == "MC"){
+        if(currentQuestions.question_type == "SC" || currentQuestions.question_type == "MC"){
             const index = currentQuestions.custom_json.given_answer.findIndex(item => item === "1");
             if (index === -1){
                 
@@ -153,15 +162,53 @@ export const ViewSolution = (props) => {
                 const letters = ["A", "B", "C", "D"];
                 return_ = letters[index];
             }
-        } else if(que_type == "FIB"){
+        } else if(currentQuestions.question_type == "FIB"){
             return_ = currentQuestions.custom_json.given_answer[0] || '';
         }
         return return_;
     };
 
+    const markForReview = function(type, bookmark_type){
+        const newBookmarkStatus = type === "0" ? "1" : "0";//1-add,0-remove
+        if(newBookmarkStatus === "0" || bookmarkModalVisibility === true) {
+            setBookmarkModalVisibility(false);
+            TestServices.remove_bookmarked_question({
+                test_id: params.quiz.id,
+                q_id: currentQuestions.id,
+                type: newBookmarkStatus,
+                bookmark_type: bookmark_type
+            }).then(async data => {
+                setIsLoading(false);
+                if (data.status === true) {
+                    const updatedCurrentQuestion = {
+                        ...currentQuestions,
+                        is_bookmarked: newBookmarkStatus
+                    };
+                    setCurrentQuestions(updatedCurrentQuestion);
+
+                    const updatedTestQuestions = testQuestions.map(question => {
+                        if (question.id === currentQuestions.id) {
+                            return {
+                                ...question,
+                                is_bookmarked: newBookmarkStatus
+                            };
+                        }
+                        return question;
+                    });
+                    setTestQuestions(updatedTestQuestions);
+                }
+                return true;
+            }).catch(error => {
+                console.log('Error!', error.message);
+                return false;
+            });
+        } else {
+            setBookmarkModalVisibility(true);
+        }
+    };
 
     useEffect(function(){
-        load_question(0);
+        load_question( currentQuestionsIndex ? currentQuestionsIndex : 0);
     }, [testQuestions]);
 
     useEffect(function () {
@@ -474,26 +521,69 @@ export const ViewSolution = (props) => {
                                     </View>
                                 </ScrollView>
                                 <View style={styles.bottomControlBar}>
-                                    <View>
-                                        {
-                                            currentQuestionsIndex > 0 &&
-                                                <TouchableOpacity onPress={() => prevQuestion()} style={styles.prevNextButton}>
-                                                    <Text style={styles.prevNextButtonText}>{"Prev"}</Text>
-                                                </TouchableOpacity>
-                                        }
-                                    </View>
-                                    <View>
-                                        {
-                                            (currentQuestionsIndex + 1) < testQuestions.length &&
-                                            <TouchableOpacity onPress={() => nextQuestion()} style={styles.prevNextButton}>
-                                                <Text style={styles.prevNextButtonText}>{"Next"}</Text>
-                                            </TouchableOpacity>
-                                        }
-                                    </View>
+                                    {currentQuestionsIndex > 0 ? (
+                                        <TouchableOpacity
+                                        onPress={() => prevQuestion()}
+                                        style={[styles.prevNextButton, {backgroundColor: Colors.WHITE}]}>
+                                        <Text style={[styles.prevNextButtonText, {backgroundColor: 'transparent', color: Colors.THEME}]}>
+                                            Prev
+                                        </Text>
+                                        </TouchableOpacity>
+                                    ) : (
+                                        <View style={{width: 80}} />
+                                    )}
+
+                                    <TouchableOpacity
+                                        onPress={() => markForReview(currentQuestions.is_bookmarked, "0")}
+                                        style={styles.markReviewButton}>
+                                        <Text style={styles.markReviewText}>{currentQuestions.is_bookmarked !== "0" ? 'Remove Bookmark' : 'Add To Bookmark'}</Text>
+                                    </TouchableOpacity>
+
+                                    {currentQuestionsIndex + 1 < testQuestions.length ? (
+                                        <TouchableOpacity
+                                        onPress={() => nextQuestion()}
+                                        style={styles.prevNextButton}>
+                                        <Text style={styles.prevNextButtonText}>Next</Text>
+                                        </TouchableOpacity>
+                                    ) : (
+                                        <View style={{width: 80}} />
+                                    )}
                                 </View>
                             </>
                         }
-                            
+                        <Modal
+                            visible={bookmarkModalVisibility}
+                            transparent
+                            animationType="fade"
+                            statusBarTranslucent
+                            >
+                            <View style={styles.overlay}>
+                                <View style={styles.modalContent}>
+                                    <Text style={styles.title}>Add Bookmark To:</Text>
+
+                                    <View style={styles.radioGroup}>
+                                        {global.BOOKMARK_FILTERS.map((item, index) => {
+                                        const isActive = 1 === item.key;
+
+                                        return (
+                                            <TouchableOpacity
+                                            key={index}
+                                            onPress={() => markForReview("0", item.key)}
+                                            style={styles.radioItem}
+                                            >
+                                            <View style={[styles.radioCircle, isActive && styles.radioCircleSelected]}>
+                                                {isActive && <View style={styles.radioDot} />}
+                                            </View>
+                                            <Text style={[styles.radioText, isActive && { color: '#0274BA', fontWeight: '600' }]}>
+                                                {item.value}
+                                            </Text>
+                                            </TouchableOpacity>
+                                        );
+                                        })}
+                                    </View>
+                                </View>
+                            </View>
+                        </Modal>
                     </MenuDrawer>
                 )
             }
@@ -669,28 +759,97 @@ const styles = StyleSheet.create({
     bottomControlBar: { 
         flexDirection:"row",
         justifyContent:"space-between", 
-        height:50,
-        padding:10,
-        backgroundColor:Colors.WHITE 
+        paddingTop: 6,
+        paddingBottom: 20,
+        backgroundColor:Colors.WHITE, 
+        paddingHorizontal: 10, 
     },
-    prevNextButton: { 
-        borderWidth: 1, 
-        borderColor: Colors.THEME, 
-        borderRadius: 5 
+    prevNextButton: {
+        borderWidth: 1,
+        borderColor: Colors.THEME,
+        borderRadius: 8,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        backgroundColor: Colors.THEME,
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.15,
+        shadowRadius: 3,
+        elevation: 3,
     },
-    prevNextButtonText: { 
-        paddingHorizontal: 5, 
-        paddingVertical: 5, 
-        backgroundColor: Colors.THEME, 
-        color: Colors.WHITE 
+    prevNextButtonText: {
+        fontSize: 15,
+        fontWeight: '600',
+        color: Colors.WHITE,
+        textAlign: 'center',
     },
-    markReviewButton: { 
-        borderWidth: 1, 
-        borderColor: "#0000006b", 
-        borderRadius: 5 
+    markReviewButton: {
+        borderWidth: 1,
+        borderColor: '#0000003a',
+        borderRadius: 8,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        backgroundColor: '#F6F7FB',
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 2,
     },
-    markReviewText: { 
-        paddingHorizontal: 5, 
-        paddingVertical: 5 
-    }
+    markReviewText: {
+        fontSize: 15,
+        fontWeight: '500',
+        color: '#333',
+        textAlign: 'center',
+    },
+    overlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        width: '90%',
+        backgroundColor: '#fff',
+        borderRadius: 12,
+        padding: 20,
+        alignSelf: 'center',
+    },
+    title: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#05030D',
+        marginBottom: 20,
+    },
+    radioGroup: {
+        flexDirection: 'column',
+    },
+    radioItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 12,
+    },
+    radioCircle: {
+        height: 20,
+        width: 20,
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: '#B4B4B7',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: 12,
+    },
+    radioCircleSelected: {
+        borderColor: '#0274BA',
+    },
+    radioDot: {
+        height: 10,
+        width: 10,
+        borderRadius: 5,
+        backgroundColor: '#0274BA',
+    },
+    radioText: {
+        fontSize: 14,
+        color: '#05030D',
+    },
 });

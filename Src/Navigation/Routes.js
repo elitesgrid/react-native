@@ -19,6 +19,8 @@ import {
   setBackgroundMessageHandler,
 } from '@react-native-firebase/messaging';
 import envVariables from '../Constants/envVariables';
+import { ConfirmDialogProvider, useConfirmDialog } from '../Components/ConfirmDialogContext';
+
 
 /*
 mkdir android/app/src/main/assets
@@ -83,116 +85,74 @@ export default function Routes() {
   }
 
   async function onDisplayNotification(payload) {
-    // Request permissions (required for iOS)
-    await notifee.requestPermission();
+    try {
+      await notifee.requestPermission();
 
-    // Create a channel (required for Android)
-    const channelId = await notifee.createChannel({
-      id: 'default',
-      name: 'Default Channel',
-    });
+      const channelId = await notifee.createChannel({
+        id: 'default',
+        name: 'Default Channel',
+      });
 
-    // Display a notification
-    await notifee.displayNotification({
-      title: payload.title,
-      body: payload.body,
-      android: {
-        channelId,
-        smallIcon: 'name-of-a-small-icon', // optional, defaults to 'ic_launcher'.
-        // pressAction is needed if you want the notification to open the app when pressed
-        pressAction: {
-          id: 'default',
+      await notifee.displayNotification({
+        title: payload.title,
+        body: payload.body,
+        android: {
+          channelId,
+          smallIcon: 'ic_launcher', // default fallback icon
+          pressAction: { id: 'default' },
         },
-      },
-    });
+      });
+    } catch (e) {
+      console.log('onDisplayNotification error:', e);
+    }
   }
 
   async function checkApplicationPermission() {
     try {
       const messaging = getMessaging();
-
-      // Request notification permission
       const authorizationStatus = await requestPermission(messaging);
 
-      if (authorizationStatus === AuthorizationStatus.AUTHORIZED) {
-        console.log('User has notification permissions enabled.');
-
-        // Fetch the FCM token
+      if (
+        authorizationStatus === AuthorizationStatus.AUTHORIZED ||
+        authorizationStatus === AuthorizationStatus.PROVISIONAL
+      ) {
         const token = await getToken(messaging);
         global.FB_TOKEN = token;
         console.log('FCM Token:', token);
-
-        // Optionally, save the token to your server or use it for push notifications
-        // For example: sendTokenToServer(token);
-      } else if (authorizationStatus === AuthorizationStatus.PROVISIONAL) {
-        console.log('User has provisional notification permissions.');
-
-        // Fetch the FCM token even if the permission is provisional
-        const token = await getToken(messaging);
-        global.FB_TOKEN = token;
-        console.log('FCM Token (provisional):', token);
       } else {
         console.log('User has notification permissions disabled');
       }
     } catch (e) {
-      console.log('checkApplicationPermission', e);
+      console.log('checkApplicationPermission error:', e);
     }
   }
 
   // Handle incoming messages when the app is in the foreground
   function handleForegroundNotifications() {
     const messaging = getMessaging();
-
-    // This will be triggered when the app is in the foreground and a notification is received
-    const unsubscribe = onMessage(messaging, async remoteMessage => {
-      //console.log('Foreground notification received:', remoteMessage.data);
-      var payload = {
-        title: remoteMessage.data.title,
-        body: remoteMessage.data.body,
-        data: remoteMessage.data,
-      };
-      onDisplayNotification(payload);
-      //Alert.alert('New Notification', remoteMessage.notification.body);
+    return onMessage(messaging, async remoteMessage => {
+      const { title, body, ...data } = remoteMessage?.data || {};
+      await onDisplayNotification({ title, body, data });
     });
-    return unsubscribe; // Return the cleanup function for later removal
   }
 
   // Handle background and quit state notifications
   function handleBackgroundNotifications() {
     const messaging = getMessaging();
-
-    // This will be triggered when the app is in the background or terminated
-    setBackgroundMessageHandler(
-      messaging,
-      async remoteMessage => {
-        var payload = {
-          title: remoteMessage.data.title,
-          body: remoteMessage.data.body,
-          data: remoteMessage.data,
-        };
-        onDisplayNotification(payload);
-        //console.log('Background/Terminated notification received:',remoteMessage);
-        // Handle the background message, for example, show a notification
-      },
-    );
-    //return unsubscribeBackground; // Return the cleanup function for background messages
+    setBackgroundMessageHandler(messaging, async remoteMessage => {
+      const { title, body, ...data } = remoteMessage?.data || {};
+      await onDisplayNotification({ title, body, data });
+    });
   }
 
   useEffect(() => {
     checkSession();
-
     checkApplicationPermission();
 
-    // Handle foreground notifications
     const unsubscribeForeground = handleForegroundNotifications();
+    handleBackgroundNotifications();
 
-    // Handle background notifications
-    handleBackgroundNotifications()
-
-    // Cleanup the listeners when the component unmounts
-    return () => {
-      unsubscribeForeground();
-    };
+    return () => unsubscribeForeground();
   }, []);
 
   return (
@@ -200,9 +160,11 @@ export default function Routes() {
       {isLoading ? (
         <LoadingComp />
       ) : (
-        <NavigationContainer>
-          {isLoggedIn ? HomeStack() : AuthStack()}
-        </NavigationContainer>
+        <ConfirmDialogProvider>
+          <NavigationContainer>
+            {isLoggedIn ? HomeStack() : AuthStack()}
+          </NavigationContainer>
+        </ConfirmDialogProvider>
       )}
     </>
   );
