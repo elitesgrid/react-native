@@ -79,15 +79,15 @@ export const Instructions = (props) => {
                                 <View style={TestSeriesStyle.container}>
                                     <View style={TestSeriesStyle.instPointTick}>
                                         <Image style={TestSeriesStyle.instPointTickImage} source={imagePaths.TEST_INSTRUCTION_CHECK} />
-                                        <Text>You will be provided with one section at a time</Text>
+                                        <Text style={{color: Colors.TEXT}}>You will be provided with one section at a time</Text>
                                     </View>
                                     <View style={TestSeriesStyle.instPointTick}>
                                         <Image style={TestSeriesStyle.instPointTickImage} source={imagePaths.TEST_INSTRUCTION_CHECK} />
-                                        <Text>You will be taken to the next section once you submit the current section</Text>
+                                        <Text style={{color: Colors.TEXT}}>You will be taken to the next section once you submit the current section</Text>
                                     </View>
                                     <View style={TestSeriesStyle.instPointTick}>
                                         <Image style={TestSeriesStyle.instPointTickImage} source={imagePaths.TEST_INSTRUCTION_CHECK} />
-                                        <Text>Once you submit the section, you will not be able to go back to it,</Text>
+                                        <Text style={{color: Colors.TEXT}}>Once you submit the section, you will not be able to go back to it,</Text>
                                     </View>
                                 </View>
                                 {
@@ -106,15 +106,15 @@ export const Instructions = (props) => {
                                                 <View style={TestSeriesStyle.container} key={"lv" + index}>
                                                     <View style={TestSeriesStyle.instPointTick}>
                                                         <Image style={TestSeriesStyle.instPointTickImage} source={imagePaths.TEST_INSTRUCTION_CHECK} />
-                                                        <Text>{item.questions.length} Questions in {item.section_timing} mins</Text>
+                                                        <Text style={{color: Colors.TEXT}}>{item.questions.length} Questions in {item.section_timing} mins</Text>
                                                     </View>
                                                     <View style={TestSeriesStyle.instPointTick}>
                                                         <Image style={TestSeriesStyle.instPointTickImage} source={imagePaths.TEST_INSTRUCTION_CHECK} />
-                                                        <Text>The positive and negative marks for each question are mentioned</Text>
+                                                        <Text style={{color: Colors.TEXT}}>The positive and negative marks for each question are mentioned</Text>
                                                     </View>
                                                     <View style={TestSeriesStyle.instPointTick}>
                                                         <Image style={TestSeriesStyle.instPointTickImage} source={imagePaths.TEST_INSTRUCTION_CHECK} />
-                                                        <Text>along with the question</Text>
+                                                        <Text style={{color: Colors.TEXT}}>along with the question</Text>
                                                     </View>
                                                 </View>
                                             </View>
@@ -131,7 +131,7 @@ export const Instructions = (props) => {
                                 <View style={TestSeriesStyle.container}>
                                     <View style={TestSeriesStyle.instPointTick}>
                                         <Image style={TestSeriesStyle.instPointTickImage} source={imagePaths.TEST_INSTRUCTION_CHECK} />
-                                        <Text>There is no -ve marking for unattempted questions</Text>
+                                        <Text style={{color: Colors.TEXT}}>There is no -ve marking for unattempted questions</Text>
                                     </View>
                                 </View>
                                 <LinearGradient
@@ -144,19 +144,19 @@ export const Instructions = (props) => {
                                 <View style={TestSeriesStyle.container}>
                                     <View style={TestSeriesStyle.instPointTick}>
                                         <Image style={TestSeriesStyle.instPointTickImage} source={imagePaths.TEST_INSTRUCTION_CHECK} />
-                                        <Text>Use next and previous buttons to navigate</Text>
+                                        <Text style={{color: Colors.TEXT}}>Use next and previous buttons to navigate</Text>
                                     </View>
                                     <View style={TestSeriesStyle.instPointTick}>
                                         <Image style={TestSeriesStyle.instPointTickImage} source={imagePaths.TEST_INSTRUCTION_CHECK} />
-                                        <Text>You can also use the question numbers provided on the side to move quickly</Text>
+                                        <Text style={{color: Colors.TEXT}}>You can also use the question numbers provided on the side to move quickly</Text>
                                     </View>
                                     <View style={TestSeriesStyle.instPointTick}>
                                         <Image style={TestSeriesStyle.instPointTickImage} source={imagePaths.TEST_INSTRUCTION_CHECK} />
-                                        <Text>You can bookmark any question to visit it later</Text>
+                                        <Text style={{color: Colors.TEXT}}>You can bookmark any question to visit it later</Text>
                                     </View>
                                     <View style={TestSeriesStyle.instPointTick}>
                                         <Image style={TestSeriesStyle.instPointTickImage} source={imagePaths.TEST_INSTRUCTION_CHECK} />
-                                        <Text>Submit the test at anytime using the submit-test button</Text>
+                                        <Text style={{color: Colors.TEXT}}>Submit the test at anytime using the submit-test button</Text>
                                     </View>
                                 </View>
                             </ScrollView>

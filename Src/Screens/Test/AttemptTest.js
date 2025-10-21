@@ -188,6 +188,10 @@ export const AttemptTest = (props) => {
     }
 
     function chooseSection(secId) {
+        if(params.allow_move_section === "0"){
+            Alert.alert("Warning","Section switching not allowed");
+            return false;
+        }
         const index = testQuestions.findIndex(item => item.section_id === secId);
         load_question(index);
     }
@@ -615,13 +619,13 @@ export const AttemptTest = (props) => {
                                         <View style={TestSeriesStyle.questionCard}>
                                             {currentQuestions.passage !== "" &&
                                                 <View key={"passage"} style={{ flex: 1 }}>
-                                                    <Text>{"Passage"}</Text>
+                                                    <Text style={{color: Colors.TEXT}}>{"Passage"}</Text>
                                                     <HTML contentWidth={windowWidth} source={{ html: currentQuestions.passage }} />
                                                 </View>
                                             }
                                             <View key={"1"}>
                                                 {currentQuestions.passage !== "" &&
-                                                    <Text>{"Question"}</Text>
+                                                    <Text style={{color: Colors.TEXT}}>{"Question"}</Text>
                                                 }
                                                 <HTML contentWidth={windowWidth} source={{ html: currentQuestions.question }} />
                                             </View>
@@ -918,6 +922,7 @@ const styles = StyleSheet.create({
     },
     markReviewText: { 
         paddingHorizontal: 5, 
-        paddingVertical: 5 
+        paddingVertical: 5,
+        color: Colors.TEXT
     }
 });

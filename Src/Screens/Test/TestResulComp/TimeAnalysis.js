@@ -22,6 +22,7 @@ const Colors = {
   BORDER_LIGHT: '#E0E0E0',
   SECTION_HEADER: '#007AFF', // Blue for main section headers
   SECTION_BACKGROUND: '#FFFFFF',
+  TEXT_LIGHT: "#292c2aff"
 };
 
 // --- Single Item Component for the SectionList ---
