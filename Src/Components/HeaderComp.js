@@ -1,8 +1,4 @@
-//import liraries
-import React, {  } from 'react';
-import {
-  getStatusBarHeight,
-} from 'react-native-iphone-x-helper';
+import React from 'react';
 import {
   View,
   Text,
@@ -10,37 +6,44 @@ import {
   TouchableOpacity,
   StatusBar,
   SafeAreaView,
-  Platform
+  Platform,
 } from 'react-native';
-import {Image} from 'react-native-elements';
+import { Image } from 'react-native-elements';
 import imagePaths from '../Constants/imagePaths';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import Colors from '../Constants/Colors';
+import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 
-// create a component
 const HeaderComp = ({
   onPressBack,
   headerStyles = {},
   headerTitle = '',
-  ...props
 }) => {
   const navigation = useNavigation();
-  const goBack = function () {
+
+  const goBack = () => {
     navigation.goBack(null);
   };
+
   return (
-    <SafeAreaView style={[styles.headerView, headerStyles]}>
-      <StatusBar backgroundColor={Colors.THEME} barStyle="light-content" />
+    <SafeAreaView style={[styles.safeArea, headerStyles]}>
+      <StatusBar
+        backgroundColor={Colors.THEME}
+        barStyle="light-content"
+      />
       <View style={styles.headerContainer}>
         {/* LEFT: Back button */}
         <TouchableOpacity
           style={styles.backButton}
-          onPress={onPressBack ? onPressBack : () => goBack()}>
+          onPress={onPressBack ? onPressBack : goBack}
+        >
           <Image source={imagePaths.BACK} style={styles.image} />
         </TouchableOpacity>
 
         {/* CENTER: Title */}
-        <Text style={styles.headerTitle}>{headerTitle}</Text>
+        <Text numberOfLines={1} style={styles.headerTitle}>
+          {headerTitle}
+        </Text>
 
         {/* RIGHT: User ID */}
         <Text style={styles.userId}>{global.USER_ID || 'A'}</Text>
@@ -49,27 +52,20 @@ const HeaderComp = ({
   );
 };
 
-// define your styles
 const styles = StyleSheet.create({
-  headerView: {
-    paddingTop: Platform.select({
-      ios: 0,
-      android: 20,
-    }),
-    height:
-      Platform.select({
-        ios: 80,
-        android: 40,
-      }) + getStatusBarHeight(),
-    width: '100%',
-    justifyContent: 'center',
+  safeArea: {
     backgroundColor: Colors.THEME,
+    paddingTop: Platform.select({
+      ios: getStatusBarHeight(),         // Handles iOS notch and non-notch
+      android: getStatusBarHeight(true), // Handles Android notch & status bar
+    }),
   },
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
+    paddingVertical: 8,
   },
   backButton: {
     padding: 8,
@@ -83,8 +79,8 @@ const styles = StyleSheet.create({
     color: Colors.WHITE,
     fontSize: 18,
     fontWeight: '600',
-    // textAlign: 'center',
     flex: 1,
+    // textAlign: 'center',
   },
   userId: {
     color: Colors.WHITE,
@@ -95,5 +91,4 @@ const styles = StyleSheet.create({
   },
 });
 
-//make this component available to the app
 export default HeaderComp;

@@ -1,19 +1,15 @@
-//import liraries
 import React, { useEffect, useState, useRef } from 'react';
 import { View,
     Text,
     ScrollView,
     TouchableOpacity,
-    Dimensions,
     SafeAreaView,
     StyleSheet,
 } from 'react-native';
 
 import Colors from '../../../Constants/Colors';
 
-// --- UI Constants for Consistency ---
 const UI_COLORS = {
-    // Attempt to use user's Colors, fallback to standard brights
     CORRECT: Colors.CORRECT || '#4CAF50',
     INCORRECT: Colors.INCORRECT || '#F44336',
     SKIPPED: Colors.SKIPPED || '#FFC107',
@@ -25,13 +21,12 @@ const UI_COLORS = {
     CARD_BORDER: '#E0E0E0',
 };
 
-// create a component
 export const DifficultyAnalysis = ({ navigation, resultData }) => {
+    const [sectionData, setSectionData] = useState({}); 
     const [easyData, setEasyData] = useState({});
     const [mediumData, setMediumData] = useState({});
-    const [hardData, setHardData] = useState({});
+    const [hardData, setHardData] = useState({}); 
 
-    // QuestionButton remains mostly the same, but uses new styles
     const QuestionButton = ({ number, type }) => {
         let backgroundColor;
         switch (type) {
@@ -48,7 +43,6 @@ export const DifficultyAnalysis = ({ navigation, resultData }) => {
                 backgroundColor = '#BDBDBD'; 
         }
 
-        // Logic for question number 22 (retained from original code)
         if (number === 22) {
             return (
                 <TouchableOpacity style={[styles.questionCircle, { backgroundColor }]}>
@@ -58,7 +52,6 @@ export const DifficultyAnalysis = ({ navigation, resultData }) => {
         }
 
         const handlePress = () => {
-             // navigation.navigate('QuestionDetail', { questionNumber: number, type });
              console.log(`Question ${number} (${type}) pressed.`);
         };
 
@@ -69,41 +62,47 @@ export const DifficultyAnalysis = ({ navigation, resultData }) => {
         );
     };
 
-    const SectionQuestions = ({ title, data }) => (
-        <View style={styles.sectionContainer}>
-            <Text style={styles.sectionTitle}>{title}</Text>
-            <View style={styles.questionsRow}>
-                {data.incorrect.map(num => (
-                    <QuestionButton key={`inc-${num}`} number={num} type="incorrect" />
-                ))}
-                {data.correct.map(num => (
-                    <QuestionButton key={`cor-${num}`} number={num} type="correct" />
-                ))}
-                {data.skipped.map(num => (
-                    <QuestionButton key={`skip-${num}`} number={num} type="skipped" />
-                ))}
-            </View>
-        </View>
-    );
-
-    const DifficultyPanel = ({ title, data, style }) => {
-        const hasData = Object.keys(data).length > 0;
-        if (!hasData) return null; // Prevent rendering empty panels
-
+    const DifficultyButtons = ({ difficulty, data }) => {
         let headerColor;
-        switch(title) {
+        switch(difficulty) {
             case 'Easy': headerColor = UI_COLORS.EASY; break;
             case 'Medium': headerColor = UI_COLORS.MEDIUM; break;
             case 'Hard': headerColor = UI_COLORS.HARD; break;
             default: headerColor = UI_COLORS.TEXT_DARK;
         }
 
+        const hasQuestions = data.correct.length > 0 || data.incorrect.length > 0 || data.skipped.length > 0;
+        if (!hasQuestions) return null;
+
         return (
-            <View style={[styles.difficultyPanel, style]}>
-                <Text style={[styles.difficultyHeader, { color: headerColor }]}>{title}</Text>
-                {Object.entries(data).map(([sectionTitle, sectionData]) => (
-                    <SectionQuestions key={sectionTitle} title={sectionTitle} data={sectionData} />
-                ))}
+            <View style={styles.difficultySectionContainer}>
+                <Text style={[styles.difficultyLevelTitle, { color: headerColor }]}>{difficulty}</Text>
+                <View style={styles.questionsRow}>
+                    {data.incorrect.map(num => (
+                        <QuestionButton key={`inc-${num}`} number={num} type="incorrect" />
+                    ))}
+                    {data.correct.map(num => (
+                        <QuestionButton key={`cor-${num}`} number={num} type="correct" />
+                    ))}
+                    {data.skipped.map(num => (
+                        <QuestionButton key={`skip-${num}`} number={num} type="skipped" />
+                    ))}
+                </View>
+            </View>
+        );
+    };
+
+    const SectionPanel = ({ title, data }) => {
+        const hasData = Object.keys(data).length > 0;
+        if (!hasData) return null; 
+
+        return (
+            <View style={styles.sectionPanel}>
+                <Text style={styles.sectionHeader}>{title}</Text>
+                
+                <DifficultyButtons difficulty="Easy" data={data.Easy} />
+                <DifficultyButtons difficulty="Medium" data={data.Medium} />
+                <DifficultyButtons difficulty="Hard" data={data.Hard} />
             </View>
         );
     };
@@ -116,57 +115,60 @@ export const DifficultyAnalysis = ({ navigation, resultData }) => {
             return acc;
         }, {});
 
-        const initialStructure = () => ({
+        const initialStatusStructure = () => ({
             correct: [],
             incorrect: [],
             skipped: [],
         });
 
-        let easy = {};
-        let medium = {};
-        let hard = {};
+        let newSectionAnalysis = {};
+
         resultData.my_progress.questions.forEach(element => {
-            const sectionName = sectionsMap[element.section_id];
-            const difficultyLevel = element.que_level; 
+            const sectionName = sectionsMap[element.section_id] || 'Unknown Section';
+            const difficultyCode = element.que_level; 
             const cj = element.custom_json;
 
-            let targetData;
-            switch(difficultyLevel) {
-                case "0": targetData = easy; break;
-                case "1": targetData = medium; break;
-                case "2": targetData = hard; break;
-                default: return; // Skip questions with invalid difficulty levels
+            let difficultyLevel;
+            switch(difficultyCode) {
+                case "0": difficultyLevel = "Easy"; break;
+                case "1": difficultyLevel = "Medium"; break;
+                case "2": difficultyLevel = "Hard"; break;
+                default: return; 
             }
-
-            if (!targetData[sectionName]) {
-                targetData[sectionName] = initialStructure();
+            
+            if (!newSectionAnalysis[sectionName]) {
+                newSectionAnalysis[sectionName] = {
+                    'Easy': initialStatusStructure(),
+                    'Medium': initialStatusStructure(),
+                    'Hard': initialStatusStructure(),
+                };
             }
 
             const isCorrect = cj.is_correct.toString() === "1";
             const isAnswered = cj.state === "answered";
+            const targetDifficultyData = newSectionAnalysis[sectionName][difficultyLevel];
 
             if (isAnswered) {
                 if (isCorrect) {
-                    targetData[sectionName].correct.push(element.sno);
+                    targetDifficultyData.correct.push(element.sno);
                 } else {
-                    targetData[sectionName].incorrect.push(element.sno);
+                    targetDifficultyData.incorrect.push(element.sno);
                 }
             } else {
-                targetData[sectionName].skipped.push(element.sno);
+                targetDifficultyData.skipped.push(element.sno);
             }
         });
 
-        setEasyData(easy);
-        setMediumData(medium);
-        setHardData(hard);
+        setSectionData(newSectionAnalysis);
+        setEasyData({});
+        setMediumData({});
+        setHardData({});
     }, [resultData]);
 
-    // --- Render ---
     return (
         <SafeAreaView style={styles.safeArea}>
             <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
                 
-                {/* --- Indicator/Legend Section --- */}
                 <View style={styles.indicatorContainer}>
                     <Text style={styles.indicatorHeader}>Indicator</Text>
                     <View style={styles.legendRow}>
@@ -185,11 +187,14 @@ export const DifficultyAnalysis = ({ navigation, resultData }) => {
                     </View>
                 </View>
 
-                {/* --- Difficulty Panels (Easy, Medium, Hard) --- */}
                 <View style={styles.panelsContainer}>
-                    <DifficultyPanel title="Easy" data={easyData} />
-                    <DifficultyPanel title="Medium" data={mediumData} />
-                    <DifficultyPanel title="Hard" data={hardData} />
+                    {Object.entries(sectionData).map(([sectionTitle, data]) => (
+                        <SectionPanel 
+                            key={sectionTitle} 
+                            title={sectionTitle} 
+                            data={data} 
+                        />
+                    ))}
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -197,7 +202,28 @@ export const DifficultyAnalysis = ({ navigation, resultData }) => {
 };
 
 
-// --- Stylesheet ---
+const baseCard = {
+    marginBottom: 20,
+    padding: 15,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
+};
+
+const baseHeader = {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: UI_COLORS.TEXT_DARK,
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+    paddingBottom: 5,
+};
+
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
@@ -212,26 +238,13 @@ const styles = StyleSheet.create({
         paddingTop: 10,
     },
     
-    // --- Indicator Styles ---
     indicatorContainer: {
-        marginBottom: 20,
-        padding: 15,
-        backgroundColor: '#FFFFFF',
-        borderRadius: 12,
-        shadowColor: "#000",
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        shadowOffset: { width: 0, height: 2 },
-        elevation: 3,
+        ...baseCard,
     },
     indicatorHeader: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: UI_COLORS.TEXT_DARK,
-        marginBottom: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: '#F0F0F0',
-        paddingBottom: 5,
+        ...baseHeader,
+        fontSize: 19,
+        borderBottomWidth: 2,
     },
     legendRow: {
         flexDirection: 'row',
@@ -256,40 +269,32 @@ const styles = StyleSheet.create({
         color: UI_COLORS.TEXT_DARK, 
     },
     
-    // --- Difficulty Panel Styles ---
     panelsContainer: {},
-    difficultyPanel: {
-        marginBottom: 20,
-        borderRadius: 12,
-        padding: 15,
-        backgroundColor: '#FFFFFF',
-        shadowColor: "#000",
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        shadowOffset: { width: 0, height: 2 },
-        elevation: 3,
+
+    sectionPanel: {
+        ...baseCard,
     },
-    difficultyHeader: {
-        fontSize: 22,
+    sectionHeader: {
+        ...baseHeader,
+        fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 15,
-        borderBottomWidth: 3, // Thicker underline for better separation
+        borderBottomWidth: 3, 
         paddingBottom: 8,
-        borderBottomColor: '#F0F0F0', // Light gray divider
+        borderBottomColor: '#E0E0E0',
     },
     
-    sectionContainer: {
+    difficultySectionContainer: {
         marginBottom: 15,
         paddingBottom: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#F5F5F5',
-    },
-    sectionTitle: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: UI_COLORS.TEXT_DARK,
-        marginBottom: 10,
         paddingLeft: 5,
+    },
+    difficultyLevelTitle: {
+        fontSize: 15,
+        fontWeight: '700',
+        marginBottom: 10,
     },
     questionsRow: {
         flexDirection: 'row',

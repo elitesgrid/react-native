@@ -25,17 +25,10 @@ const CommonStyles = StyleSheet.create({
     marginRight: 5,
   },
   headerView: {
-     paddingTop: Platform.select({
-      ios: 0,
-      android: 20,
+    paddingTop: Platform.select({
+      ios: getStatusBarHeight(),         // Handles iOS notch and non-notch
+      android: getStatusBarHeight(true), // Handles Android notch & status bar
     }),
-    height:
-      Platform.select({
-        ios: 80,
-        android: 40,
-      }) + getStatusBarHeight(),
-    width: '100%',
-    justifyContent: 'center',
     backgroundColor: Colors.THEME,
   },
   notificationImage: {
@@ -50,9 +43,10 @@ const CommonStyles = StyleSheet.create({
   },
   HeaderContainer: {
     flexDirection: 'row',
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
   headerText: {
     color: 'white',
