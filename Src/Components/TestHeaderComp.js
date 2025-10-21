@@ -7,7 +7,7 @@ import { ifIphoneX,getStatusBarHeight,getBottomSpace } from 'react-native-iphone
 import imagePaths from '../Constants/imagePaths';
 import { useNavigation } from '@react-navigation/native';
 import Colors from '../Constants/Colors';
-
+import CommonStyles from '../Assets/Style/CommonStyle';
 
 // create a component
 const TestHeaderComp = ({
@@ -23,9 +23,9 @@ const TestHeaderComp = ({
         navigation.goBack(null);
     }
     return (
-        <SafeAreaView style={{ ...styles.headerView, ...headerStyles }}>
+        <SafeAreaView style={{ ...CommonStyles.headerView, ...headerStyles }}>
             <StatusBar backgroundColor={Colors.THEME} barStyle="light-content" />
-            <View style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+            <View style={CommonStyles.HeaderContainer}>
                 <TouchableOpacity 
                  style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
                  onPress={!!onPressBack ? onPressBack : () => goBack()}>
@@ -61,25 +61,10 @@ const TestHeaderComp = ({
 
 // define your styles
 const styles = StyleSheet.create({
-    headerView: {
-        paddingTop: Platform.select({
-              ios: 0,
-              android: 20,
-            }),
-        height:
-            Platform.select({
-            ios: 80,
-            android: 40,
-            }) + getStatusBarHeight(),
-        width: "100%",
-        justifyContent: "center",
-        backgroundColor: Colors.THEME
-    },
     image: {
         height: 20,
         width: 20,
-        marginLeft: 20,
-        tintColor: Colors.WHITE
+        tintColor: Colors.WHITE,
     }
 });
 

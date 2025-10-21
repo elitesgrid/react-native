@@ -13,6 +13,7 @@ import imagePaths from '../Constants/imagePaths';
 import { useNavigation } from '@react-navigation/native';
 import Colors from '../Constants/Colors';
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
+import CommonStyles from '../Assets/Style/CommonStyle';
 
 const HeaderComp = ({
   onPressBack,
@@ -26,12 +27,12 @@ const HeaderComp = ({
   };
 
   return (
-    <SafeAreaView style={[styles.safeArea, headerStyles]}>
+    <SafeAreaView style={[CommonStyles.headerView, headerStyles]}>
       <StatusBar
         backgroundColor={Colors.THEME}
         barStyle="light-content"
       />
-      <View style={styles.headerContainer}>
+      <View style={CommonStyles.HeaderContainer}>
         {/* LEFT: Back button */}
         <TouchableOpacity
           style={styles.backButton}
@@ -53,20 +54,6 @@ const HeaderComp = ({
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    backgroundColor: Colors.THEME,
-    paddingTop: Platform.select({
-      ios: getStatusBarHeight(),         // Handles iOS notch and non-notch
-      android: getStatusBarHeight(true), // Handles Android notch & status bar
-    }),
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
   backButton: {
     padding: 8,
   },
