@@ -172,7 +172,7 @@ const TimelineTabs = props => {
                       marginVertical: 2.5,
                       marginHorizontal: 2.5,
                       width: '100%',
-                      height: 90,
+                      // height: 90,
                       paddingVertical: 10,
                       paddingHorizontal: 10,
                       flex: 1,
@@ -219,7 +219,7 @@ const TimelineTabs = props => {
                             }}>
                             {'Description: '}
                           </Text>
-                          {item.description}
+                          {item.description.trim()}
                         </Text>
                         <Text
                           style={{
@@ -337,7 +337,7 @@ const TimelineTabs = props => {
                               }}>
                               {'Description: '}
                             </Text>
-                            {item.description}
+                            {item.description.trim()}
                           </Text>
                           <Text
                             style={{
@@ -435,7 +435,7 @@ const TimelineTabs = props => {
                               }}>
                               {'Description: '}
                             </Text>
-                            {item.description}
+                            {item.description.trim()}
                           </Text>
                           <Text
                             style={{

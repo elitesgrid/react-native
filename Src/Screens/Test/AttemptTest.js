@@ -11,6 +11,7 @@ import { View,
     StyleSheet,
     TextInput,
     ImageBackground,
+    KeyboardAvoidingView,
     useColorScheme
 } from 'react-native';
 //import { WebView } from 'react-native-webview';
@@ -126,29 +127,6 @@ export const AttemptTest = (props) => {
         }
     }
 
-    async function updateLengend(){
-        // FIX: IMMUTABILITY - Create a new drawerLegend array instead of mutating the existing one (dl)
-        let localStatesTotal = {
-            answered: 0,
-            not_answered: 0,
-            not_visited: 0,
-            marked_for_review: 0,
-            answered_marked_for_review: 0
-        }
-        
-        finalJson.forEach(val =>{ // Use finalJson directly
-            ++localStatesTotal[val.state];
-        });
-        
-        // Use map to create a new array with updated counts
-        const updatedDrawerLegend = drawerLegend.map(val => ({
-            ...val,
-            count: localStatesTotal[val.key] || 0,
-        }));
-        
-        setDrawerLegend(updatedDrawerLegend); // Set state with the new array
-    }
-
      async function load_question(index) {
         let currentQuestion = testQuestions[index];
         if(!currentQuestion){
@@ -170,6 +148,7 @@ export const AttemptTest = (props) => {
         const newCurrentQuestion = {
             ...currentQuestion,
             answers: userSavedAnswers,
+            c_index: currentQuestion.c_index
         }
 
         setCurrentQuestions(newCurrentQuestion);
@@ -242,7 +221,6 @@ export const AttemptTest = (props) => {
             // Update the auxiliary state used by TextInput
             setFibActiveAnswers(newAnswers);
         }
-        updateLengend(); // Update legend based on new finalJson state
     }
 
     async function togglePallete(){
@@ -283,7 +261,6 @@ export const AttemptTest = (props) => {
         });
 
         setFinalJson(newFinalJson);
-        updateLengend();
     }
 
     const nextQuestion = async function (){
@@ -308,27 +285,31 @@ export const AttemptTest = (props) => {
             Alert.alert("Warning","Section switching not allowed");
             return false;
         }
-
         load_question(index);
     }
 
     const submitTest = async function() {
-        // ... submitTest logic remains unchanged ...
-        let payload = {
-            json: JSON.stringify(finalJson),
-            time_taken: remainSeconds,
-            test_id: params.id,
-            section_sequence: resumeSectionId,
-            state: 2,
-            first_attempt: "1",
-            last_question: parseInt(currentQuestionsIndex),
-            active_section: currentQuestions.section_id
-        }
+        await saveAnswer(false);
 
         showConfirmDialog({
             title: 'Elites Grid',
             message: 'Are you sure want to submit test?',
             onConfirm: () => {
+                let fj = finalJson.map(item => {
+                    const { c_index, ...rest } = item;
+                    return rest;
+                });
+                let payload = {
+                    json: JSON.stringify(fj),
+                    time_taken: remainSeconds,
+                    test_id: params.id,
+                    section_sequence: resumeSectionId,
+                    state: 2,
+                    first_attempt: "1",
+                    last_question: parseInt(currentQuestionsIndex),
+                    active_section: currentQuestions.section_id
+                }
+
                 TestServices.submit_test_detail(payload).then(async (data) => {
                     data = data.data;
                     if (data.id) {
@@ -367,13 +348,19 @@ export const AttemptTest = (props) => {
 
                 setTestSeries(data);
 
+                let section_index_map = {};
                 let sections = [];
                 let questions = [];
                 let user_answers = [];
                 let index = 0;
-                let total_sec = remainSeconds;
+                let total_sec = 0;
                 data.questions.forEach(element => {
                     element.questions.forEach((que, ind) => {
+                        if (!section_index_map[que.section_id]) {
+                            section_index_map[que.section_id] = 0;
+                        }
+                        section_index_map[que.section_id]++;
+
                         switch(que.question_type) {
                             case "3":
                                 element.questions[ind].question_type = "FIB";
@@ -406,10 +393,14 @@ export const AttemptTest = (props) => {
                             index:index,
                             state: state,
                             spent_time: spent_time,
-                            answers : answers
+                            answers : answers,
+                            c_index: section_index_map[que.section_id]
                         })
                         ++index;
+
+                        element.questions[ind].c_index= section_index_map[que.section_id];
                     });
+
                     sections.push({ key: element.id, title: element.subject });
                     questions.push(...element.questions);
                     total_sec += (parseInt(element.section_timing) * 60);
@@ -418,7 +409,7 @@ export const AttemptTest = (props) => {
                 setTestSections(sections);
                 setTestQuestions(questions);
                 // Ensure initial time is correct
-                setRemainSeconds(total_sec - (resume_time_taken || 0)); 
+                setRemainSeconds(remainSeconds ? remainSeconds : total_sec - (resume_time_taken || 0)); 
                 setIsLoading(false);
             } else {
                 setIsLoading(false);
@@ -429,6 +420,27 @@ export const AttemptTest = (props) => {
             return false;
         });
     }
+
+    useEffect(function(){
+        let localStatesTotal = {
+            answered: 0,
+            not_answered: 0,
+            not_visited: 0,
+            marked_for_review: 0,
+            answered_marked_for_review: 0
+        }
+        
+        finalJson.forEach(val =>{ 
+            ++localStatesTotal[val.state];
+        });
+        
+        const updatedDrawerLegend = drawerLegend.map(val => ({
+            ...val,
+            count: localStatesTotal[val.key] || 0,
+        }));
+        
+        setDrawerLegend(updatedDrawerLegend); 
+    }, [finalJson])
 
     useEffect(function(){
         if(finalJson.length > 0){
@@ -500,7 +512,7 @@ export const AttemptTest = (props) => {
         if (!selected) return null;
 
         return (
-            <TouchableOpacity onPress={() => index !== "" && pallete_jump_question(index)}>
+            <TouchableOpacity onPress={() => index !== "" && pallete_jump_question(index, value)}>
                 <ImageBackground source={selected.image} style={selected.style}>
                     <Text style={{ color: selected.textColor }}>{value}</Text>
                 </ImageBackground>
@@ -554,7 +566,7 @@ export const AttemptTest = (props) => {
                                             styles.legendItem,
                                             {
                                                 // Retained complex width logic as per original code
-                                                width: idx == 4 ? "95%" : (idx % 2 === 0 ? "40%" : "60%"), 
+                                                width: idx == 4 ? "98%" : (idx % 2 === 0 ? "40%" : "60%"), 
                                             }
                                         ]}
                                         >
@@ -577,11 +589,17 @@ export const AttemptTest = (props) => {
                                 {/* Question Palette */}
                                 <ScrollView contentContainerStyle={styles.questionPaletteScroll}>
                                     <View style={styles.questionPaletteRow}>
-                                    {finalJson.map((item, index) => (
-                                        <View key={index} style={styles.questionPaletteItem}>
-                                        {pallete_highlighers(item.state, item.index + 1, item.index)}
-                                        </View>
-                                    ))}
+                                    {
+                                        finalJson.filter(item => 
+                                            currentQuestions.section_id === item.section_id || params.allow_move_section === "1"
+                                        ).map((item, index) => {
+                                            return (
+                                                <View key={index} style={styles.questionPaletteItem}>
+                                                    {pallete_highlighers(item.state, params.allow_move_section === "0" ? item.c_index : item.index + 1, item.index)}
+                                                </View>
+                                            )
+                                        })
+                                    }
                                     </View>
                                 </ScrollView>
 
@@ -630,8 +648,15 @@ export const AttemptTest = (props) => {
                         </View>
                         {
                             currentQuestions && Object.keys(currentQuestions).length > 0 &&
-                            <>
-                                <ScrollView>
+                            <KeyboardAvoidingView
+                                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                                style={{flex: 1}}
+                                keyboardVerticalOffset={60} 
+                                >
+                                <ScrollView contentContainerStyle={{
+                                    flexGrow: 1,
+                                    justifyContent: 'flex-end'
+                                }}>
                                     <View style={{ flex: 1, marginBottom: 10 }}>
                                         <View style={TestSeriesStyle.questionTypeCard}>
                                             <Text style={TestSeriesStyle.questionTypeText}>{
@@ -641,7 +666,7 @@ export const AttemptTest = (props) => {
                                             }</Text>
                                         </View>
                                         <View style={TestSeriesStyle.questionNumberingCard}>
-                                            <Text style={TestSeriesStyle.questionNumberingText}>{"Question: " + (currentQuestionsIndex + 1)}</Text>
+                                            <Text style={TestSeriesStyle.questionNumberingText}>{"Question: " + (params.allow_move_section === "0" ? currentQuestions.c_index : (currentQuestionsIndex + 1))}</Text>
                                         </View>
                                         <View style={TestSeriesStyle.questionCard}>
                                             {currentQuestions.passage !== "" &&
@@ -689,7 +714,10 @@ export const AttemptTest = (props) => {
                                                         ]}
                                                     >
                                                         <View style={{ paddingRight: 8 }}>
-                                                            <Image source={imagePaths[`TEST_OPTION_${String.fromCharCode(64 + opt)}`]} />
+                                                            <Image 
+                                                            source={selected ? imagePaths.LETTERS[`${String.fromCharCode(64 + opt)}`] : imagePaths[`TEST_OPTION_${String.fromCharCode(64 + opt)}`]}
+                                                            style={{height: 30,width: 30}}
+                                                             />
                                                         </View>
                                                         <View style={styles.optionContent}>
                                                             {
@@ -757,7 +785,7 @@ export const AttemptTest = (props) => {
                                         }
                                     </View>
                                 </View>
-                            </>
+                            </KeyboardAvoidingView>
                         }
                             
                     </MenuDrawer>
@@ -790,7 +818,8 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   legendContainer: { 
-    padding: 16 
+    paddingVertical: 16,
+    paddingHorizontal: 5
   },
   legendHeader: { 
     fontSize: 16, 
@@ -809,7 +838,7 @@ const styles = StyleSheet.create({
   },
   legendText: { 
     marginLeft: 8, 
-    fontSize: 14, 
+    fontSize: 13, 
     color: Colors.DARK 
   },
   chooseQuestionHeader: { 
@@ -935,8 +964,10 @@ const styles = StyleSheet.create({
     bottomControlBar: { 
         flexDirection:"row",
         justifyContent:"space-between", 
-        height:50,
-        padding:10,
+        height:60,
+        paddingHorizontal:10,
+        padingBottom: 20,
+        paddingTop: 5,
         backgroundColor:Colors.WHITE 
     },
     prevNextButton: { 

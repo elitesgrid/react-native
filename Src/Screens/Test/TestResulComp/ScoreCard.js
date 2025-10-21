@@ -3,30 +3,17 @@ import React, { useEffect, useState, useRef } from 'react';
 import { View,
     Text,
     ScrollView,
-    useWindowDimensions,
-    Image,
-    TouchableOpacity,
     SafeAreaView,
-    Alert,
     StyleSheet,
-    TextInput,
-    ImageBackground
 } from 'react-native';
 
-import Colors from '../../../Constants/Colors'; // Assuming Colors provides essential colors
-import TestSeriesStyle from '../../../Assets/Style/TestSeriesStyle';
-import imagePaths from '../../../Constants/imagePaths';
-import TestServices from '../../../Services/apis/TestServices';
-import CustomHelper from '../../../Constants/CustomHelper';
-import HeaderComp from '../../../Components/HeaderComp';
+import Colors from '../../../Constants/Colors'; 
 
-// --- UI Constants for Consistency ---
-const UI_COLORS = {
-    // These colors are used for metrics that denote status
+const UI_COLORS = {    
     CORRECT: Colors.CORRECT || '#4CAF50',
     INCORRECT: Colors.INCORRECT || '#F44336',
     SKIPPED: Colors.SKIPPED || '#FFC107',
-    TOTAL_SCORE: Colors.PRIMARY || '#007AFF', // Using a primary color for the main score
+    TOTAL_SCORE: Colors.PRIMARY || '#007AFF', 
     ACCURACY: Colors.ACCURACY || '#2ecc71',
     ATTEMPTED: Colors.ATTEMPTED || '#1a2779',
     HEADER_BG: Colors.BG || '#f4f6fb',
@@ -34,30 +21,12 @@ const UI_COLORS = {
     TEXT_DARK: Colors.BLACK || '#222',
 };
 
-// --- Reusable Component for a Single Metric Row ---
-const MetricRow = ({ title, value, color, isPercentage }) => {
-    // Determine the color for the value, prioritizing explicit color if provided
-    const valueColor = color ? color : UI_COLORS.TEXT_DARK;
-    const formattedValue = isPercentage ? `${value}%` : value;
-
-    return (
-        <View style={styles.metricRow}>
-            <Text style={styles.metricTitle}>{title}</Text>
-            <Text style={[styles.metricValue, { color: valueColor }]}>{formattedValue}</Text>
-        </View>
-    );
-};
-
-
-// create a component
 export const ScoreCard = ({ navigation, resultData }) => {
   const [filteredData, setFilteredData] = useState([]);
 
   useEffect(() => {
     if (!resultData?.my_progress?.sections?.length) return;
 
-    // The structure will hold the column titles and an array of objects for data points
-    // New structure: Group data by SECTION (row) rather than by METRIC (column)
     const sections = resultData.my_progress.sections;
     const newStructure = sections.map((section) => ({
         subject: section.subject,
@@ -66,14 +35,11 @@ export const ScoreCard = ({ navigation, resultData }) => {
         incorrect: section.in_correct,
         skipped: section.skipped,
         accuracy: section.accuracy,
-        attempted: section.percentile, // Using percentile for attempted_percent
+        attempted: section.percentile, 
     }));
-
-    // For the overall ScoreCard structure, we just need the array of sections
     setFilteredData(newStructure);
   }, [resultData]);
-
-  // If data isn't processed yet, return a loading view or null
+  
   if (filteredData.length === 0) {
       return (
           <View style={styles.loadingContainer}>
@@ -81,14 +47,11 @@ export const ScoreCard = ({ navigation, resultData }) => {
           </View>
       );
   }
-
-  // Calculate the overall test totals for the final row
+  
   const totalScore = filteredData.reduce((sum, item) => sum + Number(item.score || 0), 0);
   const totalCorrect = filteredData.reduce((sum, item) => sum + Number(item.correct || 0), 0);
   const totalIncorrect = filteredData.reduce((sum, item) => sum + Number(item.incorrect || 0), 0);
   const totalSkipped = filteredData.reduce((sum, item) => sum + Number(item.skipped || 0), 0);
-
-  // The simplified data structure will be rendered in a single table-like view
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -113,56 +76,35 @@ export const ScoreCard = ({ navigation, resultData }) => {
         {filteredData.map((section, index) => (
             <View key={index} style={styles.dataRow}>
                 <Text style={[styles.dataCell, styles.dataCellSubject]}>{section.subject}</Text>
-                
-                {/* Score (Total) */}
                 <Text style={[styles.dataCell, { fontWeight: '700', color: UI_COLORS.TOTAL_SCORE }]}>
                     {Number(section.score).toFixed(2)}
                 </Text>
-
-                {/* Correct */}
                 <Text style={[styles.dataCell, { color: UI_COLORS.CORRECT }]}>{section.correct}</Text>
-
-                {/* Incorrect */}
                 <Text style={[styles.dataCell, { color: UI_COLORS.INCORRECT }]}>{section.incorrect}</Text>
-
-                {/* Skipped */}
                 <Text style={[styles.dataCell, { color: UI_COLORS.SKIPPED }]}>{section.skipped}</Text>
-                
-                {/* Accuracy */}
                 <Text style={[styles.dataCell, { fontWeight: '600' }]}>{Number(section.accuracy).toFixed(1)}%</Text>
             </View>
         ))}
-
-        {/* --- Total Summary Row --- */}
         <View style={[styles.dataRow, styles.totalSummaryRow]}>
-            <Text style={[styles.dataCell, styles.dataCellSubject, { fontWeight: 'bold' }]}>Total</Text>
-            
+            <Text style={[styles.dataCell, styles.dataCellSubject, { fontWeight: 'bold' }]}>Total</Text>            
             <Text style={[styles.dataCell, { fontWeight: 'bold', color: UI_COLORS.TOTAL_SCORE }]}>
                 {totalScore.toFixed(2)}
             </Text>
-
             <Text style={[styles.dataCell, { fontWeight: 'bold', color: UI_COLORS.CORRECT }]}>{totalCorrect}</Text>
             <Text style={[styles.dataCell, { fontWeight: 'bold', color: UI_COLORS.INCORRECT }]}>{totalIncorrect}</Text>
             <Text style={[styles.dataCell, { fontWeight: 'bold', color: UI_COLORS.SKIPPED }]}>{totalSkipped}</Text>
-            
-            {/* Overall Accuracy */}
             <Text style={[styles.dataCell, { fontWeight: 'bold' }]}>
                 {((totalCorrect / (totalCorrect + totalIncorrect)) * 100 || 0).toFixed(1)}%
             </Text>
         </View>
 
-        {/* --- Attempted Percentage Card (Separate summary block for better visual impact) --- */}
         {filteredData.some(s => s.attempted) && (
             <View style={styles.attemptedCardContainer}>
                 <Text style={styles.attemptedCardTitle}>Attempted & Percentile</Text>
-                
-                {/* Header Row for Attempted Data */}
                 <View style={[styles.headerRow, styles.attemptedHeader]}>
                     <Text style={[styles.headerCell, styles.headerCellSubject]}>Section</Text>
-                    <Text style={styles.headerCell}>Attempted (%)</Text>
+                    <Text style={styles.headerCell}>Percentile (%)</Text>
                 </View>
-
-                {/* Data Rows for Attempted Data */}
                 {filteredData.map((section, index) => (
                     <View key={`att-${index}`} style={styles.dataRow}>
                         <Text style={[styles.dataCell, styles.dataCellSubject]}>{section.subject}</Text>
@@ -203,10 +145,10 @@ const styles = StyleSheet.create({
         marginBottom: 15,
     },
     
-    // --- Table/Grid Styles ---
+    //
     headerRow: {
         flexDirection: 'row',
-        backgroundColor: UI_COLORS.ATTEMPTED, // Use a strong color for the header
+        backgroundColor: UI_COLORS.ATTEMPTED, 
         paddingVertical: 10,
         borderRadius: 8,
         marginBottom: 5,
@@ -219,7 +161,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     headerCellSubject: {
-        flex: 2, // Allocate more space for the subject name
+        flex: 2, 
         textAlign: 'left',
         paddingLeft: 10,
     },
@@ -229,7 +171,7 @@ const styles = StyleSheet.create({
         backgroundColor: UI_COLORS.CARD_BG,
         paddingVertical: 12,
         borderRadius: 8,
-        marginBottom: 4, // Reduce margin to make it look like a cohesive list/table
+        marginBottom: 4, 
         alignItems: 'center',
         shadowColor: '#000',
         shadowOpacity: 0.05,
@@ -252,12 +194,12 @@ const styles = StyleSheet.create({
     },
     totalSummaryRow: {
         marginTop: 10,
-        backgroundColor: UI_COLORS.TEXT_DARK, // Dark background for the total row
+        backgroundColor: UI_COLORS.TEXT_DARK, 
         borderRadius: 10,
         borderWidth: 2,
-        borderColor: UI_COLORS.TOTAL_SCORE, // Highlight border
+        borderColor: UI_COLORS.TOTAL_SCORE, 
     },
-    // --- Attempted Percentage Card Styles (Secondary Data) ---
+    
     attemptedCardContainer: {
         backgroundColor: UI_COLORS.CARD_BG,
         marginTop: 20,

@@ -107,7 +107,7 @@ export const Home = (props) => {
                             return (<TouchableOpacity onPress={() => navPastPaperDetail(item)} key={index} style={{ borderColor: "#EEEEEE", backgroundColor: "white", borderWidth: 1, borderRadius: 10, marginHorizontal: 5, paddingHorizontal: 8 }}>
                               <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", height: 48 }}>
                                 <Image source={imagePaths.PAST_PAPER} style={{ height: 32, width: 32, marginHorizontal: 5 }} />
-                                <Text>{item.title}</Text>
+                                <Text style={{color:Colors.DARK}}>{item.title}</Text>
                               </View>
                             </TouchableOpacity>)
                           })

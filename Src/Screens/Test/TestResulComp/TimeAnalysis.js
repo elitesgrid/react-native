@@ -159,6 +159,12 @@ export const TimeAnalysis = ({ resultData }) => {
                 case "not_visited": 
                     state = "Not Visited"; 
                     break;
+                case "not_answered": 
+                    state = "Not Answered"; 
+                    break;
+                case "answered_marked_for_review": 
+                    state = "Bookmarked"; 
+                    break;
                 default: 
                     state = cj.state !== "" ? cj.state : "N/A"; 
                     break;
@@ -248,7 +254,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.BORDER_LIGHT,
   },
   itemSectionNo: {
-    width: 45,
+    width: 35,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
@@ -259,7 +265,7 @@ const styles = StyleSheet.create({
     color: Colors.TIME_PRIMARY,
   },
   itemSectionMetrics: {
-    flex: 2,
+    flex: 3.5,
     paddingRight: 10,
     borderRightWidth: 1,
     borderRightColor: Colors.BORDER_LIGHT,

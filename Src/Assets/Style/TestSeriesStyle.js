@@ -1,9 +1,4 @@
 import {StyleSheet} from 'react-native';
-import {
-  moderateScale,
-  scale,
-  moderateVerticalScale,
-} from 'react-native-size-matters';
 import Colors from '../../Constants/Colors';
 
 const TestSeriesStyle = StyleSheet.create({
@@ -109,7 +104,8 @@ const TestSeriesStyle = StyleSheet.create({
   pallete_header: {
     flexDirection: "row", 
     alignItems: "center", 
-    paddingVertical: 12, 
+    paddingTop: 30,
+    paddingBottom: 12, 
     paddingHorizontal: 16, 
     backgroundColor: Colors.THEME 
   },
@@ -123,7 +119,8 @@ const TestSeriesStyle = StyleSheet.create({
     width: 30,
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 5,
+    marginVertical: 5,
+    marginHorizontal: 1
   },
 });
 

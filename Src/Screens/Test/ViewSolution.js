@@ -416,7 +416,10 @@ export const ViewSolution = (props) => {
                                                         ]}
                                                     >
                                                         <View style={{ paddingRight: 8 }}>
-                                                            <Image source={imagePaths[`TEST_OPTION_${String.fromCharCode(64 + opt)}`]} />
+                                                            <Image 
+                                                            source={selected ? imagePaths.LETTERS[`${String.fromCharCode(64 + opt)}`] : imagePaths[`TEST_OPTION_${String.fromCharCode(64 + opt)}`]} 
+                                                            style={{height: 30, width: 30}}
+                                                            />
                                                         </View>
                                                         <View style={styles.optionContent}>
                                                             {

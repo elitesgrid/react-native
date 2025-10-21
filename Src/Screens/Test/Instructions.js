@@ -73,7 +73,7 @@ export const Instructions = (props) => {
                                     start={{ x: 0, y: 0 }}
                                     end={{ x: 1, y: 1 }}
                                     style={TestSeriesStyle.instHeadingGradient}
-                                    colors={['#0274BA', 'white']}>
+                                    colors={['#0274BA', '#7cb7dbff']}>
                                     <Text style={TestSeriesStyle.instHeadingGradientText}>3 Sections</Text>
                                 </LinearGradient>
                                 <View style={TestSeriesStyle.container}>
@@ -100,7 +100,7 @@ export const Instructions = (props) => {
                                                     start={{ x: 0, y: 0 }}
                                                     end={{ x: 1, y: 1 }}
                                                     style={TestSeriesStyle.instHeadingGradient}
-                                                    colors={['#0274BA', 'white']}>
+                                                    colors={['#0274BA', '#7cb7dbff']}>
                                                     <Text style={TestSeriesStyle.instHeadingGradientText}>{item.subject}</Text>
                                                 </LinearGradient>
                                                 <View style={TestSeriesStyle.container} key={"lv" + index}>
@@ -125,7 +125,7 @@ export const Instructions = (props) => {
                                     start={{ x: 0, y: 0 }}
                                     end={{ x: 1, y: 1 }}
                                     style={{ ...TestSeriesStyle.instHeadingGradient, ...{ height: 70 } }}
-                                    colors={['#0274BA', 'white']}>
+                                    colors={['#0274BA', '#7cb7dbff']}>
                                     <Text style={TestSeriesStyle.instHeadingGradientText}>Negative marking for unattempted questions</Text>
                                 </LinearGradient>
                                 <View style={TestSeriesStyle.container}>
@@ -138,7 +138,7 @@ export const Instructions = (props) => {
                                     start={{ x: 0, y: 0 }}
                                     end={{ x: 1, y: 1 }}
                                     style={TestSeriesStyle.instHeadingGradient}
-                                    colors={['#0274BA', 'white']}>
+                                    colors={['#0274BA', '#7cb7dbff']}>
                                     <Text style={TestSeriesStyle.instHeadingGradientText}>Selection, Navigate, Bookmark</Text>
                                 </LinearGradient>
                                 <View style={TestSeriesStyle.container}>
@@ -167,7 +167,8 @@ export const Instructions = (props) => {
                                 }}
                                 style={{
                                     backgroundColor: Colors.THEME,
-                                    marginVertical: 10,
+                                    marginTop: 5,
+                                    marginBottom: 20,
                                     paddingVertical: 10,
                                     marginHorizontal: 20,
                                     borderRadius: 5,
