@@ -1,5 +1,5 @@
 //import liraries
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { View,
     Text,
     ScrollView,
@@ -11,7 +11,8 @@ import { View,
     TextInput,
     ImageBackground,
     Modal,
-    Dimensions
+    Dimensions,
+    useColorScheme
 } from 'react-native';
 //import { WebView } from 'react-native-webview';
 import MenuDrawer from 'react-native-side-drawer'
@@ -47,6 +48,8 @@ export const ViewSolution = (props) => {
     const [currentQuestionsIndex, setCurrentQuestionsIndex] = useState(0);
     const [visibleResponse, setVisibleResponse] = useState(false);
     const [fibActiveAnswers, setFibActiveAnswers] = useState(['', '', '', '']);
+    const colorScheme = useColorScheme();
+    const isNightMode = colorScheme === 'dark';
     const [drawerLegend, setDrawerLegend] = useState([
         { label: "Answered", key: "answered", count: 0 },
         { label: "Not Answered", key: "not_answered", count: 0 },
@@ -54,6 +57,24 @@ export const ViewSolution = (props) => {
         { label: "Marked for Review", key: "marked_for_review", count: 0 },
         { label: "Answered & Marked for Review", key: "answered_marked_for_review", count: 0 },
     ]);
+
+    const htmlTagsStyles = useMemo(() => {
+        if (isNightMode) {
+            if (isNightMode) {
+                const baseStyle = {
+                    whiteSpace: 'normal',
+                    color: Colors.DARK,
+                };
+                return {
+                    body: baseStyle,
+                    p: baseStyle,
+                    span: baseStyle,
+                    li: baseStyle
+                };
+            }
+        }
+        return {};
+    }, [isNightMode]);
 
     async function getSessionData() {
         let session = await StorageManager.get_session();
@@ -305,8 +326,7 @@ export const ViewSolution = (props) => {
                                             style={[
                                                 styles.legendItem,
                                                 {
-                                                    // Retained complex width logic as per original code
-                                                    width: idx == 4 ? "95%" : (idx % 2 === 0 ? "40%" : "60%"), 
+                                                    width: idx == 4 ? "98%" : (idx % 2 === 0 ? "40%" : "60%"),
                                                 }
                                             ]}
                                         >
@@ -388,14 +408,20 @@ export const ViewSolution = (props) => {
                                             {currentQuestions.passage !== "" &&
                                                 <View key={"passage"} style={{ flex: 1 }}>
                                                     <Text>{"Passage"}</Text>
-                                                    <HTML contentWidth={windowWidth} source={{ html: currentQuestions.passage }} />
+                                                    <HTML 
+                                                    contentWidth={windowWidth} 
+                                                    source={{ html: currentQuestions.passage }}
+                                                    tagsStyles={htmlTagsStyles} />
                                                 </View>
                                             }
                                             <View key={"1"}>
                                                 {currentQuestions.passage !== "" &&
                                                     <Text>{"Question"}</Text>
                                                 }
-                                                <HTML contentWidth={windowWidth} source={{ html: currentQuestions.question }} />
+                                                <HTML 
+                                                contentWidth={windowWidth}
+                                                source={{ html: currentQuestions.question }}
+                                                tagsStyles={htmlTagsStyles} />
                                             </View>
                                             {[1, 2, 3, 4].map((opt, i) => {
                                                 const optionText = currentQuestions[`option_${opt}`];
@@ -438,6 +464,7 @@ export const ViewSolution = (props) => {
                                                                 currentQuestions.question_type !== "FIB" && <HTML 
                                                                     contentWidth={windowWidth - 60} // subtract padding + image width
                                                                     source={{ html: optionText }} 
+                                                                    tagsStyles={htmlTagsStyles}
                                                                 />
                                                             }
                                                         </View>
@@ -484,7 +511,7 @@ export const ViewSolution = (props) => {
 
                                                         {
                                                             currentQuestions.video !== '0' && currentQuestions.video && <TouchableOpacity
-                                                                onPress={()=>watchVideoSolution(currentQuestions.video)}
+                                                                onPress={()=> watchVideoSolution(currentQuestions.video)}
                                                                 style={{
                                                                     backgroundColor: "#007BFF",
                                                                     paddingVertical: 8,
@@ -499,7 +526,7 @@ export const ViewSolution = (props) => {
                                                         }
 
                                                         {
-                                                            currentQuestions.passage && 
+                                                            currentQuestions.solution && 
                                                             <View>
                                                                 <Text style={{ fontSize: 16, fontWeight: "600", color: "#333", marginBottom: 8 }}>
                                                                 Solution
@@ -513,7 +540,10 @@ export const ViewSolution = (props) => {
                                                                     borderColor: "#EEE",
                                                                 }}
                                                                 >
-                                                                <HTML contentWidth={windowWidth - 60} source={{ html: currentQuestions.passage }} />
+                                                                <HTML 
+                                                                contentWidth={windowWidth - 60} 
+                                                                source={{ html: currentQuestions.solution }}
+                                                                tagsStyles={htmlTagsStyles} />
                                                                 </View>
                                                             </View>
                                                         }
@@ -617,7 +647,8 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   legendContainer: { 
-    padding: 16 
+    padding: 16 ,
+    paddingHorizontal: 5
   },
   legendHeader: { 
     fontSize: 16, 
@@ -636,7 +667,7 @@ const styles = StyleSheet.create({
   },
   legendText: { 
     marginLeft: 8, 
-    fontSize: 14, 
+    fontSize: 13, 
     color: Colors.DARK 
   },
   chooseQuestionHeader: { 
@@ -667,8 +698,6 @@ const styles = StyleSheet.create({
     justifyContent: "center", 
     margin: 5 
   },
-
-  
     navCloseBtn:{
         position: 'absolute',
         top: "50%",
@@ -709,7 +738,7 @@ const styles = StyleSheet.create({
         fontSize: 16 
     },
 
-    
+
     sectionHeaderBar: { 
         backgroundColor: Colors.THEME 
     },
@@ -723,7 +752,7 @@ const styles = StyleSheet.create({
         color: Colors.WHITE 
     },
 
-    
+
     optionCardBase: {
         width: '100%',
         flexDirection: 'row',
@@ -731,7 +760,7 @@ const styles = StyleSheet.create({
     },
     optionCardWrap: {
         flexWrap: "wrap",
-        alignItems: "flex-start",
+        // alignItems: "flex-start",
     },
     optionContent: {
         flex: 1,
@@ -758,7 +787,7 @@ const styles = StyleSheet.create({
         color: "#DA4A54"
     },
 
-    
+
     bottomControlBar: { 
         flexDirection:"row",
         justifyContent:"space-between", 

@@ -100,131 +100,131 @@ export const TestSeries3 = props => {
         <View style={styles.container}>
           <HeaderComp headerTitle={payloadPrevScreen.title} />
           <FlatList
-    data={testSeries}
-    numColumns={1}
-    showsVerticalScrollIndicator={false}
-    renderItem={({ item, index }) => {
-        // Prepare boolean flags for cleaner rendering logic
-        const isCompleted = item.report_id && item.state === '2';
-        const isResumable = item.report_id && item.state !== '2';
-        const isAttemptable = !item.report_id;
-        const showMarks1 = isCompleted && item.res_seq_attempt === '1'; // First Marks format
-        const showMarks2 = isCompleted; // Second Marks format
-        const showRankers = item.report_id && item.view_rankers_count !== '0';
-        const showPractice = isCompleted && item.practice === '0';
+            data={testSeries}
+            numColumns={1}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item, index }) => {
+                // Prepare boolean flags for cleaner rendering logic
+                const isCompleted = item.report_id && item.state === '2';
+                const isResumable = item.report_id && item.state !== '2';
+                const isAttemptable = !item.report_id;
+                const showMarks1 = isCompleted && item.res_seq_attempt === '1'; // First Marks format
+                const showMarks2 = isCompleted; // Second Marks format
+                const showRankers = item.report_id && item.view_rankers_count !== '0';
+                const showPractice = isCompleted && item.practice === '0';
 
-        return (
-            <View style={styles.cardContainer}>
-                <View style={styles.cardContent}>
-                    
-                    {/* --- 1. Thumbnail and Title --- */}
-                    <View style={styles.cardHeader}>
-                        <Image
-                            resizeMode="stretch"
-                            source={{ uri: item.thumbnail }}
-                            style={styles.thumbnail}
-                        />
-                        <View style={styles.titleMetaContainer}>
-                            <Text style={styles.testTitle}>
-                                {item.title}
-                            </Text>
-                            <Text style={styles.testDescription} numberOfLines={1}>
-                                {'Desc: ' + item.description}
-                            </Text>
+                return (
+                    <View style={styles.cardContainer}>
+                        <View style={styles.cardContent}>
+                            
+                            {/* --- 1. Thumbnail and Title --- */}
+                            <View style={styles.cardHeader}>
+                                <Image
+                                    resizeMode="stretch"
+                                    source={{ uri: item.thumbnail }}
+                                    style={styles.thumbnail}
+                                />
+                                <View style={styles.titleMetaContainer}>
+                                    <Text style={styles.testTitle}>
+                                        {item.title}
+                                    </Text>
+                                    <Text style={styles.testDescription} numberOfLines={1}>
+                                        {'Desc: ' + item.description}
+                                    </Text>
+                                </View>
+                            </View>
+
+                            {/* --- 2. Metadata Block (Questions | Time) --- */}
+                            <View style={styles.metaContainer}>
+                                <Text style={styles.testMeta}>
+                                    {'Questions: ' + item.total_questions}
+                                </Text>
+                                <Text style={styles.testMeta}>
+                                    {'Time: ' + CustomHelper.secFormat(item.length)}
+                                </Text>
+                            </View>
+
+                            {/* --- 3. Marks & Status Block --- */}
+                            <View style={styles.marksContainer}>
+                                {showMarks1 && (
+                                    <Text style={styles.testAttemptMarksLabel}>
+                                        {/* Note: This line seems redundant with the one below but is preserved from the original logic */}
+                                        {'Marks: ' + item.marks} 
+                                    </Text>
+                                )}
+                                {showMarks2 && (
+                                    <Text style={styles.testAttemptMarksLabel}>
+                                        {'Marks: ' + item.marks + '/' + item.total_marks}
+                                    </Text>
+                                )}
+                            </View>
+
+                            {/* --- 4. Action Buttons --- */}
+                            <View style={styles.buttonRow}>
+                                
+                                {/* 4a. View Result Button */}
+                                {isCompleted && (
+                                    <LinearGradient
+                                        colors={['#37B6F1', '#0274BA']}
+                                        style={styles.actionButtonGradient}>
+                                        <TouchableOpacity onPress={() => navToStartTest({...item, internal_type: 'View Result'})}>
+                                            <Text style={styles.actionButtonText}>{'View Result'}</Text>
+                                        </TouchableOpacity>
+                                    </LinearGradient>
+                                )}
+
+                                {/* 4b. Resume Button */}
+                                {isResumable && (
+                                    <LinearGradient
+                                        colors={['#37B6F1', '#0274BA']}
+                                        style={styles.actionButtonGradient}>
+                                        <TouchableOpacity onPress={() => navToStartTest({...item, internal_type: 'Resume Test'})}>
+                                            <Text style={styles.actionButtonText}>{'Resume'}</Text>
+                                        </TouchableOpacity>
+                                    </LinearGradient>
+                                )}
+
+                                {/* 4c. Attempt Now Button */}
+                                {isAttemptable && (
+                                    <LinearGradient
+                                        colors={['#37B6F1', '#0274BA']}
+                                        style={styles.actionButtonGradient}>
+                                        <TouchableOpacity onPress={() => navToStartTest({...item, internal_type: 'Start Test'})}>
+                                            <Text style={styles.actionButtonText}>{'Attempt Now'}</Text>
+                                        </TouchableOpacity>
+                                    </LinearGradient>
+                                )}
+                                
+                                {/* 4d. View Rankers Button */}
+                                {showRankers && (
+                                    <LinearGradient
+                                        colors={['#37B6F1', '#0274BA']}
+                                        style={styles.actionButtonGradient}>
+                                        <TouchableOpacity onPress={() => navToStartTest({...item, internal_type: 'View Rankers'})}>
+                                            <Text style={styles.actionButtonText}>{'View Rankers'}</Text>
+                                        </TouchableOpacity>
+                                    </LinearGradient>
+                                )}
+
+                                {/* 4e. Practice Button */}
+                                {showPractice && (
+                                    <LinearGradient
+                                        colors={['#37B6F1', '#0274BA']}
+                                        style={styles.actionButtonGradient}>
+                                        <TouchableOpacity onPress={() => navToStartTest({...item, internal_type: 'Start Practice'})}>
+                                            <Text style={styles.actionButtonText}>{'Practice'}</Text>
+                                        </TouchableOpacity>
+                                    </LinearGradient>
+                                )}
+                            </View>
+
                         </View>
                     </View>
-
-                    {/* --- 2. Metadata Block (Questions | Time) --- */}
-                    <View style={styles.metaContainer}>
-                        <Text style={styles.testMeta}>
-                            {'Questions: ' + item.total_questions}
-                        </Text>
-                        <Text style={styles.testMeta}>
-                            {'Time: ' + CustomHelper.secFormat(item.length)}
-                        </Text>
-                    </View>
-
-                    {/* --- 3. Marks & Status Block --- */}
-                    <View style={styles.marksContainer}>
-                        {showMarks1 && (
-                            <Text style={styles.testAttemptMarksLabel}>
-                                {/* Note: This line seems redundant with the one below but is preserved from the original logic */}
-                                {'Marks: ' + item.marks} 
-                            </Text>
-                        )}
-                        {showMarks2 && (
-                            <Text style={styles.testAttemptMarksLabel}>
-                                {'Marks: ' + item.marks + '/' + item.total_marks}
-                            </Text>
-                        )}
-                    </View>
-
-                    {/* --- 4. Action Buttons --- */}
-                    <View style={styles.buttonRow}>
-                        
-                        {/* 4a. View Result Button */}
-                        {isCompleted && (
-                            <LinearGradient
-                                colors={['#37B6F1', '#0274BA']}
-                                style={styles.actionButtonGradient}>
-                                <TouchableOpacity onPress={() => navToStartTest({...item, internal_type: 'View Result'})}>
-                                    <Text style={styles.actionButtonText}>{'View Result'}</Text>
-                                </TouchableOpacity>
-                            </LinearGradient>
-                        )}
-
-                        {/* 4b. Resume Button */}
-                        {isResumable && (
-                            <LinearGradient
-                                colors={['#37B6F1', '#0274BA']}
-                                style={styles.actionButtonGradient}>
-                                <TouchableOpacity onPress={() => navToStartTest({...item, internal_type: 'Resume Test'})}>
-                                    <Text style={styles.actionButtonText}>{'Resume'}</Text>
-                                </TouchableOpacity>
-                            </LinearGradient>
-                        )}
-
-                        {/* 4c. Attempt Now Button */}
-                        {isAttemptable && (
-                            <LinearGradient
-                                colors={['#37B6F1', '#0274BA']}
-                                style={styles.actionButtonGradient}>
-                                <TouchableOpacity onPress={() => navToStartTest({...item, internal_type: 'Start Test'})}>
-                                    <Text style={styles.actionButtonText}>{'Attempt Now'}</Text>
-                                </TouchableOpacity>
-                            </LinearGradient>
-                        )}
-                        
-                        {/* 4d. View Rankers Button */}
-                        {showRankers && (
-                            <LinearGradient
-                                colors={['#37B6F1', '#0274BA']}
-                                style={styles.actionButtonGradient}>
-                                <TouchableOpacity onPress={() => navToStartTest({...item, internal_type: 'View Rankers'})}>
-                                    <Text style={styles.actionButtonText}>{'View Rankers'}</Text>
-                                </TouchableOpacity>
-                            </LinearGradient>
-                        )}
-
-                        {/* 4e. Practice Button */}
-                        {showPractice && (
-                            <LinearGradient
-                                colors={['#37B6F1', '#0274BA']}
-                                style={styles.actionButtonGradient}>
-                                <TouchableOpacity onPress={() => navToStartTest({...item, internal_type: 'Start Practice'})}>
-                                    <Text style={styles.actionButtonText}>{'Practice'}</Text>
-                                </TouchableOpacity>
-                            </LinearGradient>
-                        )}
-                    </View>
-
-                </View>
-            </View>
-        );
-    }}
-    keyExtractor={item => item.id}
-    contentContainerStyle={styles.flatListContent}
-/>
+                );
+            }}
+            keyExtractor={item => item.id}
+            contentContainerStyle={styles.flatListContent}
+        />
         </View>
       )}
     </>
@@ -239,13 +239,12 @@ const styles = StyleSheet.create({
   flatListContent: {
         marginHorizontal: 10,
         marginTop: 10,
-        paddingBottom: 20, // Add padding at bottom for better scrolling
+        paddingBottom: 20,
     },
     cardContainer: {
         marginBottom: 15,
         borderRadius: 12,
         backgroundColor: Colors.WHITE || '#FFFFFF',
-        // Modern shadow for better elevation
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
@@ -293,7 +292,7 @@ const styles = StyleSheet.create({
     testMeta: {
         fontSize: 12,
         color: Colors.TEXT || '#555555',
-        marginRight: 15, // Space out meta items
+        marginRight: 15,
         fontWeight: '500',
     },
     marksContainer: {
@@ -302,20 +301,20 @@ const styles = StyleSheet.create({
     testAttemptMarksLabel: {
         fontSize: 13,
         fontWeight: '600',
-        color: Colors.SUCCESS || '#4CAF50', // Use a success color for marks
+        color: Colors.SUCCESS || '#4CAF50',
     },
     buttonRow: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'flex-start',
         marginTop: 10,
-        gap: 8, // New way to add spacing between buttons (requires React Native 0.71+)
+        gap: 8,
     },
     actionButtonGradient: {
         borderRadius: 6,
-        paddingHorizontal: 8, // Less padding to allow more buttons
+        paddingHorizontal: 8,
         paddingVertical: 6,
-        minWidth: 90, // Ensure a minimum width for small labels
+        minWidth: 90,
     },
     actionButtonText: {
         fontSize: 12,

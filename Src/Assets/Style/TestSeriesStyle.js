@@ -84,7 +84,7 @@ const TestSeriesStyle = StyleSheet.create({
   questionNumberingText: {fontSize: 10, color: '#0274BA', marginVertical: 3},
   questionCard: {flex: 1, marginHorizontal: 15, marginTop: 8},
   optionsCard: {
-    flex: 0.1,
+    // flex: 0.1,
     backgroundColor: Colors.WHITE,
     flexDirection: 'row',
     borderWidth: 1,
@@ -92,7 +92,7 @@ const TestSeriesStyle = StyleSheet.create({
     borderRadius: 20,
     overflow: 'scroll',
     marginVertical: 3,
-    alignItems: 'center',
+    alignItems: 'center'
   },
 
   //Pallete Design

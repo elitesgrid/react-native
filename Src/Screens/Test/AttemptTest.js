@@ -102,12 +102,15 @@ export const AttemptTest = (props) => {
 
     const htmlTagsStyles = useMemo(() => {
         if (isNightMode) {
+            const baseStyle = {
+                whiteSpace: 'normal',
+                color: Colors.DARK,
+            };
             return {
-                // Apply light text color to common tags when in dark mode
-                body: { color: Colors.DARK, whiteSpace: 'normal' },
-                p: { color: Colors.DARK, whiteSpace: 'normal' },
-                span: { color: Colors.DARK, whiteSpace: 'normal' },
-                li: { color: Colors.DARK, whiteSpace: 'normal' },
+                body: baseStyle,
+                p: baseStyle,
+                span: baseStyle,
+                li: baseStyle
             };
         }
         return {};
@@ -261,6 +264,7 @@ export const AttemptTest = (props) => {
         });
 
         setFinalJson(newFinalJson);
+        return newFinalJson;
     }
 
     const nextQuestion = async function (){
@@ -289,13 +293,13 @@ export const AttemptTest = (props) => {
     }
 
     const submitTest = async function() {
-        await saveAnswer(false);
+        let newFinalJson = await saveAnswer(false);
 
         showConfirmDialog({
             title: 'Elites Grid',
             message: 'Are you sure want to submit test?',
             onConfirm: () => {
-                let fj = finalJson.map(item => {
+                let fj = newFinalJson.map(item => {
                     const { c_index, ...rest } = item;
                     return rest;
                 });
@@ -736,7 +740,7 @@ export const AttemptTest = (props) => {
                                                             {
                                                                 currentQuestions.question_type !== "FIB" && <HTML 
                                                                     contentWidth={windowWidth - 60} // subtract padding + image width
-                                                                    source={{ html: optionText }} 
+                                                                    source={{ html: optionText.trim() }} 
                                                                     tagsStyles={htmlTagsStyles}
                                                                 />
                                                             }
@@ -933,10 +937,10 @@ const styles = StyleSheet.create({
     },
     optionCardWrap: {
         flexWrap: "wrap",
-        alignItems: "flex-start",
+        // alignItems: "flex-start",
     },
     optionContent: {
-        flex: 1,
+        flex: 1
     },
     fibInput: {
         borderWidth: 1,

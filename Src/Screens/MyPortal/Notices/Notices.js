@@ -1,6 +1,6 @@
 //import liraries
-import React, { useEffect, useState } from 'react';
-import { View, Text,  FlatList, useWindowDimensions, Image,Alert} from 'react-native';
+import React, { useEffect, useState, useMemo } from 'react';
+import { View, Text,  FlatList, useWindowDimensions, Image, Alert, useColorScheme} from 'react-native';
 
 import PortalService from '../../../Services/apis/PortalService';
 import imagePaths from '../../../Constants/imagePaths';
@@ -8,6 +8,7 @@ import Colors from '../../../Constants/Colors';
 import PortalStyles from '../../../Assets/Style/PortalStyle';
 import { WebView } from 'react-native-webview';
 import HTML from 'react-native-render-html';
+import CustomHelper from '../../../Constants/CustomHelper';
 
 // create a component
 export const Notices = (props) => {
@@ -16,6 +17,26 @@ export const Notices = (props) => {
 
     const [isLoading, setIsLoading] = useState(true);
     const [noticeList, setNoticesList] = useState([]);
+    const colorScheme = useColorScheme();
+    const isNightMode = colorScheme === 'dark';
+
+    const htmlTagsStyles = useMemo(() => {
+        if (isNightMode) {
+            if (isNightMode) {
+                const baseStyle = {
+                    whiteSpace: 'normal',
+                    color: Colors.DARK,
+                };
+                return {
+                    body: baseStyle,
+                    p: baseStyle,
+                    span: baseStyle,
+                    li: baseStyle
+                };
+            }
+        }
+        return {};
+    }, [isNightMode]);
 
     const getNotices = async function () {
         let payload = {
@@ -25,9 +46,8 @@ export const Notices = (props) => {
         return await PortalService.get_notices(payload)
             .then(async (data) => {
                 setIsLoading(false);
-                if (data.status === true) {
+                if (data.status === true && data.notices) {
                     data = data.data;
-                    //console.log(data);
                     setNoticesList(data.notices);
                     setIsLoading(false);
                 }
@@ -58,25 +78,35 @@ export const Notices = (props) => {
                     :
                     (
                         <View style={PortalStyles.container}>
-                            <FlatList
-                                data={noticeList}
-                                numColumns={1}
-                                renderItem={({ item, index }) => (
-                                    <View  key={index} style={{...PortalStyles.SubjectTopicCard,...{flex:1}}}>
-                                        <View style={PortalStyles.SubjectTopicContainer}>
-                                            <Image source={imagePaths.DEFAULT_VIDEO} resizeMode='stretch' style={PortalStyles.SubjectTopicImage} />
-                                            <View style={PortalStyles.SubjectTopicInfoSection}>
-                                                <Text style={PortalStyles.SubjectTopicInfoTitle}>{item.course_title}</Text>
+                            {
+                                noticeList.length == 0 ? <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+                                    <Text style={{fontSize: 20,fontWeight:'500',color:Colors.TEXT_COLOR}}>No Notice Available For you.</Text>
+                                </View> : 
+                                <FlatList
+                                    data={noticeList}
+                                    numColumns={1}
+                                    renderItem={({ item, index }) => (
+                                        <View  key={index} style={{...PortalStyles.SubjectTopicCard,...{flex:1}}}>
+                                            <View style={PortalStyles.SubjectTopicContainer}>
+                                                <Image source={imagePaths.DEFAULT_VIDEO} resizeMode='stretch' style={PortalStyles.SubjectTopicImage} />
+                                                <View style={PortalStyles.SubjectTopicInfoSection}>
+                                                    <Text style={PortalStyles.SubjectTopicInfoTitle}>{item.course_title}</Text>
+                                                    <Text style={{color: Colors.TAG_COLOR}}>{"Created At: " + CustomHelper.tsToDate(item.created, 'd M Y')}</Text>
+                                                </View>
+                                            </View>
+                                            <View style={{flex:1}}>
+                                                <HTML 
+                                                contentWidth={windowWidth} 
+                                                source={{ html: item.description }}
+                                                tagsStyles={htmlTagsStyles}
+                                                />
                                             </View>
                                         </View>
-                                        <View style={{flex:1}}>
-                                            <HTML contentWidth={windowWidth} source={{ html: item.description }} />
-                                        </View>
-                                    </View>
-                                )}
-                                keyExtractor={(item) => item.id}
-                                contentContainerStyle={{ marginHorizontal: 5, marginTop: 10 }}
-                            />
+                                    )}
+                                    keyExtractor={(item) => item.id}
+                                    contentContainerStyle={{ marginHorizontal: 5, marginTop: 10 }}
+                                />
+                            }
                         </View>
                     )
             }

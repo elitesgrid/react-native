@@ -235,8 +235,8 @@ const TimelineTabs = props => {
                           style={{
                             borderRadius: 5,
                             justifyContent: 'center',
+                            alignItems: 'center',
                             paddingHorizontal: 5,
-                            height: 20,
                             marginRight: 8,
                           }}>
                           <TouchableOpacity
@@ -259,10 +259,12 @@ const TimelineTabs = props => {
                           }}
                           style={{
                             alignItems: 'center',
+                            justifyContent:'center',
                             backgroundColor:
                               item.is_open === '1'
                                 ? Colors.SUCCESS
                                 : Colors.WARNING,
+                            paddingHorizontal: 5,
                             borderRadius: 5,
                           }}>
                           <Text
@@ -359,12 +361,12 @@ const TimelineTabs = props => {
                           </Text>
                         </View>
                       </View>
-                      <View style={{flexDirection: 'row', marginLeft: 60}}>
+                      <View style={{flexDirection: 'row', marginLeft: 60,marginTop: 5}}>
                         <LinearGradient
                           colors={['#37B6F1', '#0274BA']}
                           style={{
                             alignItems: 'center',
-                            marginTop: 5,
+                            justifyContent: 'center',
                             borderRadius: 5,
                             paddingHorizontal: 8,
                             marginHorizontal: 5,
@@ -384,7 +386,6 @@ const TimelineTabs = props => {
                           }}
                           style={{
                             alignItems: 'center',
-                            marginTop: 5,
                             borderRadius: 5,
                             paddingHorizontal: 8,
                             backgroundColor:
