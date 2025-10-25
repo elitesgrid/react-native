@@ -45,11 +45,11 @@ export const ListCourses = (props) => {
                     <View style={CommonStyles.flexRow}>
                       <View style={CommonStyles.flexRowItemCenter}>
                         <Image source={imagePaths.PEOPLE_COUNT} style={CommonStyles.CourseListIconStyle} />
-                        <Text>15K</Text>
+                        <Text style={{color: Colors.TEXT_COLOR}}>15K</Text>
                       </View>
                       <View style={CommonStyles.flexRowItemCenter}>
                         <Image source={imagePaths.STAR} style={CommonStyles.CourseListIconStyle} />
-                        <Text>15K</Text>
+                        <Tex style={{color: Colors.TEXT_COLOR}}t>15K</Text>
                       </View>
                     </View> */}
                                     <View style={CommonStyles.CourseListPriceSection}>

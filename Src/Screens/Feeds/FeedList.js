@@ -297,6 +297,7 @@ export const FeedList = props => {
               autoCapitalize={'none'}
               keyboardType={'numeric'}
               editable={false}
+              placeholderTextColor={Colors.IDLE}
             />
             <Image
               style={{height: 50, width: 20, height: 20}}
@@ -319,6 +320,7 @@ export const FeedList = props => {
           }}
           placeholderStyle={{fontSize: 16, color: Colors.BLACK}}
           selectedTextStyle={{fontSize: 16, color: Colors.BLACK}}
+          itemTextStyle={{ fontSize: 16, color: Colors.BLACK }}
           inputSearchStyle={{height: 40, fontSize: 16, color: Colors.BLACK}}
           iconStyle={{width: 20, height: 20, marginTop: 10, marginRight: 10}}
           data={courseList}
@@ -346,6 +348,7 @@ export const FeedList = props => {
           }}
           placeholderStyle={{fontSize: 16, color: Colors.BLACK}}
           selectedTextStyle={{fontSize: 16, marginLeft: 10, color: Colors.BLACK}}
+          itemTextStyle={{ fontSize: 16, color: Colors.BLACK }}
           inputSearchStyle={{height: 40, fontSize: 16, color: Colors.BLACK}}
           iconStyle={{width: 20, height: 20, marginTop: 2, marginRight: 10}}
           data={global.FEED_FILTERS || []}
@@ -531,7 +534,7 @@ export const FeedList = props => {
                 style={{width: 20, height: 20}}></Image>
             </View>
             <View style={{marginHorizontal: 10}}>
-              <Text>{'Delete'}</Text>
+              <Text style={{color: Colors.TEXT_COLOR}}>{'Delete'}</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity
@@ -549,7 +552,7 @@ export const FeedList = props => {
                 style={{width: 20, height: 20}}></Image>
             </View>
             <View style={{marginHorizontal: 10}}>
-              <Text>{'Hide Post'}</Text>
+              <Text style={{color: Colors.TEXT_COLOR}}>{'Hide Post'}</Text>
             </View>
           </TouchableOpacity>
         </BottomSheet>
@@ -574,7 +577,7 @@ export const FeedList = props => {
                 style={{width: 20, height: 20}}></Image>
             </View>
             <View style={{marginHorizontal: 10}}>
-              <Text>{'Delete'}</Text>
+              <Text style={{color: Colors.TEXT_COLOR}}>{'Delete'}</Text>
             </View>
           </View>
           <View
@@ -591,7 +594,7 @@ export const FeedList = props => {
                 style={{width: 20, height: 20}}></Image>
             </View>
             <View style={{marginHorizontal: 10}}>
-              <Text>{'Hide Post'}</Text>
+              <Text style={{color: Colors.TEXT_COLOR}}>{'Hide Post'}</Text>
             </View>
           </View>
         </BottomSheet>

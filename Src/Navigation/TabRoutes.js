@@ -37,7 +37,10 @@ export default function TabRoutes() {
             isTablet ? (
               <></>
             ) : (
-              <Text style={CommonStyles.bottomTabLabel}>{route.name}</Text>
+              <Text style={{
+                ...CommonStyles.bottomTabLabel,
+                color: focused ? Colors.THEME : Colors.IDLE
+              }}>{route.name}</Text>
             ),
           tabBarIcon: ({focused}) => {
             return (
@@ -71,6 +74,7 @@ export default function TabRoutes() {
                       style={{
                         ...CommonStyles.bottomTabLabel,
                         ...{marginLeft: 8, marginTop: 3},
+                        color: focused ? Colors.THEME : Colors.IDLE
                       }}>
                       {route.name}
                     </Text>
@@ -90,7 +94,10 @@ export default function TabRoutes() {
             isTablet ? (
               <></>
             ) : (
-              <Text style={CommonStyles.bottomTabLabel}>{route.name}</Text>
+              <Text style={{
+                ...CommonStyles.bottomTabLabel,
+                color: focused ? Colors.THEME : Colors.IDLE
+              }}>{route.name}</Text>
             ),
           tabBarIcon: ({focused}) => {
             return (
@@ -124,6 +131,7 @@ export default function TabRoutes() {
                       style={{
                         ...CommonStyles.bottomTabLabel,
                         ...{marginLeft: 8, marginTop: 3},
+                        color: focused ? Colors.THEME : Colors.IDLE
                       }}>
                       {route.name}
                     </Text>
@@ -142,7 +150,10 @@ export default function TabRoutes() {
             isTablet ? (
               <></>
             ) : (
-              <Text style={CommonStyles.bottomTabLabel}>{route.name}</Text>
+              <Text style={{
+                ...CommonStyles.bottomTabLabel,
+                color: focused ? Colors.THEME : Colors.IDLE
+              }}>{route.name}</Text>
             ),
           tabBarIcon: ({focused}) => {
             return (
@@ -176,6 +187,7 @@ export default function TabRoutes() {
                       style={{
                         ...CommonStyles.bottomTabLabel,
                         ...{marginLeft: 8, marginTop: 3},
+                        color: focused ? Colors.THEME : Colors.IDLE
                       }}>
                       {route.name}
                     </Text>
@@ -194,7 +206,10 @@ export default function TabRoutes() {
             isTablet ? (
               <></>
             ) : (
-              <Text style={CommonStyles.bottomTabLabel}>{route.name}</Text>
+              <Text style={{
+                ...CommonStyles.bottomTabLabel,
+                color: focused ? Colors.THEME : Colors.IDLE
+              }}>{route.name}</Text>
             ),
           tabBarIcon: ({focused}) => {
             return (
@@ -228,6 +243,7 @@ export default function TabRoutes() {
                       style={{
                         ...CommonStyles.bottomTabLabel,
                         ...{marginLeft: 8, marginTop: 3},
+                        color: focused ? Colors.THEME : Colors.IDLE
                       }}>
                       {route.name}
                     </Text>
@@ -246,7 +262,10 @@ export default function TabRoutes() {
             isTablet ? (
               <></>
             ) : (
-              <Text style={CommonStyles.bottomTabLabel}>{route.name}</Text>
+              <Text style={{
+                ...CommonStyles.bottomTabLabel,
+                color: focused ? Colors.THEME : Colors.IDLE
+              }}>{route.name}</Text>
             ),
           tabBarIcon: ({focused}) => {
             return (
@@ -280,6 +299,7 @@ export default function TabRoutes() {
                       style={{
                         ...CommonStyles.bottomTabLabel,
                         ...{marginLeft: 8, marginTop: 3},
+                        color: focused ? Colors.THEME : Colors.IDLE
                       }}>
                       {route.name}
                     </Text>

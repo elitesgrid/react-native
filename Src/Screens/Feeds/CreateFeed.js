@@ -211,6 +211,7 @@ export const CreateFeed = props => {
           }}
           placeholderStyle={{fontSize: 16, color: Colors.BLACK}}
           selectedTextStyle={{fontSize: 16, color: Colors.BLACK}}
+          itemTextStyle={{ fontSize: 16, color: Colors.BLACK }}
           inputSearchStyle={{height: 40, fontSize: 16, color: Colors.BLACK}}
           iconStyle={{width: 20, height: 30, marginTop: 10, marginRight: 10}}
           data={courseList}

@@ -49,14 +49,11 @@ export const Instructions = (props) => {
   }
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      setTestSeries({});
-      async function fetchData() {
-        await getTestInstructions(params);
-      }
-      fetchData();
-    });
-    return unsubscribe;
+    setTestSeries({});
+    async function fetchData() {
+      await getTestInstructions(params);
+    }
+    fetchData();
   }, [navigation, params]);
 
   if (isLoading) return <LoadingComp />;
@@ -100,7 +97,7 @@ export const Instructions = (props) => {
             }}
           >
             <Text style={{ color: Colors.WHITE }}>
-              🕒 Duration: {testSeries?.sections?.[0]?.section_timing || 0} mins
+              🕒 Duration: {testSeries?.result?.length || 0} mins
             </Text>
             <Text style={{ color: Colors.WHITE }}>
               ❓ Questions: {testSeries?.result?.total_questions || 0}

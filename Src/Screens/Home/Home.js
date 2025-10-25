@@ -148,11 +148,11 @@ export const Home = (props) => {
                                 <View style={CommonStyles.flexRow}>
                                   <View style={CommonStyles.flexRowItemCenter}>
                                     <Image source={imagePaths.PEOPLE_COUNT} style={CommonStyles.CourseListIconStyle} />
-                                    <Text>15K</Text>
+                                    <Text style={{color: Colors.TEXT_COLOR}}>15K</Text>
                                   </View>
                                   <View style={CommonStyles.flexRowItemCenter}>
                                     <Image source={imagePaths.STAR} style={CommonStyles.CourseListIconStyle} />
-                                    <Text>15K</Text>
+                                    <Text style={{color: Colors.TEXT_COLOR}}>15K</Text>
                                   </View>
                                 </View> */}
                                 <View style={CommonStyles.CourseListPriceSection}>
@@ -229,7 +229,7 @@ export const Home = (props) => {
                                   <Text style={[CommonStyles.sectionHeaderTitle, { fontWeight: "500", fontSize: 14 }]}>{(item.title.substring(0, 30)) + "..."}</Text>
                                 </View>
                                 <View>
-                                  <Text>Student</Text>
+                                  <Text style={{color: Colors.TAG_COLOR}}>Student</Text>
                                 </View>
                                 <View style={{ flex: 1, flexDirection: "row" }}>
                                   <Image style={{ marginLeft: 5 }} source={imagePaths.STAR} />

@@ -12,11 +12,12 @@ import { View,
     TextInput,
     ImageBackground,
     KeyboardAvoidingView,
-    useColorScheme
+    useColorScheme,
+    BackHandler
 } from 'react-native';
 //import { WebView } from 'react-native-webview';
 import MenuDrawer from 'react-native-side-drawer'
-
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import HTML from 'react-native-render-html';
 import TestHeaderComp from '../../Components/TestHeaderComp';
 import Colors from '../../Constants/Colors';
@@ -28,11 +29,13 @@ import StorageManager from '../../Services/StorageManager';
 import LoadingComp from '../../Components/LoadingComp'; // Assuming this is defined/used
 import navigationStrings from '../../Constants/navigationStrings';
 import { useConfirmDialog } from '../../Components/ConfirmDialogContext';
+import { StackActions } from '@react-navigation/native';
 
 function useExamTimer(initialRemainSeconds = 0) {
   const [questionTime, setQuestionTime] = useState(0); // counts UP
   const [remainSeconds, setRemainSeconds] = useState(initialRemainSeconds); // counts DOWN
   const [formattedRemainTime, setFormattedRemainTime] = useState("");
+  const [pageReady, setPageReady] = useState(false);
   const intervalRef = useRef(null);
 
   useEffect(() => {
@@ -46,8 +49,6 @@ function useExamTimer(initialRemainSeconds = 0) {
   }, []);
 
   useEffect(() => {
-    // Optimization: This effect is fine as it uses CustomHelper.secFormat
-    // and updates the dependent state (formattedRemainTime)
     setFormattedRemainTime(CustomHelper.secFormat(remainSeconds));
   }, [remainSeconds]);
 
@@ -66,6 +67,7 @@ export const AttemptTest = (props) => {
     const { route, navigation } = props;
     const { width: windowWidth } = useWindowDimensions();
     const { params } = route;
+    const insets = useSafeAreaInsets();
 
     const [isOpen, setIsOpen] = useState(false);
 
@@ -79,10 +81,12 @@ export const AttemptTest = (props) => {
     const [currentQuestions, setCurrentQuestions] = useState({});
     const [currentQuestionsIndex, setCurrentQuestionsIndex] = useState(0);
     const [finalJson, setFinalJson] = useState([]);
-    const [resumeSectionId, setResumeSectionId] = useState(0);
+    const [resumeSectionId, setResumeSectionId] = useState("0");
+    const [sectionTimings, setSectionsTimings] = useState();
     const {showConfirmDialog} = useConfirmDialog();
     const colorScheme = useColorScheme();
     const isNightMode = colorScheme === 'dark';
+    const timerMounted = useRef(false);
     const {
         questionTime,
         remainSeconds,
@@ -99,6 +103,43 @@ export const AttemptTest = (props) => {
         { label: "Marked for Review", key: "marked_for_review", count: 0 },
         { label: "Answered & Marked for Review", key: "answered_marked_for_review", count: 0 },
     ]);
+
+    const timerActions = async function() {
+        //console.log("remainSeconds",remainSeconds);
+        if(remainSeconds > 0){
+            if(params.allow_move_section === "0"){
+                if(sectionTimings && Object.keys(sectionTimings).length > 0){
+                    let sec_timing = sectionTimings;
+                    sec_timing[resumeSectionId] = remainSeconds;
+                    setSectionsTimings(sec_timing);
+                } else {
+                    console.log("sectionTimings Set Check Failed", sectionTimings);
+                }
+            } 
+            setTestFormatRemainTime(formattedRemainTime);
+        } else if(params.allow_move_section === "0" && remainSeconds <= 0){
+            let sections = sectionTimings ? Object.keys(sectionTimings) : [];
+
+            const index = sections.length === 0 ? -1 : sections.indexOf(resumeSectionId);
+            let nextSecId = sections.length === 0 ? resumeSectionId : (sections[index + 1] ?? sections[sections.length - 1]);
+            if(nextSecId === resumeSectionId && remainSeconds <= 0) {
+                submitTest('1', await collectJson('2'));
+                console.log("Auto Submit", nextSecId, resumeSectionId, index, sections);
+            } else {
+                console.log("New Sec Time Setting Up",sectionTimings[nextSecId]);
+                setRemainSeconds(sectionTimings[nextSecId]);
+                //Partial Submit
+                switchSection(nextSecId, true);
+                let json = await collectJson('1', nextSecId);
+                json.active_section = nextSecId;
+                //console.log("Partial Submit",json, sectionTimings);
+                submitTest("2", json);
+            }
+        } else if(params.allow_move_section === "1"){
+            // submitTest('1', await collectJson('2'));
+            console.log("Auto Submit.");
+        }
+    }
 
     const htmlTagsStyles = useMemo(() => {
         if (isNightMode) {
@@ -117,9 +158,14 @@ export const AttemptTest = (props) => {
     }, [isNightMode]);
 
     useEffect(function(){
-        if(remainSeconds > 0){
-            setTestFormatRemainTime(formattedRemainTime);
+        if (!timerMounted.current) {
+            if(remainSeconds > 0){
+                timerMounted.current = true; // skip the first run
+            }
+            console.log("Timer Mounted");
+            return;
         }
+        timerActions()
     }, [remainSeconds]);
 
     async function getSessionData() {
@@ -154,6 +200,7 @@ export const AttemptTest = (props) => {
             c_index: currentQuestion.c_index
         }
 
+        setResumeSectionId(newCurrentQuestion.section_id.toString());
         setCurrentQuestions(newCurrentQuestion);
         setCurrentQuestionsIndex(index);
         
@@ -185,9 +232,9 @@ export const AttemptTest = (props) => {
         setCurrentQuestions(newCurrentQuestions);
     }
 
-    function chooseSection(secId) {
-        if(params.allow_move_section === "0"){
-            Alert.alert("Warning","Section switching not allowed");
+    function switchSection(secId, force = false) {
+        if(params.allow_move_section === "0" && secId !== resumeSectionId && force === false){
+            Alert.alert("Warning","Section switching not allowed.");
             return false;
         }
         const index = testQuestions.findIndex(item => item.section_id === secId);
@@ -242,7 +289,7 @@ export const AttemptTest = (props) => {
                 : (marked ? 'answered_marked_for_review' : "answered");
         } else {
             // Assuming givenAnswers is an array of "0" or "1"
-            const countOfNonZero = givenAnswers.filter(item => item === "1").length;
+            const countOfNonZero = (givenAnswers || ['0','0','0','0']).filter(item => item === "1").length;
             if (countOfNonZero === 0) {
                 newState = marked ? 'marked_for_review' : "not_answered";
             } else {
@@ -268,6 +315,34 @@ export const AttemptTest = (props) => {
     }
 
     const nextQuestion = async function (){
+        let currentQuestion = testQuestions[currentQuestionsIndex + 1];
+        if(params.allow_move_section === "0" && resumeSectionId.toString() !== currentQuestion.section_id){
+            showConfirmDialog({
+                title: 'Elites Grid',
+                message: 'Are you sure want to submit this section?',
+                onConfirm: async () => {
+                    submitTest('2', await collectJson('1'));
+
+                    let sections = sectionTimings ? Object.keys(sectionTimings) : [];
+                    const index = sections.length === 0 ? -1 : sections.indexOf(resumeSectionId);
+                    let nextSecId = sections.length === 0 ? resumeSectionId : (sections[index + 1] ?? sections[sections.length - 1]);
+                    if(nextSecId === resumeSectionId) {
+                        submitTest('1', await collectJson('2'));
+                        console.log("Auto Submit", nextSecId, resumeSectionId, index, sections);
+                    } else {
+                        console.log("New Sec Time Setting Up",sectionTimings[nextSecId]);
+                        setRemainSeconds(sectionTimings[nextSecId]);
+                        //Partial Submit
+                        switchSection(nextSecId, true);
+                        let json = await collectJson('1', nextSecId);
+                        json.active_section = nextSecId;
+                        //console.log("Force Partial Submit",json, sectionTimings);
+                        submitTest("2", json);
+                    }
+                },
+            });
+            return false;
+        }
         await saveAnswer(false);
         load_question(currentQuestionsIndex + 1);
     }
@@ -278,6 +353,12 @@ export const AttemptTest = (props) => {
     }
 
     const prevQuestion = async function (){
+        let currentQuestion = testQuestions[currentQuestionsIndex - 1];
+        if(params.allow_move_section === "0" && resumeSectionId !== currentQuestion.section_id){
+            Alert.alert("Invalid Prev","Section switching not allowed");
+            return false;
+        }
+
         load_question(currentQuestionsIndex - 1);
     }
 
@@ -292,41 +373,71 @@ export const AttemptTest = (props) => {
         load_question(index);
     }
 
-    const submitTest = async function() {
-        let newFinalJson = await saveAnswer(false);
-
-        showConfirmDialog({
-            title: 'Elites Grid',
-            message: 'Are you sure want to submit test?',
-            onConfirm: () => {
+    const collectJson = async function (state, resumeSec = 0) {
+        return new Promise(async function(resolve, reject){
+            try{
+                let newFinalJson = await saveAnswer(false);
                 let fj = newFinalJson.map(item => {
                     const { c_index, ...rest } = item;
                     return rest;
                 });
-                let payload = {
+
+                let rs = remainSeconds;
+                if(params.allow_move_section === "0" && sectionTimings){
+                    rs = sectionTimings[resumeSec ? resumeSec : resumeSectionId];
+                }
+
+                let ss = sectionTimings ? Object.keys(sectionTimings).join(',') : resumeSectionId;
+
+                let return_ = {
                     json: JSON.stringify(fj),
                     time_taken: remainSeconds,
                     test_id: params.id,
-                    section_sequence: resumeSectionId,
-                    state: 2,
+                    section_sequence: ss,
+                    state: state ? 1 : 2,
                     first_attempt: "1",
-                    last_question: parseInt(currentQuestionsIndex),
-                    active_section: currentQuestions.section_id
+                    last_question: currentQuestionsIndex,
+                    active_section: resumeSec ? resumeSec : resumeSectionId
                 }
+                resolve(return_);
+            } catch (e) {
+                console.log(e);
+                reject(e);
+            }
+        });
+    }
 
-                TestServices.submit_test_detail(payload).then(async (data) => {
-                    data = data.data;
-                    if (data.id) {
-                        testSeries.report_id = data.id;
-                        delete testSeries.questions;
-                        delete testSeries.resume;
-                        //console.log(testSeries);
-                        // Assuming navigationStrings.TEST_VIEW_RESULT is available globally
-                        navigation.replace(navigationStrings.TEST_VIEW_RESULT, testSeries); 
-                        console.log("Submit Test Success", testSeries);
-                    }
-                    console.log("Submit Test", data);
-                }); 
+    const submitTest = async function (backPress, payload){
+        TestServices.submit_test_detail(payload).then(async (data) => {
+            if(backPress === "2"){
+                console.log(data);
+                return false;
+            }
+            data = data.data;
+            if (data.id) {
+                testSeries.report_id = data.id;
+                delete testSeries.questions;
+                delete testSeries.resume;
+                //console.log(testSeries);
+                // Assuming navigationStrings.TEST_VIEW_RESULT is available globally
+                if(backPress === "1"){
+                    const popAction = StackActions.pop(2);
+                    navigation.dispatch(popAction);
+                } else {
+                    navigation.replace(navigationStrings.TEST_VIEW_RESULT, testSeries); 
+                }
+                console.log("Submit Test Success", testSeries);
+            }
+            console.log("Submit Test", data);
+        }); 
+    }
+
+    const confirmAndSubmitTest = async function(backPress = "") {
+        showConfirmDialog({
+            title: 'Elites Grid',
+            message: 'Are you sure want to submit test?',
+            onConfirm: async () => {
+                submitTest(backPress, await collectJson('2'));
             },
         });
     }
@@ -344,10 +455,13 @@ export const AttemptTest = (props) => {
                 let resume_json = data.resume;
                 let resume_que_json = [];
                 let resume_time_taken = 0;
+                let resume_section = 0;
                 if(resume_json){
                      resume_que_json = JSON.parse(resume_json.custom_json);
-                     resume_time_taken = resume_json.time_taken;
-                     setResumeSectionId(resume_json.active_section);
+                     resume_time_taken = parseInt(resume_json.time_taken);
+                     resume_section = resume_json.active_section;
+                     setResumeSectionId(resume_json.active_section.toString());
+                     //console.log("Resume Section",resume_json.active_section, Object.keys(resume_json));
                 }
 
                 setTestSeries(data);
@@ -357,8 +471,16 @@ export const AttemptTest = (props) => {
                 let questions = [];
                 let user_answers = [];
                 let index = 0;
-                let total_sec = 0;
+                let sec_timings = {};
                 data.questions.forEach(element => {
+                    var reduce_seconds = 0;
+                    if(resume_que_json){
+                        resume_que_json.forEach((re_ele, re_ind)=> {
+                            if(re_ele.section_id === element.id){
+                                reduce_seconds += parseInt(re_ele.spent_time);
+                            }
+                        });
+                    }
                     element.questions.forEach((que, ind) => {
                         if (!section_index_map[que.section_id]) {
                             section_index_map[que.section_id] = 0;
@@ -405,15 +527,24 @@ export const AttemptTest = (props) => {
                         element.questions[ind].c_index= section_index_map[que.section_id];
                     });
 
+                    sec_timings[element.id] = (parseInt(element.section_timing) * 60) - reduce_seconds;
                     sections.push({ key: element.id, title: element.subject });
                     questions.push(...element.questions);
-                    total_sec += (parseInt(element.section_timing) * 60);
                 });
+                // console.log("sec_timings",sections);
                 setFinalJson(user_answers);
                 setTestSections(sections);
                 setTestQuestions(questions);
+                setSectionsTimings(sec_timings);
                 // Ensure initial time is correct
-                setRemainSeconds(remainSeconds ? remainSeconds : total_sec - (resume_time_taken || 0)); 
+                if(parseInt(resume_section) === 0){
+                    resume_section = questions[0].section_id;
+                }
+                if(params.allow_move_section === "0"){
+                    setRemainSeconds(sectionTimings && sectionTimings[resume_section] ? sectionTimings[resume_section] : sec_timings[resume_section]);
+                } else{                
+                    setRemainSeconds(remainSeconds ? remainSeconds : (resume_time_taken > 0 ? resume_time_taken : (parseInt(data.length) * 60) ));
+                }
                 setIsLoading(false);
             } else {
                 setIsLoading(false);
@@ -449,7 +580,7 @@ export const AttemptTest = (props) => {
     useEffect(function(){
         if(finalJson.length > 0){
             if(resumeSectionId > 0) {
-                chooseSection(resumeSectionId);
+                switchSection(resumeSectionId, false);
             } else {
                 load_question(0);
             }
@@ -468,19 +599,21 @@ export const AttemptTest = (props) => {
             fetchData();
         // });
 
-        const blurListener = () => {
-            stopTimer()
-        };
-        // const unsubscribeBlur = navigation.addListener('blur', blurListener);
-        // return ()=>{
-        //     unsubscribe,
-        //     unsubscribeBlur
-        // };
-        
-        // FIX: The original commented-out return statement was invalid syntax.
-        // We will stick to the default behavior since the listeners are commented out.
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            () => {
+                Alert.alert("Your progress will be lost, Please save it first.")
+                return true;
+            }
+        );
+
+        return () => backHandler.remove(); // cleanup on unmount
 
     }, [navigation, params]);
+
+    const onTestBackPress = function(){
+        confirmAndSubmitTest("1");
+    }
 
     function pallete_highlighers(type, value, index) {
         // ... pallete_highlighers logic remains unchanged ...
@@ -595,7 +728,7 @@ export const AttemptTest = (props) => {
                                     <View style={styles.questionPaletteRow}>
                                     {
                                         finalJson.filter(item => 
-                                            currentQuestions.section_id === item.section_id || params.allow_move_section === "1"
+                                            resumeSectionId === item.section_id || params.allow_move_section === "1"
                                         ).map((item, index) => {
                                             return (
                                                 <View key={index} style={styles.questionPaletteItem}>
@@ -620,7 +753,7 @@ export const AttemptTest = (props) => {
                                 {/* Submit Button */}
                                 <TouchableOpacity
                                     style={styles.navSubmitBtn}
-                                    onPress={()=> submitTest()}
+                                    onPress={()=> confirmAndSubmitTest()}
                                 >
                                     <Text style={styles.navSubmitText}>
                                     Submit Test
@@ -632,17 +765,17 @@ export const AttemptTest = (props) => {
                             animationTime={250}
                             position={'right'}
                         >
-                        <TestHeaderComp headerTitle={params.title} headerTestTime={testFormatRemainTime} togglePallete={togglePallete} />
+                        <TestHeaderComp headerTitle={params.title} headerTestTime={testFormatRemainTime} togglePallete={togglePallete} onPressBack={onTestBackPress}/>
                         <View style={styles.sectionHeaderBar}>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{  }}>
                                 {testSections.length && currentQuestions && testSections.map((section, idx) => (
                                     <TouchableOpacity 
                                     key={idx} 
-                                    onPress={()=> chooseSection(section.key)}
+                                    onPress={()=> switchSection(section.key, false)}
                                     style={[
                                         styles.sectionButton,
                                         { 
-                                            borderBottomColor: currentQuestions.section_id === section.key ? Colors.WHITE : Colors.THEME,
+                                            borderBottomColor: resumeSectionId === section.key ? Colors.WHITE : Colors.THEME,
                                         }
                                     ]}>
                                         <Text style={styles.sectionButtonText}>{section.title}</Text>
@@ -735,6 +868,7 @@ export const AttemptTest = (props) => {
                                                                         chooseOption(updatedAnswers);
                                                                     }}
                                                                     style={styles.fibInput}
+                                                                    placeholderTextColor={Colors.IDLE}
                                                             />
                                                             }
                                                             {
@@ -760,7 +894,7 @@ export const AttemptTest = (props) => {
                                         </View>
                                     </View>
                                 </ScrollView>
-                                <View style={styles.bottomControlBar}>
+                                <View style={[styles.bottomControlBar,{paddingBottom: insets.bottom, height: 50 + insets.bottom}]}>
                                     {
                                         currentQuestionsIndex > 0 &&
                                         <View>
@@ -783,7 +917,7 @@ export const AttemptTest = (props) => {
                                         }
                                         {
                                             (currentQuestionsIndex + 1) >= testQuestions.length &&
-                                            <TouchableOpacity onPress={() => submitTest()} style={styles.prevNextButton}>
+                                            <TouchableOpacity onPress={() => confirmAndSubmitTest()} style={styles.prevNextButton}>
                                                 <Text style={styles.prevNextButtonText}>{"Submit"}</Text>
                                             </TouchableOpacity>
                                         }
@@ -869,8 +1003,10 @@ const styles = StyleSheet.create({
   answeredMarkedForReviewStyle: { 
     height: 30, 
     width: 34, 
-    alignItems: "center", 
-    justifyContent: "center", 
+    // alignItems: "center", 
+    paddingLeft: 10,
+    // justifyContent: "center", 
+    paddingTop: 5,
     margin: 5 
   },
 
@@ -968,9 +1104,7 @@ const styles = StyleSheet.create({
     bottomControlBar: { 
         flexDirection:"row",
         justifyContent:"space-between", 
-        height:60,
         paddingHorizontal:10,
-        padingBottom: 20,
         paddingTop: 5,
         backgroundColor:Colors.WHITE 
     },

@@ -139,8 +139,12 @@ const TimelineTabs = props => {
   };
 
   const navToStartTest = function (item) {
-    navigation.navigate(navigationStrings.TEST_WEBVIEW, item);
-    //navigation.navigate(navigationStrings.TEST_INSTRUCTIONS, item);
+    // navigation.navigate(navigationStrings.TEST_WEBVIEW, item);
+    if(item.internal_type == "View Result"){
+      navigation.navigate(navigationStrings.TEST_VIEW_RESULT, item);
+    } else {
+      navigation.navigate(navigationStrings.TEST_INSTRUCTIONS, item);
+    }
   };
 
   useEffect(
@@ -472,9 +476,10 @@ const TimelineTabs = props => {
                                   }}>
                                   <Text
                                     style={{
-                                      marginVertical: 1,
                                       fontSize: 12,
+                                      fontWeight: '600',
                                       color: Colors.WHITE,
+                                      textAlign: 'center',
                                     }}>
                                     {'View Result'}
                                   </Text>

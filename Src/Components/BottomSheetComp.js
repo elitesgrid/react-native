@@ -29,7 +29,7 @@ export const BottomSheetComp = ({...props}) => {
     const renderItem = useCallback(
       ({ item }) => (
         <View style={styles.itemContainer}>
-          <Text>{item}</Text>
+          <Text style={{color: Colors.TEXT_COLOR}}>{item}</Text>
         </View>
       ),
       []

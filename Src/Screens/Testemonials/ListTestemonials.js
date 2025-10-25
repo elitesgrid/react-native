@@ -31,7 +31,7 @@ export const ListTestemonials = (props) => {
                                             <Text style={[CommonStyles.sectionHeaderTitle, { fontWeight: "500", fontSize: 14 }]}>{(item.title.substring(0, 30)) + "..."}</Text>
                                         </View>
                                         <View>
-                                            <Text>Student</Text>
+                                            <Text style={{color: Colors.TAG_COLOR}}>Student</Text>
                                         </View>
                                         <View style={{ flex: 1, flexDirection: "row" }}>
                                             <Image style={{ marginLeft: 5 }} source={imagePaths.STAR} />

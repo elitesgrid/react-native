@@ -33,7 +33,7 @@ const NoDataFound = ({
       )}
       {pageDesc && (
         <View>
-          <Text>{pageDesc}</Text>
+          <Text style={{color: Colors.TEXT_COLOR}}>{pageDesc}</Text>
         </View>
       )}
     </View>

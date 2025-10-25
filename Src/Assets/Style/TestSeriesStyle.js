@@ -35,8 +35,9 @@ const TestSeriesStyle = StyleSheet.create({
   testListButton: {
     borderRadius: 5,
     alignItems: 'center',
+    justifyContent:'center',
     width: 'auto',
-    height: 20,
+    height: 25,
     paddingHorizontal: 5,
     marginHorizontal: 2,
   },

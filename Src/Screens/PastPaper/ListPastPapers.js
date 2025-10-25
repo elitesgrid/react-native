@@ -32,7 +32,7 @@ export const ListPastPapers = (props) => {
                         <TouchableOpacity onPress={() => navPastPaperDetail(item)} key={index} style={{ borderColor: "#EEEEEE", backgroundColor: "white", borderWidth: 1, borderRadius: 10, marginVertical:2.5,marginHorizontal:2.5, width: "49%" }}>
                             <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", height: 48 }}>
                                 <Image source={imagePaths.PAST_PAPER} style={{ height: 32, width: 32, marginHorizontal: 5 }} />
-                                <Text>{item.title}</Text>
+                                <Text style={{color: Colors.TEXT_COLOR}}>{item.title}</Text>
                             </View>
                         </TouchableOpacity>
                     )}

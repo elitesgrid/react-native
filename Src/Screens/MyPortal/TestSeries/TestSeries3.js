@@ -140,24 +140,26 @@ export const TestSeries3 = props => {
                                     {'Questions: ' + item.total_questions}
                                 </Text>
                                 <Text style={styles.testMeta}>
-                                    {'Time: ' + CustomHelper.secFormat(item.length)}
+                                    {'Time: ' + CustomHelper.secFormat(parseInt(item.length) * 60)}
                                 </Text>
                             </View>
 
-                            {/* --- 3. Marks & Status Block --- */}
-                            <View style={styles.marksContainer}>
-                                {showMarks1 && (
-                                    <Text style={styles.testAttemptMarksLabel}>
-                                        {/* Note: This line seems redundant with the one below but is preserved from the original logic */}
-                                        {'Marks: ' + item.marks} 
-                                    </Text>
-                                )}
-                                {showMarks2 && (
-                                    <Text style={styles.testAttemptMarksLabel}>
-                                        {'Marks: ' + item.marks + '/' + item.total_marks}
-                                    </Text>
-                                )}
-                            </View>
+                            {
+                                (showMarks1 || showMarks2) && 
+                                <View style={styles.marksContainer}>
+                                    {showMarks1 && (
+                                        <Text style={styles.testAttemptMarksLabel}>
+                                            {/* Note: This line seems redundant with the one below but is preserved from the original logic */}
+                                            {'Marks: ' + item.marks} 
+                                        </Text>
+                                    )}
+                                    {showMarks2 && (
+                                        <Text style={styles.testAttemptMarksLabel}>
+                                            {'Marks: ' + item.marks + '/' + item.total_marks}
+                                        </Text>
+                                    )}
+                                </View>
+                            }
 
                             {/* --- 4. Action Buttons --- */}
                             <View style={styles.buttonRow}>

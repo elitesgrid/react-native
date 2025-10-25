@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {
   Text,
   View,
@@ -8,6 +8,7 @@ import {
   useWindowDimensions,
   FlatList,
   Alert,
+  useColorScheme
 } from 'react-native';
 
 import HeaderComp from '../../Components/HeaderComp';
@@ -26,6 +27,24 @@ export const Notification = props => {
   const [notificationList, setNotificationList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const {width: windowWidth} = useWindowDimensions();
+  const colorScheme = useColorScheme();
+  const isNightMode = colorScheme === 'dark';
+
+  const htmlTagsStyles = useMemo(() => {
+      if (isNightMode) {
+          const baseStyle = {
+              whiteSpace: 'normal',
+              color: Colors.DARK,
+          };
+          return {
+              body: baseStyle,
+              p: baseStyle,
+              span: baseStyle,
+              li: baseStyle
+          };
+      }
+      return {};
+  }, [isNightMode]);
 
   const getNotification = async function () {
     return await NotificationService.get_notifications({
@@ -129,42 +148,66 @@ export const Notification = props => {
               <TouchableOpacity
                 onPress={() => notificationClick(item)}
                 style={{
-                  flex: 1,
                   flexDirection: 'row',
-                  marginHorizontal: 10,
-                  height: 80,
                   backgroundColor: '#FFFFFF',
-                  borderRadius: 10,
-                  marginTop: 6,
-                  borderColor: '#FFFFFF',
-                  borderWidth: 1,
+                  marginHorizontal: 12,
+                  marginTop: 8,
+                  borderRadius: 12,
+                  padding: 10,
+                  alignItems: 'center',
+                  shadowColor: '#000',
+                  shadowOpacity: 0.08,
+                  shadowRadius: 4,
+                  shadowOffset: { width: 0, height: 2 },
+                  elevation: 2,
                 }}>
-                <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                <View style={{
+                  height: 55,
+                  width: 55,
+                  borderRadius: 12,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: '#F2F7FB',
+                }}>
                   <Image
                     source={fixImageUrl(item.message)}
-                    resizeMode="stretch"
-                    style={{height: 50, width: 50}}
+                    resizeMode="contain"
+                    style={{height: 35, width: 35}}
                   />
                 </View>
                 <View
                   style={{
-                    marginHorizontal: 15,
-                    paddingTop: 6,
+                    flex: 1,
+                    marginLeft: 12,
+                    justifyContent: 'center',
                     maxWidth: '82%',
                   }}>
                   <HTML
                     contentWidth={windowWidth}
                     source={{html: item.message}}
+                    tagsStyles={htmlTagsStyles}
                   />
                   <View
                     style={{
-                      flex: 1,
                       flexDirection: 'row',
                       justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginTop: 6,
                     }}>
                     <Text style={{color: Colors.IDLE, fontSize: 12}}>
                       {CustomHelper.tsToDate(item.created, 'd-m-Y h:i A')}
                     </Text>
+                    {item.is_read === '0' && (
+                      <View
+                        style={{
+                          height: 8,
+                          width: 8,
+                          borderRadius: 4,
+                          backgroundColor: Colors.THEME || '#0274BA',
+                          marginRight: 4,
+                        }}
+                      />
+                    )}
                   </View>
                 </View>
               </TouchableOpacity>
@@ -175,6 +218,8 @@ export const Notification = props => {
           onEndReached={loadItems}
           onScrollToTop={loadItemsPrev}
           onEndReachedThreshold={0.8}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingVertical: 10 }}
         />
       </View>
     </View>

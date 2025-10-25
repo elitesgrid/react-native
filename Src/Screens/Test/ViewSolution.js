@@ -407,7 +407,7 @@ export const ViewSolution = (props) => {
                                         <View style={TestSeriesStyle.questionCard}>
                                             {currentQuestions.passage !== "" &&
                                                 <View key={"passage"} style={{ flex: 1 }}>
-                                                    <Text>{"Passage"}</Text>
+                                                    <Text style={{color: Colors.TEXT_COLOR}}>{"Passage"}</Text>
                                                     <HTML 
                                                     contentWidth={windowWidth} 
                                                     source={{ html: currentQuestions.passage }}
@@ -416,7 +416,7 @@ export const ViewSolution = (props) => {
                                             }
                                             <View key={"1"}>
                                                 {currentQuestions.passage !== "" &&
-                                                    <Text>{"Question"}</Text>
+                                                    <Text style={{color: Colors.TEXT_COLOR}}>{"Question"}</Text>
                                                 }
                                                 <HTML 
                                                 contentWidth={windowWidth}
@@ -458,6 +458,7 @@ export const ViewSolution = (props) => {
                                                                         setFibActiveAnswers(updatedAnswers);
                                                                     }}
                                                                     style={styles.fibInput}
+                                                                    placeholderTextColor={Colors.IDLE}
                                                             />
                                                             }
                                                             {

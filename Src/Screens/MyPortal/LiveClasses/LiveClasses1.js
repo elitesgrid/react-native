@@ -129,7 +129,7 @@ export const LiveClasses1 = props => {
                         justifyContent: 'center',
                         marginLeft: 10,
                       }}>
-                      <Text>{item.title}</Text>
+                      <Text style={{color: Colors.TEXT_COLOR}}>{item.title}</Text>
                       <Text style={{color: Colors.IDLE}}>
                         {item.description}
                       </Text>
