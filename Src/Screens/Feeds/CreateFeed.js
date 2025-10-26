@@ -1,23 +1,18 @@
-import React, {useEffect, useState, useRef, useMemo, useCallback} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   StyleSheet,
-  SafeAreaView,
-  StatusBar,
   View,
   Image,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
   TextInput,
 } from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {Dropdown} from 'react-native-element-dropdown';
 import Compressor from 'react-native-compressor';
 import {
-  ifIphoneX,
   getStatusBarHeight,
-  getBottomSpace,
 } from 'react-native-iphone-x-helper';
 
 import imagePaths from '../../Constants/imagePaths';
@@ -27,6 +22,7 @@ import HeaderComp from '../../Components/HeaderComp';
 import HomeService from '../../Services/apis/HomeService';
 import {S3Upload} from '../../Services/S3Upload';
 import FeedService from '../../Services/apis/FeedService';
+import CustomHelper from '../../Constants/CustomHelper';
 
 export const CreateFeed = props => {
   const {navigation} = props;
@@ -77,11 +73,11 @@ export const CreateFeed = props => {
 
   const submitPost = async () => {
     if (query.length < 10) {
-      Alert.alert('Error', 'Please type atleast 10 character in query input.');
+      CustomHelper.showMessage('Please type atleast 10 character in query input.');
       return;
     }
     if (courseId === 0) {
-      Alert.alert('Error', 'Please select course first.');
+      CustomHelper.showMessage('Please select course first.');
       return;
     }
     setIsLoading(true);
@@ -113,14 +109,11 @@ export const CreateFeed = props => {
           setImageUri2(null);
           setQuery('');
           setCourseId(0);
-          Alert.alert('Server Says', data.message);
-        } else {
-          Alert.alert('Server Says', data.message);
         }
-        return true;
+        CustomHelper.showMessage(data.message);
       })
       .catch(error => {
-        Alert.alert('Error!', error.message);
+        CustomHelper.showMessage(error.message);
         return false;
       });
   };
@@ -143,7 +136,7 @@ export const CreateFeed = props => {
         return true;
       })
       .catch(error => {
-        Alert.alert('Error!', error.message);
+        CustomHelper.showMessage(error.message);
         return false;
       });
   };
@@ -167,38 +160,7 @@ export const CreateFeed = props => {
 
   return (
     <View style={{flex: 1}}>
-      <SafeAreaView style={styles.headerView}>
-        <StatusBar backgroundColor={Colors.THEME} barStyle="light-content" />
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginRight: '4%',
-          }}>
-          <TouchableOpacity onPress={() => goBack()}>
-            <Image source={imagePaths.BACK} style={styles.image} />
-          </TouchableOpacity>
-          <Text style={{color: Colors.WHITE, fontSize: 18, marginLeft: 12}}>
-            {'Create New Post'}
-          </Text>
-          <TouchableOpacity
-            style={{
-              backgroundColor: Colors.WHITE,
-              height: 25,
-              paddingHorizontal: 10,
-              justifyContent: 'center',
-              borderRadius: 4,
-            }}
-            onPress={() => submitPost()}>
-            <Text
-              style={{color: Colors.THEME, fontSize: 18, fontWeight: '500'}}>
-              {'Post'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
+      <HeaderComp headerTitle='Create New Post'></HeaderComp>
       <View style={{margin: 10, flex: 0.93}}>
         <Dropdown
           style={{

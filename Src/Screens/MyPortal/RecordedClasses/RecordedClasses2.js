@@ -7,8 +7,8 @@ import HeaderComp from '../../../Components/HeaderComp';
 import imagePaths from '../../../Constants/imagePaths';
 import navigationStrings from '../../../Constants/navigationStrings';
 import LoadingComp from '../../../Components/LoadingComp';
-import Colors from '../../../Constants/Colors';
 import PortalStyles from '../../../Assets/Style/PortalStyle';
+import CustomHelper from '../../../Constants/CustomHelper';
 
 // create a component
 export const RecordedClasses2 = (props) => {
@@ -39,8 +39,7 @@ export const RecordedClasses2 = (props) => {
                 return true;
             })
             .catch((error) => {
-                Alert.alert('Error!', error.message);
-                return false;
+                CustomHelper.showMessage(error.message);
             });
     };
 

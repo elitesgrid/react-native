@@ -3,6 +3,7 @@ import { View, Dimensions, StyleSheet, ScrollView } from 'react-native';
 import Pdf from 'react-native-pdf';
 
 import HeaderComp from '../../Components/HeaderComp';
+import CustomHelper from '../../Constants/CustomHelper';
 
 // create a component
 export const PdfViewer = (props) => {
@@ -22,6 +23,7 @@ export const PdfViewer = (props) => {
                     }}
                     onError={(error) => {
                         console.log(error);
+                        CustomHelper.showMessage(error.message || 'Error while opening PDF.');
                     }}
                     trustAllCerts={false}
                     style={styles.pdf}
@@ -39,5 +41,5 @@ const styles = StyleSheet.create({
         flex: 1,
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
-      },
+    },
 });

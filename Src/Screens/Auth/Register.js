@@ -22,6 +22,7 @@ import navigationStrings from '../../Constants/navigationStrings';
 import HeaderComp from '../../Components/HeaderComp';
 import envVariables from '../../Constants/envVariables';
 import Colors from '../../Constants/Colors';
+import CustomHelper from '../../Constants/CustomHelper';
 
 export const Register = () => {
   const navigation = useNavigation();
@@ -46,18 +47,14 @@ export const Register = () => {
     };
     return await Auth.registration(payload)
       .then(response => {
-        if (response.status == false) {
-          Alert.alert('Warning!', response.message);
-          return false;
-        } else {
+        if (response.status == true) {
           navigation.navigate(navigationStrings.OTP_VERIFICATION, payload);
-          return true;
+        } else {
+          CustomHelper.showMessage(response.message);
         }
       })
       .catch(error => {
-        console.log(error.message);
-        // signUp can fail if any parameter is blank or failed an uniqueness check on the server
-        Alert.alert('Error!', error.message);
+        CustomHelper.showMessage(error.message);        
         return false;
       });
   };

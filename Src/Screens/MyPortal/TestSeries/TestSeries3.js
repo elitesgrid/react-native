@@ -17,7 +17,6 @@ import LoadingComp from '../../../Components/LoadingComp';
 import CustomHelper from '../../../Constants/CustomHelper';
 import LinearGradient from 'react-native-linear-gradient';
 import Colors from '../../../Constants/Colors';
-import TestSeriesStyle from '../../../Assets/Style/TestSeriesStyle';
 
 // create a component
 export const TestSeries3 = props => {
@@ -62,7 +61,7 @@ export const TestSeries3 = props => {
         return true;
       })
       .catch(error => {
-        Alert.alert('Error!', error.message);
+        CustomHelper.showMessage(error.message);
         return false;
       });
   };

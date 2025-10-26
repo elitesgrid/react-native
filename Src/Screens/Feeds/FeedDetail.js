@@ -6,7 +6,6 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
-  Alert,
   StyleSheet
 } from 'react-native';
 
@@ -39,7 +38,7 @@ export const FeedDetail = props => {
         return true;
       })
       .catch(error => {
-        Alert.alert('Error!', error.message);
+        CustomHelper.showMessage(error.message);
         return false;
       });
   };
@@ -56,7 +55,7 @@ export const FeedDetail = props => {
         return true;
       })
       .catch(error => {
-        Alert.alert('Error!', error.message);
+        CustomHelper.showMessage(error.message);
         return false;
       });
   };
@@ -75,7 +74,7 @@ export const FeedDetail = props => {
         getFeedDetail();
       })
       .catch(error => {
-        Alert.alert('Error!', error.message);
+        CustomHelper.showMessage(error.message);
       });
   };
 
@@ -93,7 +92,7 @@ export const FeedDetail = props => {
 
   const postComment = function () {
     if (commentInput === '') {
-      Alert.alert('Error!', 'Please enter valid comment.');
+      CustomHelper.showMessage('Please enter valid comment.');
       return false;
     }
     let payload = {
@@ -110,7 +109,7 @@ export const FeedDetail = props => {
         getFeedComments();
       })
       .catch(error => {
-        Alert.alert('Error!', error.message);
+        CustomHelper.showMessage(error.message);
       });
   };
 
@@ -128,7 +127,7 @@ export const FeedDetail = props => {
         getFeedComments();
       })
       .catch(error => {
-        Alert.alert('Error!', error.message);
+        CustomHelper.showMessage(error.message);
       });
   };
 

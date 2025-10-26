@@ -79,6 +79,7 @@ async function network_call(API, payload) {
 
   try {
     const response = await axios(refreshOptions);
+    // console.log(response);
     if (response.status === 200) {
       let _return = response.data;
       // console.log(refreshOptions);
@@ -96,9 +97,9 @@ async function network_call(API, payload) {
       Alert.alert('Server says', response.data);
     }
   } catch (error) {
-    console.log(API);
-    console.log(error);
-    if (error.code) {
+    console.log("API Call:",API);
+    console.log('Error:', error?.message || error);
+    if (error?.message === 'Network Error' || error?.code === 'ERR_NETWORK') {
       return {
         status: false,
         message:

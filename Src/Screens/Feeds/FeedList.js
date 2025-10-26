@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   RefreshControl,
   SafeAreaView,
-  Alert,
   TextInput,
   StyleSheet
 } from 'react-native';
@@ -20,7 +19,7 @@ import CustomHelper from '../../Constants/CustomHelper';
 import FeedService from '../../Services/apis/FeedService';
 import Colors from '../../Constants/Colors';
 import navigationStrings from '../../Constants/navigationStrings';
-import BottomSheet, {BottomSheetFlatList} from '@gorhom/bottom-sheet';
+import BottomSheet from '@gorhom/bottom-sheet';
 import Styles from '../../Assets/Style/LoginStyle';
 import HomeService from '../../Services/apis/HomeService';
 
@@ -71,7 +70,7 @@ export const FeedList = props => {
         return true;
       })
       .catch(error => {
-        Alert.alert('Error!', error.message);
+        CustomHelper.showMessage(error.message);
         return false;
       });
   };
@@ -97,7 +96,7 @@ export const FeedList = props => {
         fetchData();
       })
       .catch(error => {
-        Alert.alert('Error!', error.message);
+        CustomHelper.showMessage(error.message);
       });
   };
 
@@ -142,8 +141,7 @@ export const FeedList = props => {
           return true;
         })
         .catch(error => {
-          Alert.alert('Error!', error.message);
-          return false;
+          CustomHelper.showMessage(error.message);
         });
     }
   };

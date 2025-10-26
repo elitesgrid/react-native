@@ -4,7 +4,6 @@ import {
   View,
   useWindowDimensions,
   TouchableOpacity,
-  Alert,
   ScrollView,
   Image,
   SafeAreaView,
@@ -61,8 +60,7 @@ export const Bookmark = props => {
         return true;
       })
       .catch(error => {
-        Alert.alert('Error!', error.message);
-        return false;
+        CustomHelper.showMessage(error.message);
       });
   }
 
@@ -70,7 +68,7 @@ export const Bookmark = props => {
     if (item.url) {
       navigation.navigate(navigationStrings.PLAYER, item);
     } else {
-      Alert.alert('Error!', 'Please enter URL.' + item.url);
+      CustomHelper.showMessage('Please enter URL.' + item.url);
     }
   };
 
@@ -94,8 +92,7 @@ export const Bookmark = props => {
           }
           return true;
         }).catch(error => {
-          Alert.alert('Error!', error.message);
-          return false;
+          CustomHelper.showMessage(error.message);
         });
       },
     });

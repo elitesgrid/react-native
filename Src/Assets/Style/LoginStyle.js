@@ -69,6 +69,7 @@ const Styles = StyleSheet.create({
     height: moderateVerticalScale(44),
     backgroundColor: '#0065A4',
     borderRadius: 50,
+    flexDirection: 'row'
   },
   button_label: {
     color: '#fff',

@@ -63,7 +63,7 @@ const TimelineTabs = props => {
       .catch(error => {
         // console.log(error);
         setIsLoading(false);
-        Alert.alert('Error!', error.message);
+        CustomHelper.showMessage(error.message);
         return false;
       });
   };
@@ -73,7 +73,7 @@ const TimelineTabs = props => {
     if (item.url) {
       navigation.navigate(navigationStrings.PLAYER, item);
     } else {
-      Alert.alert('Error!', 'Please enter URL.' + item.url);
+      CustomHelper.showMessage('Please enter URL.' + item.url);
     }
   };
 
@@ -603,7 +603,6 @@ const TimelineTabs = props => {
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => {
-              Alert.alert('Modal has been closed.');
               setModalVisible(!modalVisible);
             }}>
             <View style={styles.centeredView}>

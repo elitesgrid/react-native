@@ -18,6 +18,7 @@ import imagePaths from '../../Constants/imagePaths';
 import navigationStrings from '../../Constants/navigationStrings';
 import HeaderComp from '../../Components/HeaderComp';
 import Colors from '../../Constants/Colors';
+import CustomHelper from '../../Constants/CustomHelper';
 
 export const ForgotPassword = () => {
   const navigation = useNavigation();
@@ -29,7 +30,7 @@ export const ForgotPassword = () => {
     let payload = {email: username};
     return await Auth.forgot_password(payload)
       .then(async data => {
-        Alert.alert('Alert!', data.message);
+        CustomHelper.showMessage(data.message);
         if (data.status === true) {
           navigation.navigate(navigationStrings.OTP_VERIFICATION, {
             email: payload.email,
@@ -39,7 +40,7 @@ export const ForgotPassword = () => {
         return true;
       })
       .catch(error => {
-        Alert.alert('Error!', error.message);
+        CustomHelper.showMessage(error.message);
         return false;
       });
   };

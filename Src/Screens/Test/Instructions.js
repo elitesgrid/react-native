@@ -9,6 +9,7 @@ import imagePaths from '../../Constants/imagePaths';
 import TestServices from '../../Services/apis/TestServices';
 import navigationStrings from '../../Constants/navigationStrings';
 import LoadingComp from '../../Components/LoadingComp';
+import CustomHelper from '../../Constants/CustomHelper';
 
 // create a component
 export const Instructions = (props) => {
@@ -21,7 +22,7 @@ export const Instructions = (props) => {
 
   const startTest = (item) => {
     if (!accepted) {
-      Alert.alert('Notice', 'Please accept the Terms & Conditions before starting the test.');
+      CustomHelper.showMessage('Please accept the Terms & Conditions before starting the test.');
       return;
     }
     navigation.navigate(navigationStrings.TEST_ATTEMPT, item);
@@ -43,7 +44,7 @@ export const Instructions = (props) => {
         return true;
       })
       .catch((error) => {
-        Alert.alert('Error!', error.message);
+        CustomHelper.showMessage(error.message);
         return false;
       });
   }

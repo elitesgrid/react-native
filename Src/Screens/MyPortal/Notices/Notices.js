@@ -54,7 +54,7 @@ export const Notices = (props) => {
                 return true;
             })
             .catch((error) => {
-                Alert.alert('Error!', error.message);
+                CustomHelper.showMessage(error.message);
                 return false;
             });
     };

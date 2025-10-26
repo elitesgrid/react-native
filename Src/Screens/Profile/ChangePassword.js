@@ -15,6 +15,7 @@ import imagePaths from '../../Constants/imagePaths';
 import Auth from '../../Services/apis/AuthService';
 import navigationStrings from '../../Constants/navigationStrings';
 import Colors from '../../Constants/Colors';
+import CustomHelper from '../../Constants/CustomHelper';
 
 export const ChangePassword = props => {
   const {navigation} = props;
@@ -28,15 +29,15 @@ export const ChangePassword = props => {
       password: newPassword,
     };
     if (password === '') {
-      Alert.alert('Alert!', 'Please enter old password');
+      CustomHelper.showMessage('Please enter old password');
       return false;
     }
     if (newPassword === '') {
-      Alert.alert('Alert!', 'Please enter new password');
+      CustomHelper.showMessage('Please enter new password');
       return false;
     }
     let response = await Auth.update_password(payload);
-    Alert.alert('Alert!', response.message);
+    CustomHelper.showMessage(response.message);
     if (response.status === true) {
       navigation.navigate(navigationStrings.HOME);
     }

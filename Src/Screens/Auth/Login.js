@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {
-  Alert,
   SafeAreaView,
   Image,
   Text,
@@ -10,7 +9,8 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
-  ScrollView
+  ScrollView,
+  ActivityIndicator
 } from 'react-native';
 import {
   moderateVerticalScale,
@@ -23,21 +23,24 @@ import navigationStrings from '../../Constants/navigationStrings';
 import imagePaths from '../../Constants/imagePaths';
 import Colors from '../../Constants/Colors';
 import envVariables from '../../Constants/envVariables';
+import CustomHelper from '../../Constants/CustomHelper';
 
 export const Login = ({navigation}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isVisible, setisVisible] = useState(true);
   const [keyBoardHeight, setKeyBoardHeight] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   const doUserLogIn = async function () {
     // Note that this values come from state variables that we've declared before
     const usernameValue = username;
     const passwordValue = password;
-
+    setIsLoading(true);
     return await Auth.login({email: usernameValue, password: passwordValue})
       .then(async data => {
-        Alert.alert('Alert!', data.message);
+        setIsLoading(false);
+        CustomHelper.showMessage(data.message);
         if (data.status === true) {
           //navigation.navigate(navigationStrings.HOME);
           RNRestart.Restart();
@@ -45,7 +48,8 @@ export const Login = ({navigation}) => {
         return true;
       })
       .catch(error => {
-        Alert.alert('Error!', error.message);
+        setIsLoading(false);
+        CustomHelper.showMessage(error.message);
         return false;
       });
   };
@@ -146,10 +150,15 @@ export const Login = ({navigation}) => {
                 </TouchableOpacity>
 
                 {/* Sign In */}
-                <TouchableOpacity onPress={doUserLogIn}>
-                  <View style={Styles.button}>
-                    <Text style={Styles.button_label}>Sign in</Text>
-                  </View>
+                <TouchableOpacity 
+                  onPress={doUserLogIn}
+                  disabled={isLoading}
+                  style={Styles.button}
+                >
+                  <Text style={Styles.button_label}>{isLoading? "Please wait...": "Sign in"}</Text>
+                  {
+                    isLoading && <ActivityIndicator style={{marginLeft: 20}} color="#fff" size="small" />
+                  }
                 </TouchableOpacity>
               </View>
             </View>

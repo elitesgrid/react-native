@@ -5,8 +5,8 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, ImageBackgro
 import PortalService from '../../../Services/apis/PortalService';
 import imagePaths from '../../../Constants/imagePaths';
 import navigationStrings from '../../../Constants/navigationStrings';
-import Colors from '../../../Constants/Colors';
 import PortalStyles from '../../../Assets/Style/PortalStyle';
+import CustomHelper from '../../../Constants/CustomHelper';
 
 // create a component
 export const TestSeries1 = (props) => {
@@ -33,7 +33,7 @@ export const TestSeries1 = (props) => {
                 return true;
             })
             .catch((error) => {
-                Alert.alert('Error!', error.message);
+                CustomHelper.showMessage(error.message);
                 return false;
             });
     };

@@ -17,6 +17,7 @@ import imagePaths from '../../Constants/imagePaths';
 import navigationStrings from '../../Constants/navigationStrings';
 import HeaderComp from '../../Components/HeaderComp';
 import Colors from '../../Constants/Colors';
+import CustomHelper from '../../Constants/CustomHelper';
 
 export const OtpVerification = props => {
   const {route, navigation} = props;
@@ -31,44 +32,32 @@ export const OtpVerification = props => {
     let payload = params;
     payload.otp = otp;
     if (payload.otp === '' || payload.otp.length != 4) {
-      Alert.alert('Error!', 'Please enter valid OTP.');
+      CustomHelper.showMessage('Please enter valid OTP.');
       return false;
     }
     if (payload.name) {
       return await Auth.registration(payload)
         .then(async data => {
-          if (data.status === false) {
-            Alert.alert('Warning!', data.message);
-            return false;
-          } else {
-            Alert.alert('Success!', data.message);
-            if (data.status === true) {
-              RNRestart.Restart();
-            }
-            return true;
+          CustomHelper.showMessage(data.message);
+          if (data.status === true) {
+            RNRestart.Restart();
           }
         })
         .catch(error => {
-          Alert.alert('Error!', error.message);
+          CustomHelper.showMessage(error.message);
           return false;
         });
     } else {
       payload.password = password;
       return await Auth.forgot_password(payload)
         .then(async data => {
-          if (data.status === false) {
-            Alert.alert('Warning!', data.message);
-            return false;
-          } else {
-            Alert.alert('Success!', data.message);
-            if (data.status === true) {
-              RNRestart.Restart();
-            }
-            return true;
+          CustomHelper.showMessage(data.message);
+          if (data.status === true) {
+            RNRestart.Restart();
           }
         })
         .catch(error => {
-          Alert.alert('Error!', error.message);
+          CustomHelper.showMessage(error.message);
           return false;
         });
     }

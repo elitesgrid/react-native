@@ -10,8 +10,6 @@ import {
   TouchableOpacity,
   Image,
   ImageBackground,
-  Alert,
-  Button,
 } from 'react-native';
 import * as Progress from 'react-native-progress';
 
@@ -74,7 +72,7 @@ export const RecordedClasses3 = props => {
       .catch(error => {
         // console.log(error);
         setIsLoading(false);
-        Alert.alert('Error!', error.message);
+        CustomHelper.showMessage(error.message);
         return false;
       });
   };
@@ -84,7 +82,7 @@ export const RecordedClasses3 = props => {
     if (item.url) {
       navigation.navigate(navigationStrings.PLAYER, item);
     } else {
-      Alert.alert('Error!', 'Please enter URL.' + item.url);
+      CustomHelper.showMessage('Please enter URL.' + item.url);
     }
   };
 
@@ -273,7 +271,6 @@ export const RecordedClasses3 = props => {
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => {
-              Alert.alert('Modal has been closed.');
               setModalVisible(!modalVisible);
             }}>
             <View style={styles.centeredView}>

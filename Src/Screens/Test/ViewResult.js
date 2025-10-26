@@ -17,6 +17,7 @@ import { TimeAnalysis } from './TestResulComp/TimeAnalysis';
 import { DifficultyAnalysis } from './TestResulComp/DifficultyAnalysis';
 import { ScoreCard } from './TestResulComp/ScoreCard';
 import navigationStrings from '../../Constants/navigationStrings';
+import CustomHelper from '../../Constants/CustomHelper';
 
 // create a component
 export const ViewResult = (props) => {
@@ -67,7 +68,7 @@ export const ViewResult = (props) => {
             }
             return true;
         }).catch((error) => {
-            Alert.alert('Error!', error.message);
+            CustomHelper.showMessage(error.message);
             return false;
         });
     }

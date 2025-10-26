@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, ScrollView, TouchableOpacity, View, Image, ImageBackground, Pressable,Alert, Platform } from 'react-native';
+import { Text, ScrollView, TouchableOpacity, View, Image, ImageBackground, Pressable, Platform } from 'react-native';
 import Styles from '../../Assets/Style/LoginStyle';
 import HomeHeaderComp from '../../Components/HomeHeaderComp';
 import BannerSlider from './includes/BannerSlider';
@@ -10,7 +10,7 @@ import HomeService from "../../Services/apis/HomeService";
 import imagePaths from '../../Constants/imagePaths';
 import navigationStrings from '../../Constants/navigationStrings';
 import LoadingComp from '../../Components/LoadingComp';
-
+import CustomHelper from '../../Constants/CustomHelper';
 
 export const Home = (props) => {
   const { navigation } = props;
@@ -50,8 +50,7 @@ export const Home = (props) => {
         return true;
       })
       .catch((error) => {
-        Alert.alert('Error!', error.message);
-        return false;
+        CustomHelper.showMessage(error.message);
       });
   };
 

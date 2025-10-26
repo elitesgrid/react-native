@@ -236,7 +236,7 @@ export const AttemptTest = (props) => {
 
     function switchSection(secId, force = false) {
         if(params.allow_move_section === "0" && secId !== resumeSectionId && force === false){
-            Alert.alert("Warning","Section switching not allowed.");
+            CustomHelper.showMessage("Section switching not allowed.");
             return false;
         }
         const index = testQuestions.findIndex(item => item.section_id === secId);
@@ -333,7 +333,7 @@ export const AttemptTest = (props) => {
     const prevQuestion = async function (){
         let currentQuestion = testQuestions[currentQuestionsIndex - 1];
         if(params.allow_move_section === "0" && resumeSectionId !== currentQuestion.section_id){
-            Alert.alert("Invalid Prev","Section switching not allowed");
+            CustomHelper.showMessage("Section switching not allowed");
             return false;
         }
 
@@ -345,7 +345,7 @@ export const AttemptTest = (props) => {
         let toBeCurrentQuestion = testQuestions[index];
         if(params.allow_move_section === "0" && currentQuestion.section_id !== toBeCurrentQuestion.section_id){
             togglePallete();
-            Alert.alert("Warning","Section switching not allowed");
+            CustomHelper.showMessage("Section switching not allowed");
             return false;
         }
         load_question(index);
@@ -561,7 +561,7 @@ export const AttemptTest = (props) => {
             }
             return true;
         }).catch((error) => {
-            Alert.alert('Error!', error.message);
+            CustomHelper.showMessage(error.message);
             return false;
         });
     }

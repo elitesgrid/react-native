@@ -8,6 +8,7 @@ import imagePaths from '../../../Constants/imagePaths';
 import navigationStrings from '../../../Constants/navigationStrings';
 import LoadingComp from '../../../Components/LoadingComp';
 import PortalStyles from '../../../Assets/Style/PortalStyle';
+import CustomHelper from '../../../Constants/CustomHelper';
 
 // create a component
 export const TestSeries2 = (props) => {
@@ -38,7 +39,7 @@ export const TestSeries2 = (props) => {
                 return true;
             })
             .catch((error) => {
-                Alert.alert('Error!', error.message);
+                CustomHelper.showMessage(error.message);
                 return false;
             });
     };

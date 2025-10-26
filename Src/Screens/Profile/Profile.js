@@ -31,10 +31,7 @@ export const Profile = () => {
       name: name,
       mobile: mobile,
     };
-    Alert.alert(
-      'Message!',
-      'Profile details update not allowed. Because Elites Grid Not allowed this. Please contact us in case of change.',
-    );
+    CustomHelper.showMessage('Profile details update not allowed. Because Elites Grid Not allowed this. Please contact us in case of change.');
   }
 
   useEffect(function () {

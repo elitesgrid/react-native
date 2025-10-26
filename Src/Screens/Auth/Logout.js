@@ -6,14 +6,14 @@ import {StackActions} from '@react-navigation/native';
 import Styles from '../../Assets/Style/LoginStyle';
 import StorageManager from '../../Services/StorageManager'
 import navigationStrings from '../../Constants/navigationStrings';
-
+import CustomHelper from '../../Constants/CustomHelper';
 
 export const Logout = () => {
   const navigation = useNavigation();
 
   const doUserLogOut = async function () {
       await StorageManager.remove_session()
-      Alert.alert('Success!', 'Logged out successfully');
+      CustomHelper.showMessage('Logged out successfully');
       navigation.navigate(navigationStrings.LOGIN);
       return true;
    };

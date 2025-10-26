@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   Image,
   ImageBackground,
-  Alert,
 } from 'react-native';
 
 import PortalService from '../../../Services/apis/PortalService';
@@ -16,6 +15,7 @@ import imagePaths from '../../../Constants/imagePaths';
 import CommonStyles from '../../../Assets/Style/CommonStyle';
 import navigationStrings from '../../../Constants/navigationStrings';
 import Colors from '../../../Constants/Colors';
+import CustomHelper from '../../../Constants/CustomHelper';
 
 // create a component
 export const LiveClasses1 = props => {
@@ -46,7 +46,7 @@ export const LiveClasses1 = props => {
         return true;
       })
       .catch(error => {
-        Alert.alert('Error!', error.message);
+        CustomHelper.showMessage(error.message);
         return false;
       });
   };

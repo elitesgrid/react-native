@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, Image, ScrollView,TouchableOpacity,Alert } from 'react-native';
+import { Text, View, Image, ScrollView,TouchableOpacity } from 'react-native';
 
 import HeaderComp from '../../Components/HeaderComp';
 import HomeService from "../../Services/apis/HomeService";
@@ -14,7 +14,7 @@ export const MyOrder = (props) => {
   const [courseList, setCourseList] = useState([]);
 
   const onItemClick = function(item_id){
-    Alert.alert('Message!', "All the information regarding added/expiry Mentioned Over Card itself. For view content for this please visit 'My Portal' from bottom bar.");
+    CustomHelper.showMessage("All the information regarding added/expiry Mentioned Over Card itself. For view content for this please visit 'My Portal' from bottom bar.");
   }
 
   const getMyOrder = async function () {
@@ -29,7 +29,7 @@ export const MyOrder = (props) => {
         return true;
       })
       .catch((error) => {
-        Alert.alert('Error!', error.message);
+        CustomHelper.showMessage(error.message);
         return false;
       });
   };

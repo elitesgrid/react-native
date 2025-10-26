@@ -1,3 +1,5 @@
+import { Platform, ToastAndroid, Alert } from 'react-native';
+
 function tsToDate(timestamp, type) {
   let MONTHS = [
     'Jan',
@@ -83,9 +85,18 @@ function ReadyHTMLForWebView(desc) {
   );
 }
 
+const showMessage = (msg) => {
+  if (Platform.OS === 'android') {
+    ToastAndroid.show(msg, ToastAndroid.SHORT);
+  } else {
+    Alert.alert('Alert!', msg);
+  }
+};
+
 export default {
   tsToDate,
   secFormat,
   ReadyHTMLForWebView,
   hexToRgba,
+  showMessage
 };
