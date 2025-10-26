@@ -1,11 +1,11 @@
 import { Platform } from "react-native";
-import VersionInfo from 'react-native-version-info';
+import DeviceInfo from 'react-native-device-info';
 
 export default {
     BASE_URL: 'https://www.elitesgrid.com/api/',
     BASE_URL_WEB: "https://www.elitesgrid.com/",
     BEARER_TOKEN: "21*dNerglnw3@@OI)30@I*Dm'@@",
-    VERSION: VersionInfo.buildVersion,
+    VERSION: Platform.OS === "ios" ? DeviceInfo.getVersion() : DeviceInfo.getBuildNumber(),
     DEVICE_TYPE: Platform.OS === "ios" ? "2" : "1",
     CRYPT_KEY: "%!F*&^$)_*%3f&B+",
     PRIVACY_POLICY_URL: "https://www.elitesgrid.com/index.php/web/home/terms_condition?is_mobile=1",

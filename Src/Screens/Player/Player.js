@@ -191,7 +191,7 @@ export const Player = props => {
         vu = url;
       }
 
-      console.log("video type:", vt," video url:", vu);
+      console.log("video type:", vt,", video url:", vu);
       setVideoType(vt);
       setVideoUrl(vu);
     } catch (e) {
