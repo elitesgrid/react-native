@@ -102,9 +102,9 @@ const TimeListItem = ({ item }) => {
 };
 
 // --- Section Header Component ---
-const SectionHeader = ({ title }) => (
+const SectionHeader = ({ title, count }) => (
   <View style={styles.sectionHeaderContainer}>
-    <Text style={styles.sectionHeaderText}>{title} (60 Q)</Text>
+    <Text style={styles.sectionHeaderText}>{title} ({count} Q)</Text>
   </View>
 );
 
@@ -173,6 +173,7 @@ export const TimeAnalysis = ({ resultData }) => {
             if (!d[sectionName]) {
                 d[sectionName] = {
                     title: sectionName,
+                    count: 0,
                     data: [],
                 }
             }
@@ -187,6 +188,7 @@ export const TimeAnalysis = ({ resultData }) => {
                 timeSpentByToppers: formatSecondsToMMSS(element.topper_time),
             }
             d[sectionName].data.push(data);
+            ++d[sectionName].count;
         });
         d = Object.values(d);
         // console.log(d);
@@ -199,7 +201,7 @@ export const TimeAnalysis = ({ resultData }) => {
         sections={sectionsData}
         keyExtractor={(item) => String(item.questionNo)}
         renderItem={({ item }) => <TimeListItem item={item} />}
-        renderSectionHeader={({ section: { title } }) => <SectionHeader title={title} />}
+        renderSectionHeader={({ section: { title, count } }) => <SectionHeader title={title} count={count} />}
         contentContainerStyle={styles.listContainer}
         // Essential optimization properties for SectionList
         initialNumToRender={10} 

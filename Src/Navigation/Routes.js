@@ -70,6 +70,7 @@ export default function Routes() {
       global.CONTACT_DETAILS = versions.data.contact_details || {};
       global.FEED_FILTERS = versions.data.feed_filter || [];
       global.BOOKMARK_FILTERS = versions.data.bookmark_filter || [];
+      global.WEBVIEW_TEST = versions.data.test_webview || "0";
       // console.log(global.BOOKMARK_FILTERS);
     } catch (e) {
       console.log('Routes.js', e);

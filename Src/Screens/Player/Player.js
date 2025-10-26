@@ -21,6 +21,7 @@ import PortalService from '../../Services/apis/PortalService';
 import LoadingComp from '../../Components/LoadingComp';
 import Colors from '../../Constants/Colors';
 import imagePaths from '../../Constants/imagePaths';
+import envVariables from '../../Constants/envVariables';
 
 // create a component
 export const Player = props => {
@@ -121,7 +122,7 @@ export const Player = props => {
         {
           text: 'Install Zoom',
           onPress: () =>
-            Linking.openURL('https://apps.apple.com/app/id546505307'),
+            Linking.openURL(envVariables.STORE_LINK),
         },
         { text: 'Cancel', style: 'cancel' },
       ]);
@@ -134,32 +135,65 @@ export const Player = props => {
   async function identifyVideoType(url) {
     try {
       setIsLoading(true);
+      console.log("url", url, params.webview);
 
-      // YouTube
+      let vt = "";
+      let vu = "";
+
       if (url.includes('youtu')) {
+        // YouTube
         const ytId = extractYouTubeId(url);
         if (ytId) {
-          setVideoType('youtube');
-          setVideoUrl('https://www.youtube.com/embed/' + ytId);
+          vt = 'youtube';
+          vu = 'https://www.youtube.com/embed/' + ytId;
         } else {
           Alert.alert('Invalid YouTube URL');
         }
-      }
-      // Webview (Zoom / website)
-      else if ((url.includes('http') && !url.includes('mp4')) || params.webview) {
-        if (params.video_type === '6') {
-          launchZoomApp(url);
-          navigation.goBack();
-          return;
+      } else if ((url.includes('http') && !url.includes('mp4')) || params.webview) {
+        if (!isNaN(parseInt(url))) {
+          zoom_meeting_url = await PortalService.generate_zoom_url({
+            meeting_id: url,
+            play_url: 1,
+          });
+          if (zoom_meeting_url.data == 1) {
+            vu = zoom_meeting_url.play_url;
+            vt = 'video';
+          } else {
+            Alert.alert('Url not found on zoom for this video.');
+          }
+        } else {
+          if (params.video_type === '6') {
+            launchZoomApp(url);
+            navigation.goBack();
+            return;
+          }
+          vt = 'webview';
+          vu = url
         }
-        setVideoType('webview');
-        setVideoUrl(url);
+      } else if (!isNaN(parseInt(url))) {
+        vt = 'video';
+        try {
+          zoom_meeting_url = await PortalService.generate_zoom_url({
+            meeting_id: url,
+          });
+          console.log(zoom_meeting_url);
+          if (zoom_meeting_url.data == 1) {
+            vu = zoom_meeting_url.url;
+          } else {
+            Alert.alert('Url not found on zoom for this video.');
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      } else {
+        // Raw Video (mp4 / mkv)  
+        vt = 'video';
+        vu = url;
       }
-      // Raw Video (mp4 / mkv)
-      else {
-        setVideoType('video');
-        setVideoUrl(url);
-      }
+
+      console.log("video type:", vt," video url:", vu);
+      setVideoType(vt);
+      setVideoUrl(vu);
     } catch (e) {
       console.log('Video detect error:', e);
     } finally {
@@ -172,7 +206,9 @@ export const Player = props => {
   // ------------------------------
   const handleBackPress = () => {
     updateVideoTime();
-    if (isFullscreen) Orientation.lockToPortrait();
+    if (isFullscreen){
+      Orientation.lockToPortrait();
+    }
     navigation.goBack();
     return true;
   };
@@ -263,7 +299,7 @@ export const Player = props => {
             <TouchableOpacity
               onPress={toggleFullscreen}
               style={styles.fullscreenBtn}>
-                <Text style={{ color: 'white', fontSize: 20, textAlign: 'center', justifyContent: 'center' }}>
+                <Text style={{ color: 'white', fontSize: 16, textAlign: 'center', justifyContent: 'center' }}>
                   {isFullscreen ? '⤡' : '⛶'}
                 </Text>
             </TouchableOpacity>
@@ -334,8 +370,8 @@ const styles = StyleSheet.create({
   },
   fullscreenBtn: {
     position: 'absolute',
-    bottom: 12,
-    right: 12,
+    bottom: 14,
+    right: 8,
     backgroundColor: 'rgba(71, 69, 69, 0.6)',
     paddingHorizontal: 12,
     paddingVertical: 6,

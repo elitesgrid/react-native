@@ -87,6 +87,7 @@ export const AttemptTest = (props) => {
     const colorScheme = useColorScheme();
     const isNightMode = colorScheme === 'dark';
     const timerMounted = useRef(false);
+    const isDev = useRef(false);
     const {
         questionTime,
         remainSeconds,
@@ -183,6 +184,7 @@ export const AttemptTest = (props) => {
         }
 
         const userSavedAnswers = finalJson[index]?.answers || [];
+        //console.log("userSavedAnswers",userSavedAnswers, index);
         
         if(currentQuestion.question_type === "FIB") {
             if (userSavedAnswers.length > 0) {
@@ -268,7 +270,6 @@ export const AttemptTest = (props) => {
         setCurrentQuestions(newCurrentQuestions);
         
         if (isFIB) {
-            // Update the auxiliary state used by TextInput
             setFibActiveAnswers(newAnswers);
         }
     }
@@ -316,35 +317,12 @@ export const AttemptTest = (props) => {
 
     const nextQuestion = async function (){
         let currentQuestion = testQuestions[currentQuestionsIndex + 1];
-        if(params.allow_move_section === "0" && resumeSectionId.toString() !== currentQuestion.section_id){
-            showConfirmDialog({
-                title: 'Elites Grid',
-                message: 'Are you sure want to submit this section?',
-                onConfirm: async () => {
-                    submitTest('2', await collectJson('1'));
-
-                    let sections = sectionTimings ? Object.keys(sectionTimings) : [];
-                    const index = sections.length === 0 ? -1 : sections.indexOf(resumeSectionId);
-                    let nextSecId = sections.length === 0 ? resumeSectionId : (sections[index + 1] ?? sections[sections.length - 1]);
-                    if(nextSecId === resumeSectionId) {
-                        submitTest('1', await collectJson('2'));
-                        console.log("Auto Submit", nextSecId, resumeSectionId, index, sections);
-                    } else {
-                        console.log("New Sec Time Setting Up",sectionTimings[nextSecId]);
-                        setRemainSeconds(sectionTimings[nextSecId]);
-                        //Partial Submit
-                        switchSection(nextSecId, true);
-                        let json = await collectJson('1', nextSecId);
-                        json.active_section = nextSecId;
-                        //console.log("Force Partial Submit",json, sectionTimings);
-                        submitTest("2", json);
-                    }
-                },
-            });
-            return false;
-        }
         await saveAnswer(false);
-        load_question(currentQuestionsIndex + 1);
+        if(params.allow_move_section === "0" && resumeSectionId.toString() !== currentQuestion.section_id){
+            switchSection(resumeSectionId);
+        } else {
+            load_question(currentQuestionsIndex + 1);
+        }
     }
 
     async function markForReviewAndNext(){
@@ -394,7 +372,7 @@ export const AttemptTest = (props) => {
                     time_taken: remainSeconds,
                     test_id: params.id,
                     section_sequence: ss,
-                    state: state ? 1 : 2,
+                    state: state,
                     first_attempt: "1",
                     last_question: currentQuestionsIndex,
                     active_section: resumeSec ? resumeSec : resumeSectionId
@@ -408,9 +386,10 @@ export const AttemptTest = (props) => {
     }
 
     const submitTest = async function (backPress, payload){
+        console.log("backPress",backPress);
         TestServices.submit_test_detail(payload).then(async (data) => {
             if(backPress === "2"){
-                console.log(data);
+                //console.log(data);
                 return false;
             }
             data = data.data;
@@ -426,20 +405,51 @@ export const AttemptTest = (props) => {
                 } else {
                     navigation.replace(navigationStrings.TEST_VIEW_RESULT, testSeries); 
                 }
-                console.log("Submit Test Success", testSeries);
+                console.log("Submit Test Success");
             }
             console.log("Submit Test", data);
-        }); 
+        });
     }
 
     const confirmAndSubmitTest = async function(backPress = "") {
-        showConfirmDialog({
-            title: 'Elites Grid',
-            message: 'Are you sure want to submit test?',
-            onConfirm: async () => {
-                submitTest(backPress, await collectJson('2'));
-            },
-        });
+        let sections = sectionTimings ? Object.keys(sectionTimings) : [];
+        if(params.allow_move_section === "0" && resumeSectionId !== sections[sections.length - 1] && backPress !== "1"){
+            showConfirmDialog({
+                title: 'Elites Grid',
+                message: 'Are you sure want to submit this section?',
+                onConfirm: async () => {
+                    const index = sections.length === 0 ? -1 : sections.indexOf(resumeSectionId);
+                    let nextSecId = sections.length === 0 ? resumeSectionId : (sections[index + 1] ?? sections[sections.length - 1]);
+                    if(nextSecId === resumeSectionId) {
+                        submitTest('1', await collectJson('2'));
+                        console.log("Auto Submit", nextSecId, resumeSectionId, index, sections);
+                    } else {
+                        console.log("New Sec Time Setting Up",sectionTimings[nextSecId]);
+                        setRemainSeconds(sectionTimings[nextSecId]);
+                        //Partial Submit
+                        switchSection(nextSecId, true);
+                        let json = await collectJson('1', nextSecId);
+                        json.active_section = nextSecId;
+                        //console.log("Force Partial Submit",json, sectionTimings);
+                        submitTest("2", json);
+                    }
+                },
+            });
+        } else {
+            let state = backPress;
+            if(backPress === "2" && params.allow_move_section === "0" && resumeSectionId === sections[sections.length - 1]){
+                state = "2";
+                backPress = "1";
+            }
+            console.log("Backpress requested", backPress, state);
+            showConfirmDialog({
+                title: 'Elites Grid',
+                message: 'Are you sure want to submit test?',
+                onConfirm: async () => {
+                    submitTest(backPress, await collectJson(state));
+                },
+            });
+        }
     }
 
     async function getTestDetail(params) {
@@ -585,29 +595,27 @@ export const AttemptTest = (props) => {
                 load_question(0);
             }
         }
-    }, [testQuestions, finalJson]) // Added finalJson dependency to ensure it runs after data load
+    }, [testQuestions]);
 
     useEffect(function () {
-        // ... setup and cleanup listeners ...
+        setTestSeries({});
+        async function fetchData() {
+            await getSessionData();
+            const response = await getTestDetail(params);
+        }
+        fetchData();
 
-        // const unsubscribe = navigation.addListener('focus', () => {
-            setTestSeries({}); // Reset testSeries on focus is questionable, but preserved.
-            async function fetchData() {
-                await getSessionData();
-                const response = await getTestDetail(params);
-            }
-            fetchData();
-        // });
+        if(!isDev){
+            const backHandler = BackHandler.addEventListener(
+                "hardwareBackPress",
+                () => {
+                    Alert.alert("Your progress will be lost, Please save it first.")
+                    return true;
+                }
+            );
 
-        const backHandler = BackHandler.addEventListener(
-            "hardwareBackPress",
-            () => {
-                Alert.alert("Your progress will be lost, Please save it first.")
-                return true;
-            }
-        );
-
-        return () => backHandler.remove(); // cleanup on unmount
+            return () => backHandler.remove(); // cleanup on unmount
+        }
 
     }, [navigation, params]);
 
@@ -673,92 +681,90 @@ export const AttemptTest = (props) => {
                             onClose={togglePallete}
                             drawerContent={
                                 <SafeAreaView style={[TestSeriesStyle.pallete_container, styles.drawerContentContainer]}>
-      
-                                {/* Header */}
-                                <View style={TestSeriesStyle.pallete_header}>
-                                    <Image
-                                    style={styles.profileImage}
-                                    resizeMode="contain"
-                                    source={profileImage === '' ? imagePaths.LOGO : {uri: profileImage}}
-                                    />
-                                    <Text
-                                    style={styles.drawerProfileText} // Inline style moved to StyleSheet
-                                    numberOfLines={1}
-                                    ellipsizeMode="tail"
-                                    >
-                                    {cusName}
-                                    </Text>
-                                </View>
-
-                                {/* Legend Section */}
-                                <View style={styles.legendContainer}>
-                                    <Text style={styles.legendHeader}>
-                                        Question Legend
-                                    </Text>
-                                    <View style={styles.legendRowContainer}>
-                                    {drawerLegend.map((item, idx) => (
-                                        <View
-                                        key={idx}
-                                        style={[
-                                            styles.legendItem,
-                                            {
-                                                // Retained complex width logic as per original code
-                                                width: idx == 4 ? "98%" : (idx % 2 === 0 ? "40%" : "60%"), 
-                                            }
-                                        ]}
+                                    <View style={TestSeriesStyle.pallete_header}>
+                                        <Image
+                                            style={styles.profileImage}
+                                            resizeMode="contain"
+                                            source={profileImage === '' ? imagePaths.LOGO : {uri: profileImage}}
+                                        />
+                                        <Text
+                                            style={styles.drawerProfileText}
+                                            numberOfLines={1}
+                                            ellipsizeMode="tail"
                                         >
-                                        {pallete_highlighers(item.key, item.count, "0")}
-                                        <Text style={styles.legendText}>
-                                            {item.label}
+                                            {cusName}
                                         </Text>
+                                    </View>
+
+                                    {/* Legend Section */}
+                                    <View style={styles.legendContainer}>
+                                        <Text style={styles.legendHeader}>
+                                            Question Legend
+                                        </Text>
+                                        <View style={styles.legendRowContainer}>
+                                        {drawerLegend.map((item, idx) => (
+                                            <View
+                                                key={idx}
+                                                style={[
+                                                    styles.legendItem,
+                                                    {
+                                                        // Retained complex width logic as per original code
+                                                        width: idx == 4 ? "98%" : (idx % 2 === 0 ? "40%" : "60%"), 
+                                                    }
+                                                ]}
+                                            >
+                                                {pallete_highlighers(item.key, item.count, "0")}
+                                                <Text style={styles.legendText}>
+                                                    {item.label}
+                                                </Text>
+                                            </View>
+                                        ))}
                                         </View>
-                                    ))}
                                     </View>
-                                </View>
 
-                                {/* Choose Question Header */}
-                                <View style={styles.chooseQuestionHeader}>
-                                    <Text style={styles.chooseQuestionHeaderText}>
-                                    Choose Question
-                                    </Text>
-                                </View>
-
-                                {/* Question Palette */}
-                                <ScrollView contentContainerStyle={styles.questionPaletteScroll}>
-                                    <View style={styles.questionPaletteRow}>
-                                    {
-                                        finalJson.filter(item => 
-                                            resumeSectionId === item.section_id || params.allow_move_section === "1"
-                                        ).map((item, index) => {
-                                            return (
-                                                <View key={index} style={styles.questionPaletteItem}>
-                                                    {pallete_highlighers(item.state, params.allow_move_section === "0" ? item.c_index : item.index + 1, item.index)}
-                                                </View>
-                                            )
-                                        })
-                                    }
+                                    {/* Choose Question Header */}
+                                    <View style={styles.chooseQuestionHeader}>
+                                        <Text style={styles.chooseQuestionHeaderText}>
+                                            Choose Question
+                                        </Text>
                                     </View>
-                                </ScrollView>
 
-                                {/* Close Button (Ensure this is correctly positioned using absolute styles) */}
-                                {isOpen && (
+                                    {/* Question Palette */}
+                                    <ScrollView contentContainerStyle={styles.questionPaletteScroll}>
+                                        <View style={styles.questionPaletteRow}>
+                                        {
+                                            finalJson.filter(item => 
+                                                resumeSectionId === item.section_id || params.allow_move_section === "1"
+                                            ).map((item, index) => {
+                                                return (
+                                                    <View key={index} style={styles.questionPaletteItem}>
+                                                        {pallete_highlighers(item.state, params.allow_move_section === "0" ? item.c_index : item.index + 1, item.index)}
+                                                    </View>
+                                                )
+                                            })
+                                        }
+                                        </View>
+                                    </ScrollView>
+
+                                    {/* Close Button (Ensure this is correctly positioned using absolute styles) */}
+                                    {isOpen && (
+                                        <TouchableOpacity
+                                            onPress={() => setIsOpen(false)}
+                                            style={styles.navCloseBtn}
+                                        >
+                                            <Text style={styles.navCloseText}>{'>'}</Text>
+                                        </TouchableOpacity>
+                                    )}
+
+                                    {/* Submit Button */}
                                     <TouchableOpacity
-                                    onPress={() => setIsOpen(false)}
-                                    style={styles.navCloseBtn}
+                                        style={styles.navSubmitBtn}
+                                        onPress={()=> confirmAndSubmitTest("2")}
                                     >
-                                    <Text style={styles.navCloseText}>{'>'}</Text>
+                                        <Text style={styles.navSubmitText}>
+                                            Submit Test
+                                        </Text>
                                     </TouchableOpacity>
-                                )}
-
-                                {/* Submit Button */}
-                                <TouchableOpacity
-                                    style={styles.navSubmitBtn}
-                                    onPress={()=> confirmAndSubmitTest()}
-                                >
-                                    <Text style={styles.navSubmitText}>
-                                    Submit Test
-                                    </Text>
-                                </TouchableOpacity>
                                 </SafeAreaView>
                             }
                             drawerPercentage={80}
@@ -770,14 +776,15 @@ export const AttemptTest = (props) => {
                             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{  }}>
                                 {testSections.length && currentQuestions && testSections.map((section, idx) => (
                                     <TouchableOpacity 
-                                    key={idx} 
-                                    onPress={()=> switchSection(section.key, false)}
-                                    style={[
-                                        styles.sectionButton,
-                                        { 
-                                            borderBottomColor: resumeSectionId === section.key ? Colors.WHITE : Colors.THEME,
-                                        }
-                                    ]}>
+                                        key={idx} 
+                                        onPress={()=> switchSection(section.key, false)}
+                                        style={[
+                                            styles.sectionButton,
+                                            { 
+                                                borderBottomColor: resumeSectionId === section.key ? Colors.WHITE : Colors.THEME,
+                                            }
+                                        ]}
+                                        >
                                         <Text style={styles.sectionButtonText}>{section.title}</Text>
                                     </TouchableOpacity>
                                 ))}
@@ -785,11 +792,7 @@ export const AttemptTest = (props) => {
                         </View>
                         {
                             currentQuestions && Object.keys(currentQuestions).length > 0 &&
-                            <KeyboardAvoidingView
-                                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                                style={{flex: 1}}
-                                keyboardVerticalOffset={60} 
-                                >
+                            <>
                                 <ScrollView contentContainerStyle={{
                                     flexGrow: 1,
                                     justifyContent: 'flex-end'
@@ -810,9 +813,9 @@ export const AttemptTest = (props) => {
                                                 <View key={"passage"} style={{ flex: 1 }}>
                                                     <Text style={{color: Colors.TEXT}}>{"Passage"}</Text>
                                                     <HTML 
-                                                    contentWidth={windowWidth} 
-                                                    source={{ html: currentQuestions.passage }} 
-                                                    tagsStyles={htmlTagsStyles}
+                                                        contentWidth={windowWidth} 
+                                                        source={{ html: currentQuestions.passage }} 
+                                                        tagsStyles={htmlTagsStyles}
                                                     />
                                                 </View>
                                             }
@@ -821,9 +824,10 @@ export const AttemptTest = (props) => {
                                                     <Text style={{color: Colors.TEXT}}>{"Question"}</Text>
                                                 }
                                                 <HTML 
-                                                contentWidth={windowWidth} 
-                                                source={{ html: currentQuestions.question }} 
-                                                tagsStyles={htmlTagsStyles}/>
+                                                    contentWidth={windowWidth} 
+                                                    source={{ html: currentQuestions.question }} 
+                                                    tagsStyles={htmlTagsStyles}
+                                                />
                                             </View>
                                             {[1, 2, 3, 4].map((opt, i) => {
                                                 const optionText = currentQuestions[`option_${opt}`];
@@ -852,8 +856,8 @@ export const AttemptTest = (props) => {
                                                     >
                                                         <View style={{ paddingRight: 8 }}>
                                                             <Image 
-                                                            source={selected ? imagePaths.LETTERS[`${String.fromCharCode(64 + opt)}`] : imagePaths[`TEST_OPTION_${String.fromCharCode(64 + opt)}`]}
-                                                            style={{height: 30,width: 30}}
+                                                                source={selected ? imagePaths.LETTERS[`${String.fromCharCode(64 + opt)}`] : imagePaths[`TEST_OPTION_${String.fromCharCode(64 + opt)}`]}
+                                                                style={{height: 30,width: 30}}
                                                              />
                                                         </View>
                                                         <View style={styles.optionContent}>
@@ -917,13 +921,13 @@ export const AttemptTest = (props) => {
                                         }
                                         {
                                             (currentQuestionsIndex + 1) >= testQuestions.length &&
-                                            <TouchableOpacity onPress={() => confirmAndSubmitTest()} style={styles.prevNextButton}>
+                                            <TouchableOpacity onPress={() => confirmAndSubmitTest("2")} style={styles.prevNextButton}>
                                                 <Text style={styles.prevNextButtonText}>{"Submit"}</Text>
                                             </TouchableOpacity>
                                         }
                                     </View>
                                 </View>
-                            </KeyboardAvoidingView>
+                            </>
                         }
                             
                     </MenuDrawer>
@@ -1109,9 +1113,17 @@ const styles = StyleSheet.create({
         backgroundColor:Colors.WHITE 
     },
     prevNextButton: { 
-        borderWidth: 1, 
-        borderColor: Colors.THEME, 
-        borderRadius: 5 
+        borderWidth: 1,
+        borderColor: Colors.THEME,
+        borderRadius: 8,
+        paddingVertical: 2,
+        paddingHorizontal: 10,
+        backgroundColor: Colors.THEME,
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.15,
+        shadowRadius: 3,
+        elevation: 3,
     },
     prevNextButtonText: { 
         paddingHorizontal: 5, 
@@ -1122,7 +1134,15 @@ const styles = StyleSheet.create({
     markReviewButton: { 
         borderWidth: 1, 
         borderColor: "#0000006b", 
-        borderRadius: 5 
+        borderRadius: 5,
+        backgroundColor: Colors.WHITE,
+        paddingVertical: 2,
+        paddingHorizontal: 10,
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.15,
+        shadowRadius: 3,
+        elevation: 3,
     },
     markReviewText: { 
         paddingHorizontal: 5, 

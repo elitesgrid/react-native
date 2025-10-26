@@ -68,10 +68,7 @@ export const PastPaperDetail = props => {
   };
 
   const openLinkInChrome = async url => {
-    if (
-      Platform.OS === 'android' &&
-      (await Linking.canOpenURL('googlechrome://'))
-    ) {
+    if (Platform.OS === 'android' && (await Linking.canOpenURL('googlechrome://'))) {
       await Linking.openURL(`googlechrome://${url}`);
     } else {
       await Linking.openURL(url);

@@ -569,15 +569,17 @@ export const ViewSolution = (props) => {
 
                                     <TouchableOpacity
                                         onPress={() => markForReview(currentQuestions.is_bookmarked, "0")}
-                                        style={styles.markReviewButton}>
+                                        style={styles.markReviewButton}
+                                    >
                                         <Text style={styles.markReviewText}>{currentQuestions.is_bookmarked !== "0" ? 'Remove Bookmark' : 'Add To Bookmark'}</Text>
                                     </TouchableOpacity>
 
                                     {currentQuestionsIndex + 1 < testQuestions.length ? (
                                         <TouchableOpacity
-                                        onPress={() => nextQuestion()}
-                                        style={styles.prevNextButton}>
-                                        <Text style={styles.prevNextButtonText}>Next</Text>
+                                            onPress={() => nextQuestion()}
+                                            style={styles.prevNextButton}
+                                        >
+                                            <Text style={styles.prevNextButtonText}>Next</Text>
                                         </TouchableOpacity>
                                     ) : (
                                         <View style={{width: 80}} />

@@ -139,11 +139,14 @@ const TimelineTabs = props => {
   };
 
   const navToStartTest = function (item) {
-    // navigation.navigate(navigationStrings.TEST_WEBVIEW, item);
-    if(item.internal_type == "View Result"){
-      navigation.navigate(navigationStrings.TEST_VIEW_RESULT, item);
+    if(global.WEBVIEW_TEST === "1"){
+      navigation.navigate(navigationStrings.TEST_WEBVIEW, item);
     } else {
-      navigation.navigate(navigationStrings.TEST_INSTRUCTIONS, item);
+      if(item.internal_type == "View Result"){
+        navigation.navigate(navigationStrings.TEST_VIEW_RESULT, item);
+      } else {
+        navigation.navigate(navigationStrings.TEST_INSTRUCTIONS, item);
+      }
     }
   };
 

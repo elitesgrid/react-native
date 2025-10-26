@@ -9,5 +9,6 @@ export default {
     DEVICE_TYPE: Platform.OS === "ios" ? "2" : "1",
     CRYPT_KEY: "%!F*&^$)_*%3f&B+",
     PRIVACY_POLICY_URL: "https://www.elitesgrid.com/index.php/web/home/terms_condition?is_mobile=1",
-    DELETE_ACCOUNT_URL: "https://www.elitesgrid.com/index.php/web/contact/delete"
+    DELETE_ACCOUNT_URL: "https://www.elitesgrid.com/index.php/web/contact/delete",
+    STORE_LINK: Platform.OS === 'ios' ? 'https://apps.apple.com/app/id546505307': 'https://play.google.com/store/apps/details?id=com.elearning.elite'
 }
