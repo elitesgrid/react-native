@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 import {moderateVerticalScale} from 'react-native-size-matters';
-
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 // import Parse from 'parse/react-native';
 import {useNavigation} from '@react-navigation/native';
 import Styles from '../../Assets/Style/LoginStyle';
@@ -64,7 +64,7 @@ export const ForgotPassword = () => {
           </View>
           <View style={Styles.form}>
             <View style={Styles.inputSection}>
-              <Image source={imagePaths.EMAIL} />
+              <Icon name="email-outline" size={22} color={Colors.IDLE} style={{}} />
               <TextInput
                 style={Styles.form_input}
                 value={username}

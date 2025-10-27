@@ -24,6 +24,7 @@ import imagePaths from '../../Constants/imagePaths';
 import Colors from '../../Constants/Colors';
 import envVariables from '../../Constants/envVariables';
 import CustomHelper from '../../Constants/CustomHelper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Using existing icon set
 
 export const Login = ({navigation}) => {
   const [username, setUsername] = useState('');
@@ -100,10 +101,7 @@ export const Login = ({navigation}) => {
               <View style={Styles.form}>
                 {/* Email input */}
                 <View style={Styles.inputSection}>
-                  <Image 
-                    source={imagePaths.EMAIL}
-                    style={{ width: 24, height: 24, resizeMode: 'contain' }}
-                     />
+                  <Icon name={"email-outline"} size={22} color={Colors.IDLE} />
                   <TextInput
                     style={Styles.form_input}
                     value={username}
@@ -117,10 +115,7 @@ export const Login = ({navigation}) => {
 
                 {/* Password input */}
                 <View style={Styles.inputSection}>
-                  <Image 
-                    source={imagePaths.PASSWORD}
-                    style={{ width: 24, height: 24, resizeMode: 'contain' }}
-                     />
+                  <Icon name={"lock-outline"} size={22} color={Colors.IDLE} />
                   <TextInput
                     style={Styles.form_input}
                     value={password}
@@ -132,12 +127,7 @@ export const Login = ({navigation}) => {
                   <TouchableOpacity
                     style={Styles.imageRightStyle}
                     onPress={showHidePassword}>
-                    <Image
-                      style={{ width: 24, height: 24, resizeMode: 'contain' }}
-                      source={
-                        !isVisible ? imagePaths.SHOW_EYE : imagePaths.HIDE_EYE
-                      }
-                    />
+                    <Icon name={isVisible ? "eye-outline" : "eye-off-outline"} size={22} color={Colors.IDLE} />
                   </TouchableOpacity>
                 </View>
 

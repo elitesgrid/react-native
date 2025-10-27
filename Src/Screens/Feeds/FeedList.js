@@ -13,6 +13,7 @@ import {
   StyleSheet
 } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import imagePaths from '../../Constants/imagePaths';
 import CustomHelper from '../../Constants/CustomHelper';
@@ -35,9 +36,7 @@ export const FeedList = props => {
   const [searchFilter, setSearchFilter] = useState(0);
   const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
   const [postBottomSheetPayload, setPostBottomSheetPayload] = useState({});
-  const [bottomSheetOpenPost, setBottomSheetOpenPost] = useState(false);
 
-  const [activeFeedId, setActiveFeedId] = useState(0);
   const sheetRef = useRef(null);
   const [modalImageUrl, setModalImageUrl] = useState('');
 
@@ -458,10 +457,7 @@ export const FeedList = props => {
                                       })
                                   }
                                   style={styles.actionButton}>
-                                  <Image
-                                      style={styles.actionIcon}
-                                      source={isLiked ? imagePaths.FEED_UNLIKE : imagePaths.FEED_LIKE}
-                                  />
+                                  <Icon name={"heart-outline"} size={22} color={!isLiked ? Colors.IDLE : Colors.THEME} />
                                   <Text
                                       style={[
                                           styles.actionText,
@@ -526,11 +522,7 @@ export const FeedList = props => {
               paddingVertical: 5,
               borderColor: Colors.IDLE,
             }}>
-            <View>
-              <Image
-                source={imagePaths.DELETE}
-                style={{width: 20, height: 20}}></Image>
-            </View>
+            <Icon name="trash-can-outline" size={22} color={Colors.TEXT_COLOR} style={{}} />
             <View style={{marginHorizontal: 10}}>
               <Text style={{color: Colors.TEXT_COLOR}}>{'Delete'}</Text>
             </View>
@@ -545,56 +537,12 @@ export const FeedList = props => {
               borderColor: Colors.IDLE,
             }}>
             <View>
-              <Image
-                source={imagePaths.HIDE_EYE}
-                style={{width: 20, height: 20}}></Image>
+              <Icon name={"eye-outline"} size={22} color={Colors.TEXT_COLOR} />
             </View>
             <View style={{marginHorizontal: 10}}>
               <Text style={{color: Colors.TEXT_COLOR}}>{'Hide Post'}</Text>
             </View>
           </TouchableOpacity>
-        </BottomSheet>
-      )}
-      {bottomSheetOpenPost === true && (
-        <BottomSheet
-          ref={sheetRef}
-          snapPoints={snapPoints}
-          onChange={handleSheetChange}
-          enablePanDownToClose={true}>
-          <View
-            style={{
-              flexDirection: 'row',
-              marginHorizontal: 10,
-              borderBottomWidth: 1,
-              paddingVertical: 5,
-              borderColor: Colors.IDLE,
-            }}>
-            <View>
-              <Image
-                source={imagePaths.DELETE}
-                style={{width: 20, height: 20}}></Image>
-            </View>
-            <View style={{marginHorizontal: 10}}>
-              <Text style={{color: Colors.TEXT_COLOR}}>{'Delete'}</Text>
-            </View>
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              marginHorizontal: 10,
-              borderBottomWidth: 1,
-              paddingVertical: 5,
-              borderColor: Colors.IDLE,
-            }}>
-            <View>
-              <Image
-                source={imagePaths.HIDE_EYE}
-                style={{width: 20, height: 20}}></Image>
-            </View>
-            <View style={{marginHorizontal: 10}}>
-              <Text style={{color: Colors.TEXT_COLOR}}>{'Hide Post'}</Text>
-            </View>
-          </View>
         </BottomSheet>
       )}
 

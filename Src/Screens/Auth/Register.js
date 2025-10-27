@@ -1,7 +1,5 @@
 import React, {useState} from 'react';
 import {
-  Alert,
-  Image,
   Platform,
   Text,
   TextInput,
@@ -11,13 +9,14 @@ import {
   SafeAreaView,
   View,
 } from 'react-native';
-
-// import Parse from 'parse/react-native';
+import {
+  scale,
+} from 'react-native-size-matters';
 import {useNavigation} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Auth from '../../Services/apis/AuthService';
 import Styles from '../../Assets/Style/LoginStyle';
-import imagePaths from '../../Constants/imagePaths';
 import navigationStrings from '../../Constants/navigationStrings';
 import HeaderComp from '../../Components/HeaderComp';
 import envVariables from '../../Constants/envVariables';
@@ -33,35 +32,25 @@ export const Register = () => {
   const [password, setPassword] = useState('');
   const [isVisible, setisVisible] = useState(true);
 
-  const navToWebView = function (obj) {
-    navigation.navigate(navigationStrings.C_WEBVIEW, obj);
-  };
+  const navToWebView = obj => navigation.navigate(navigationStrings.C_WEBVIEW, obj);
 
   const doUserSignUp = async function () {
-    // Since the signUp method returns a Promise, we need to call it using await
-    let payload = {
-      name: name,
-      email: email,
-      mobile: mobile,
-      password: password,
-    };
+    let payload = {name, email, mobile, password};
     return await Auth.registration(payload)
       .then(response => {
-        if (response.status == true) {
+        if (response.status === true) {
           navigation.navigate(navigationStrings.OTP_VERIFICATION, payload);
         } else {
           CustomHelper.showMessage(response.message);
         }
       })
       .catch(error => {
-        CustomHelper.showMessage(error.message);        
+        CustomHelper.showMessage(error.message);
         return false;
       });
   };
 
-  const showHidePassword = function () {
-    isVisible ? setisVisible(false) : setisVisible(true);
-  };
+  const showHidePassword = () => setisVisible(!isVisible);
 
   return (
     <SafeAreaView style={[Styles.container, {backgroundColor: Colors.WHITE}]}>
@@ -72,129 +61,172 @@ export const Register = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
         <ScrollView
-          contentContainerStyle={{flexGrow: 1, justifyContent: 'space-between'}}
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'space-between',
+            paddingHorizontal: 20,
+            paddingTop: 10,
+            paddingBottom: 30,
+          }}
           keyboardShouldPersistTaps="handled">
-          <View style={Styles.containerChild}>
-            <View>
-              {/* Title */}
-              <View
-                style={[Styles.title_master, {marginTop: 10, marginBottom: 0}]}>
-                <Text style={Styles.title}>Create an account!</Text>
-              </View>
-
-              {/* Form */}
-              <View style={Styles.form}>
-                {/* Name */}
-                <View style={Styles.inputSection}>
-                  <Image source={imagePaths.USER} />
-                  <TextInput
-                    style={Styles.form_input}
-                    value={name}
-                    placeholder="Enter Your Name"
-                    onChangeText={setName}
-                    autoCapitalize="words"
-                    placeholderTextColor={Colors.IDLE}
-                  />
-                </View>
-
-                {/* Email */}
-                <View style={Styles.inputSection}>
-                  <Image source={imagePaths.EMAIL} />
-                  <TextInput
-                    style={Styles.form_input}
-                    value={email}
-                    placeholder="Enter Email Address"
-                    onChangeText={setEmail}
-                    autoCapitalize="none"
-                    keyboardType="email-address"
-                    placeholderTextColor={Colors.IDLE}
-                  />
-                </View>
-
-                {/* Mobile */}
-                <View style={Styles.inputSection}>
-                  <Image source={imagePaths.MOBILE} />
-                  <TextInput
-                    style={Styles.form_input}
-                    value={mobile}
-                    placeholder="Enter Mobile"
-                    onChangeText={setMobile}
-                    keyboardType="phone-pad"
-                    autoCapitalize="none"
-                    placeholderTextColor={Colors.IDLE}
-                  />
-                </View>
-
-                {/* Password */}
-                <View style={Styles.inputSection}>
-                  <Image source={imagePaths.PASSWORD} />
-                  <TextInput
-                    style={Styles.form_input}
-                    value={password}
-                    placeholder="Password"
-                    secureTextEntry={isVisible}
-                    onChangeText={setPassword}
-                    placeholderTextColor={Colors.IDLE}
-                  />
-                  <TouchableOpacity
-                    style={Styles.imageRightStyle}
-                    onPress={showHidePassword}>
-                    <Image
-                      source={
-                        !isVisible ? imagePaths.SHOW_EYE : imagePaths.HIDE_EYE
-                      }
-                    />
-                  </TouchableOpacity>
-                </View>
-
-                {/* Sign Up Button */}
-                <TouchableOpacity onPress={doUserSignUp}>
-                  <View style={Styles.button}>
-                    <Text style={Styles.button_label}>Sign Up</Text>
-                  </View>
-                </TouchableOpacity>
-
-                {/* Terms & Conditions */}
-                <View style={{marginTop: 5, marginHorizontal: 20}}>
-                  <Text style={{textAlign: 'center', color: Colors.DARK_TEXT}}>
-                    {"By tapping 'Sign Up' you agree to the "}
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() =>
-                      navToWebView({
-                        title: 'Terms & Conditions',
-                        url: envVariables.PRIVACY_POLICY_URL,
-                      })
-                    }>
-                    <Text
-                      style={{
-                        color: Colors.THEME,
-                        textAlign: 'center',
-                        textDecorationLine: 'underline',
-                        marginTop: 4,
-                      }}>
-                      terms & conditions
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
+          <View style={{flex: 1}}>
+            {/* Title */}
+            <View style={{alignItems: 'center', marginVertical: 15}}>
+              <Text style={[Styles.title, {fontSize: 24, fontWeight: '700', color: Colors.THEME}]}>
+                Create an account
+              </Text>
+              <Text style={{color: Colors.IDLE, fontSize: 14, marginTop: 6}}>
+                Please fill in your details to continue
+              </Text>
             </View>
 
-            {/* Footer */}
-            <View style={[Styles.bottomView, {marginBottom: 20}]}>
+            {/* Form */}
+            <View style={{marginTop: 10}}>
+              {/* Name */}
+              <View style={inputBox}>
+                <Icon name="account-outline" size={22} color={Colors.IDLE} style={iconStyle} />
+                <TextInput
+                  style={textInput}
+                  value={name}
+                  placeholder="Enter your name"
+                  onChangeText={setName}
+                  autoCapitalize="words"
+                  placeholderTextColor={Colors.IDLE}
+                />
+              </View>
+
+              {/* Email */}
+              <View style={inputBox}>
+                <Icon name="email-outline" size={22} color={Colors.IDLE} style={iconStyle} />
+                <TextInput
+                  style={textInput}
+                  value={email}
+                  placeholder="Enter email address"
+                  onChangeText={setEmail}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  placeholderTextColor={Colors.IDLE}
+                />
+              </View>
+
+              {/* Mobile */}
+              <View style={inputBox}>
+                <Icon name="phone-outline" size={22} color={Colors.IDLE} style={iconStyle} />
+                <TextInput
+                  style={textInput}
+                  value={mobile}
+                  placeholder="Enter mobile number"
+                  onChangeText={setMobile}
+                  keyboardType="phone-pad"
+                  autoCapitalize="none"
+                  placeholderTextColor={Colors.IDLE}
+                />
+              </View>
+
+              {/* Password */}
+              <View style={inputBox}>
+                <Icon name="lock-outline" size={22} color={Colors.IDLE} style={iconStyle} />
+                <TextInput
+                  style={[textInput, {flex: 1}]}
+                  value={password}
+                  placeholder="Password"
+                  secureTextEntry={isVisible}
+                  onChangeText={setPassword}
+                  placeholderTextColor={Colors.IDLE}
+                />
+                <TouchableOpacity onPress={showHidePassword}>
+                  <Icon
+                    name={isVisible ? 'eye-off-outline' : 'eye-outline'}
+                    size={22}
+                    color={Colors.IDLE}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              {/* Sign Up Button */}
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate(navigationStrings.LOGIN)
-                }>
-                <Text style={Styles.login_footer_text}>
-                  {'Already have an account? '}
-                  <Text style={Styles.login_footer_link}>Sign In</Text>
+                onPress={doUserSignUp}
+                activeOpacity={0.8}
+                style={{
+                  backgroundColor: Colors.THEME,
+                  borderRadius: 12,
+                  paddingVertical: 14,
+                  marginTop: 25,
+                  shadowColor: Colors.THEME,
+                  shadowOffset: {width: 0, height: 4},
+                  shadowOpacity: 0.3,
+                  shadowRadius: 6,
+                  elevation: 3,
+                }}>
+                <Text style={{color: Colors.WHITE, textAlign: 'center', fontSize: 16, fontWeight: '600'}}>
+                  Sign Up
                 </Text>
               </TouchableOpacity>
+
+              {/* Terms */}
+              <View style={{marginTop: 18, alignItems: 'center'}}>
+                <Text style={{textAlign: 'center', color: Colors.DARK_TEXT, fontSize: 13}}>
+                  By tapping <Text style={{fontWeight: '600'}}>‘Sign Up’</Text> you agree to the
+                </Text>
+                <TouchableOpacity
+                  onPress={() =>
+                    navToWebView({
+                      title: 'Terms & Conditions',
+                      url: envVariables.PRIVACY_POLICY_URL,
+                    })
+                  }>
+                  <Text
+                    style={{
+                      color: Colors.THEME,
+                      textAlign: 'center',
+                      textDecorationLine: 'underline',
+                      marginTop: 5,
+                      fontWeight: '600',
+                    }}>
+                    Terms & Conditions
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
+          </View>
+
+          {/* Footer */}
+          <View style={{marginBottom: 15, alignItems: 'center'}}>
+            <TouchableOpacity onPress={() => navigation.navigate(navigationStrings.LOGIN)}>
+              <Text style={{color: Colors.DARK_TEXT, fontSize: 14}}>
+                Already have an account?{' '}
+                <Text style={{color: Colors.THEME, fontWeight: '700'}}>Sign In</Text>
+              </Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
+};
+
+const inputBox = {
+  flexDirection: 'row',
+  alignItems: 'center',
+  borderWidth: 1,
+  borderColor: '#E0E0E0',
+  borderRadius: scale(50),
+  backgroundColor: '#fff',
+  paddingHorizontal: 12,
+  paddingVertical: Platform.OS === 'ios' ? 12 : 0,
+  marginVertical: 8,
+  shadowColor: '#000',
+  shadowOpacity: 0.05,
+  shadowRadius: 4,
+  elevation: 1,
+};
+
+const iconStyle = {
+  marginRight: 8,
+};
+
+const textInput = {
+  flex: 1,
+  fontSize: 15,
+  color: Colors.DARK_TEXT,
 };

@@ -18,6 +18,7 @@ import StorageManager from '../Services/StorageManager';
 import RNRestart from 'react-native-restart';
 import envVariables from '../Constants/envVariables';
 import { useConfirmDialog } from './ConfirmDialogContext';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 function CustomDrawerContent(props) {
   const {navigation} = props;
@@ -124,9 +125,7 @@ function CustomDrawerContent(props) {
         <DrawerItem
           labelStyle={styles.drawerLabel}
           icon={() => (
-            <Image
-              source={imagePaths.DELETE}
-              style={styles.drawerIcon}></Image>
+            <Icon name="trash-can-outline" size={22} color={Colors.THEME} style={{}} />
           )}
           label={'Delete Account'}
           onPress={() =>

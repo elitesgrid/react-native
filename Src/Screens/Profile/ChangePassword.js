@@ -16,6 +16,7 @@ import Auth from '../../Services/apis/AuthService';
 import navigationStrings from '../../Constants/navigationStrings';
 import Colors from '../../Constants/Colors';
 import CustomHelper from '../../Constants/CustomHelper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export const ChangePassword = props => {
   const {navigation} = props;
@@ -54,7 +55,7 @@ export const ChangePassword = props => {
       <View>
         <View style={Styles.form}>
           <View style={Styles.inputSection}>
-            <Image source={imagePaths.PASSWORD} />
+            <Icon name="lock-outline" size={22} color={Colors.IDLE} style={{}} />
             <TextInput
               style={Styles.form_input}
               value={password}
@@ -66,8 +67,7 @@ export const ChangePassword = props => {
             />
           </View>
           <View style={Styles.inputSection}>
-            <Image source={imagePaths.PASSWORD} />
-
+            <Icon name="lock-outline" size={22} color={Colors.IDLE} style={{}} />
             <TextInput
               style={{...Styles.form_input, ...{maxWidth: '100%'}}}
               value={newPassword}

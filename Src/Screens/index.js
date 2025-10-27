@@ -38,7 +38,7 @@ export {Instructions} from './Test/Instructions';
 export {AttemptTest} from './Test/AttemptTest';
 export { ViewResult } from './Test/ViewResult';
 export { ViewSolution } from './Test/ViewSolution';
-
+export { TestRankers } from './Test/TestRankers';
 
 export {TestWebView} from './Test/TestWebView';
 

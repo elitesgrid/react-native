@@ -14,6 +14,7 @@ import {useNavigation} from '@react-navigation/native';
 import CommonStyles from '../Assets/Style/CommonStyle';
 import Colors from '../Constants/Colors';
 import navigationStrings from '../Constants/navigationStrings';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 // create a component
 const HomeHeaderComp = ({
@@ -43,13 +44,11 @@ const HomeHeaderComp = ({
           />
         </TouchableOpacity>
         <Text style={CommonStyles.headerText}>{headingText}</Text>
-        <Image
+        <Icon
           onPress={() => {
             navToNofication();
           }}
-          source={imagePaths.NOTIFICATION}
-          style={CommonStyles.notificationImage}
-        />
+          name="bell" size={22} color={Colors.WHITE} style={{}} />
       </View>
     </SafeAreaView>
   );

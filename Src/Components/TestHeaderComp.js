@@ -2,12 +2,13 @@
 import React, { Component } from 'react';
 import { Image, View, Text, StyleSheet, TouchableOpacity,SafeAreaView, StatusBar } from 'react-native';
 //import LinearGradient from 'react-native-linear-gradient';
-import { ifIphoneX,getStatusBarHeight,getBottomSpace } from 'react-native-iphone-x-helper'
+//import { ifIphoneX,getStatusBarHeight,getBottomSpace } from 'react-native-iphone-x-helper'
 
 import imagePaths from '../Constants/imagePaths';
 import { useNavigation } from '@react-navigation/native';
 import Colors from '../Constants/Colors';
 import CommonStyles from '../Assets/Style/CommonStyle';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Using existing icon set
 
 // create a component
 const TestHeaderComp = ({
@@ -29,10 +30,7 @@ const TestHeaderComp = ({
                 <TouchableOpacity 
                  style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
                  onPress={!!onPressBack ? onPressBack : () => goBack()}>
-                    <Image
-                        source={imagePaths.BACK}
-                        style={styles.image}
-                    />
+                    <Icon name="arrow-left" size={22} color="#fff" />
                     <Text 
                         style={{ color: Colors.WHITE, fontSize: 18, marginLeft: 12 }}
                         numberOfLines={1}

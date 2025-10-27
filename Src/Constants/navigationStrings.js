@@ -44,6 +44,7 @@ export default {
   TEST_VIEW_RESULT:"Test View Result",
   TEST_VIEW_SOLUTION:"View Solution",
   TEST_WEBVIEW: 'Tet Webview',
+  TEST_RANKERS: 'Test Rankers',
 
   PDF2: 'PDF Topic List',
   PDF3: 'PDF List',

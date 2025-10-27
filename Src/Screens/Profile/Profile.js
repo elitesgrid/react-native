@@ -14,6 +14,7 @@ import imagePaths from '../../Constants/imagePaths';
 import StorageManager from '../../Services/StorageManager';
 import CustomHelper from '../../Constants/CustomHelper';
 import Colors from '../../Constants/Colors';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export const Profile = () => {
   const [name, setName] = useState('');
@@ -53,7 +54,7 @@ export const Profile = () => {
       <View>
         <View style={Styles.form}>
           <View style={Styles.inputSection}>
-            <Image source={imagePaths.USER} />
+            <Icon name="account-outline" size={22} color={Colors.IDLE} style={{}} />
             <TextInput
               style={Styles.form_input}
               value={name}
@@ -65,7 +66,7 @@ export const Profile = () => {
             />
           </View>
           <View style={Styles.inputSection}>
-            <Image source={imagePaths.EMAIL} />
+            <Icon name="email-outline" size={22} color={Colors.IDLE} style={{}} />
             <TextInput
               style={Styles.form_input}
               value={email}
@@ -78,7 +79,7 @@ export const Profile = () => {
             />
           </View>
           <View style={Styles.inputSection}>
-            <Image source={imagePaths.MOBILE} />
+            <Icon name="phone-outline" size={22} color={Colors.IDLE} style={{}} />
             <TextInput
               style={Styles.form_input}
               value={mobile}

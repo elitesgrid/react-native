@@ -10,7 +10,6 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
-  Alert,
   useWindowDimensions,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -144,6 +143,8 @@ const TimelineTabs = props => {
     } else {
       if(item.internal_type == "View Result"){
         navigation.navigate(navigationStrings.TEST_VIEW_RESULT, item);
+      } else if(item.internal_type == "View Rankers"){
+        navigation.navigate(navigationStrings.TEST_RANKERS, item);
       } else {
         navigation.navigate(navigationStrings.TEST_INSTRUCTIONS, item);
       }

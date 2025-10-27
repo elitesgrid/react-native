@@ -6,14 +6,13 @@ import {
   TouchableOpacity,
   StatusBar,
   SafeAreaView,
-  Platform,
 } from 'react-native';
 import { Image } from 'react-native-elements';
 import imagePaths from '../Constants/imagePaths';
 import { useNavigation } from '@react-navigation/native';
 import Colors from '../Constants/Colors';
-import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 import CommonStyles from '../Assets/Style/CommonStyle';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Using existing icon set
 
 const HeaderComp = ({
   onPressBack,
@@ -38,7 +37,7 @@ const HeaderComp = ({
           style={styles.backButton}
           onPress={onPressBack ? onPressBack : goBack}
         >
-          <Image source={imagePaths.BACK} style={styles.image} />
+          <Icon name="arrow-left" size={22} color="#fff" />
         </TouchableOpacity>
 
         {/* CENTER: Title */}
@@ -73,8 +72,10 @@ const styles = StyleSheet.create({
     color: Colors.WHITE,
     fontSize: 14,
     backgroundColor: Colors.IDLE,
-    paddingHorizontal: 5,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
     opacity: 0.5,
+    borderRadius: 10,
   },
 });
 

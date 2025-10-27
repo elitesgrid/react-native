@@ -19,6 +19,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import Colors from '../../../Constants/Colors';
 
 // create a component
+
 export const TestSeries3 = props => {
   const {route, navigation} = props;
   const {params} = route;
@@ -72,6 +73,8 @@ export const TestSeries3 = props => {
     } else {
         if(item.internal_type == "View Result"){
             navigation.navigate(navigationStrings.TEST_VIEW_RESULT, item);
+        } else if(item.internal_type == "View Rankers"){
+            navigation.navigate(navigationStrings.TEST_RANKERS, item);
         } else {
             navigation.navigate(navigationStrings.TEST_INSTRUCTIONS, item);
         }

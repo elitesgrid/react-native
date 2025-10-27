@@ -8,7 +8,6 @@ import {
   Linking,
   Dimensions,
   TouchableOpacity,
-  Image,
   Text
 } from 'react-native';
 
@@ -20,8 +19,8 @@ import HeaderComp from '../../Components/HeaderComp';
 import PortalService from '../../Services/apis/PortalService';
 import LoadingComp from '../../Components/LoadingComp';
 import Colors from '../../Constants/Colors';
-import imagePaths from '../../Constants/imagePaths';
 import envVariables from '../../Constants/envVariables';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Using existing icon set
 
 // create a component
 export const Player = props => {
@@ -274,8 +273,8 @@ export const Player = props => {
             <TouchableOpacity
               onPress={toggleFullscreen}
               style={styles.fullscreenBtn}>
-                <Text style={{ color: 'white', fontSize: 20, textAlign: 'center', justifyContent: 'center' }}>
-                  {isFullscreen ? '⤡' : '⛶'}
+                <Text style={{ textAlign: 'center', justifyContent: 'center' }}>
+                  <Icon name={isFullscreen ? "fullscreen-exit" : "fullscreen"} size={22} color="#fff" />
                 </Text>
               </TouchableOpacity>
           </View>
@@ -299,8 +298,8 @@ export const Player = props => {
             <TouchableOpacity
               onPress={toggleFullscreen}
               style={styles.fullscreenBtn}>
-                <Text style={{ color: 'white', fontSize: 16, textAlign: 'center', justifyContent: 'center' }}>
-                  {isFullscreen ? '⤡' : '⛶'}
+                <Text style={{ textAlign: 'center', justifyContent: 'center' }}>
+                  <Icon name={isFullscreen ? "fullscreen-exit" : "fullscreen"} size={22} color="#fff" />
                 </Text>
             </TouchableOpacity>
           </View>
@@ -350,7 +349,7 @@ export const Player = props => {
                 }}
                 activeOpacity={0.7} // adds click feedback
               >
-                <Image source={imagePaths.BACK} style={{tintColor: Colors.WHITE}} />
+                <Icon name="arrow-left" size={22} color="#fff" />
               </TouchableOpacity>
           }
           {renderPlayer()}

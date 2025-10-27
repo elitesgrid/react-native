@@ -22,6 +22,7 @@ import ConfirmationPopup from '../../Constants/ConfirmationPopup';
 import LoadingComp from '../../Components/LoadingComp';
 import NoDataFound from '../../Components/NoDataFound';
 import { useConfirmDialog } from '../../Components/ConfirmDialogContext';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export const Bookmark = props => {
   const {navigation} = props;
@@ -174,9 +175,7 @@ export const Bookmark = props => {
 
         {/* No Data */}
         {questionsList.length === 0 ? (
-          <NoDataFound
-            pageTitle={'No Bookmarked Question Found'}
-            imageUrl={imagePaths.DELETE}
+          <NoDataFound pageTitle={'No Bookmarked Question Found'}
           />
         ) : (
           <>
@@ -333,10 +332,7 @@ export const Bookmark = props => {
                         borderRadius: 6,
                         padding: 5,
                       }}>
-                      <Image
-                        source={imagePaths.DELETE}
-                        style={{width: 12, height: 14, tintColor: Colors.WHITE}}
-                      />
+                      <Icon name="trash-can-outline" size={18} color={Colors.WHITE} style={{}} />
                     </TouchableOpacity>
                   </View>
                 </View>

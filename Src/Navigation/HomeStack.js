@@ -28,6 +28,7 @@ import {
   AttemptTest,
   ViewResult,
   ViewSolution,
+  TestRankers,
   TestWebView,
   Notification,
   FeedDetail,
@@ -125,6 +126,9 @@ const StackNavigator = () => (
     <Stack.Screen
       name={navigationStrings.C_WEBVIEW}
       component={C_Webview}></Stack.Screen>
+    <Stack.Screen
+      name={navigationStrings.TEST_RANKERS}
+      component={TestRankers}></Stack.Screen>
   </Stack.Navigator>
 );
 

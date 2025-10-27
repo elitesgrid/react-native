@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo, useCallback, useRef} from 'react';
 import {
   Text,
   View,
@@ -15,6 +15,8 @@ import CustomHelper from '../../Constants/CustomHelper';
 import FeedService from '../../Services/apis/FeedService';
 import Colors from '../../Constants/Colors';
 import StorageManager from '../../Services/StorageManager';
+import BottomSheet from '@gorhom/bottom-sheet';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export const FeedDetail = props => {
   const {route, navigation} = props;
@@ -25,6 +27,8 @@ export const FeedDetail = props => {
   const [commentInput, setCommentInput] = useState('');
   const [commentList, setCommentList] = useState([]);
   const [userId, setUserId] = useState(0);
+  const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
+  const sheetRef = useRef(null);
 
   const getFeedDetail = async function () {
     return await FeedService.get_feed_detail({feed_id: params.feed_id})
@@ -80,15 +84,50 @@ export const FeedDetail = props => {
 
   const deleteFeed = function (obj) {
     let payload = {
-      feed_id: obj.feed_id,
+      feed_id: feedDetail.id,
     };
   };
 
-  const hideFeed = function (obj) {
+  const hideFeed = function () {
     let payload = {
-      feed_id: obj.feed_id,
+      feed_id: feedDetail.id,
     };
   };
+
+  const openBottomSheet = function (obj) {
+    //console.log(obj);
+    setBottomSheetOpen(true);
+    handleSnapPress(0);
+  };
+
+  //BottomSheet
+  const data = useMemo(
+    () =>
+      Array(50)
+        .fill(0)
+        .map((_, index) => `index-${index}`),
+    [],
+  );
+  const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
+
+  // callbacks
+  const handleSheetChange = useCallback(index => {
+    if (index === 0) {
+      console.log('handleSheetChange', index);
+      // sheetRef.current?.close();
+    } else {
+      sheetRef.current?.snapToIndex(index);
+    }
+  }, []);
+
+  const handleSnapPress = useCallback(index => {
+    console.log('handleSheetChange:', index);
+    sheetRef.current?.snapToIndex(index);
+  }, []);
+
+  const handleClosePress = useCallback(() => {
+    sheetRef.current?.close();
+  }, []);
 
   const postComment = function () {
     if (commentInput === '') {
@@ -189,14 +228,15 @@ export const FeedDetail = props => {
                   </Text>
               </View>
               
-              {/* More Options Icon (No onPress, as this is a detail view) */}
-              <View style={styles.moreOptionsContainer}>
+              <TouchableOpacity
+                  onPress={() => openBottomSheet({feed_id: feedDetail.id})}
+                  style={styles.moreOptionsContainer}>
                   <Image
                       style={styles.moreOptionsIcon}
                       resizeMode="contain"
                       source={imagePaths.FEED_MORE_GRAY}
                   />
-              </View>
+              </TouchableOpacity>
           </View>
           
           {/* --- 2. Content Body (Text and Media) --- */}
@@ -242,14 +282,7 @@ export const FeedDetail = props => {
                       })
                   }
                   style={styles.actionButton}>
-                  <Image
-                      style={styles.actionIcon}
-                      source={
-                          feedDetail.my_like === '0'
-                              ? imagePaths.FEED_LIKE
-                              : imagePaths.FEED_UNLIKE
-                      }
-                  />
+                  <Icon name={"heart-outline"} size={22} color={feedDetail.my_like === '0' ? Colors.IDLE : Colors.THEME} />
                   <Text
                       style={[
                           styles.actionText,
@@ -322,11 +355,7 @@ export const FeedDetail = props => {
                 </View>
                 {item.user_id === userId && (
                   <TouchableOpacity onPress={() => deleteComment(item.id)}>
-                    <Image
-                      style={{width: 16, height: 16, marginHorizontal: 5}}
-                      resizeMode="stretch"
-                      source={imagePaths.DELETE}
-                    />
+                    <Icon name="trash-can-outline" size={22} color={Colors.TEXT_COLOR} style={{}} />
                   </TouchableOpacity>
                 )}
               </View>
@@ -377,6 +406,44 @@ export const FeedDetail = props => {
           </Text>
         </TouchableOpacity>
       </View>
+      {bottomSheetOpen === true && (
+        <BottomSheet
+          ref={sheetRef}
+          snapPoints={snapPoints}
+          onChange={handleSheetChange}
+          enablePanDownToClose={true}>
+          <TouchableOpacity
+            onPress={() => deleteFeed()}
+            style={{
+              flexDirection: 'row',
+              marginHorizontal: 10,
+              borderBottomWidth: 1,
+              paddingVertical: 5,
+              borderColor: Colors.IDLE,
+            }}>
+            <Icon name="trash-can-outline" size={22} color={Colors.TEXT_COLOR} style={{}} />
+            <View style={{marginHorizontal: 10}}>
+              <Text style={{color: Colors.TEXT_COLOR}}>{'Delete'}</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => hideFeed()}
+            style={{
+              flexDirection: 'row',
+              marginHorizontal: 10,
+              borderBottomWidth: 1,
+              paddingVertical: 5,
+              borderColor: Colors.IDLE,
+            }}>
+            <View>
+              <Icon name={"eye-outline"} size={22} color={Colors.TEXT_COLOR} />
+            </View>
+            <View style={{marginHorizontal: 10}}>
+              <Text style={{color: Colors.TEXT_COLOR}}>{'Hide Post'}</Text>
+            </View>
+          </TouchableOpacity>
+        </BottomSheet>
+      )}
     </View>
   );
 };

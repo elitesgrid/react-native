@@ -18,6 +18,7 @@ import navigationStrings from '../../Constants/navigationStrings';
 import HeaderComp from '../../Components/HeaderComp';
 import Colors from '../../Constants/Colors';
 import CustomHelper from '../../Constants/CustomHelper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export const OtpVerification = props => {
   const {route, navigation} = props;
@@ -82,7 +83,7 @@ export const OtpVerification = props => {
         </View>
         <View style={Styles.form}>
           <View style={Styles.inputSection}>
-            <Image source={imagePaths.EMAIL} />
+            <Icon name="email-outline" size={22} color={Colors.IDLE} style={{}} />
             <TextInput
               style={Styles.form_input}
               value={otp}
@@ -94,7 +95,7 @@ export const OtpVerification = props => {
           </View>
           {params?.password === true && (
             <View style={Styles.inputSection}>
-              <Image source={imagePaths.PASSWORD} />
+              <Icon name="lock-outline" size={22} color={Colors.IDLE} style={{}} />
               <TextInput
                 style={Styles.form_input}
                 value={password}
