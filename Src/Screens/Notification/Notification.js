@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   FlatList,
-  Alert,
   useColorScheme
 } from 'react-native';
 

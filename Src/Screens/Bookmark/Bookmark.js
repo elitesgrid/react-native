@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {
   Text,
   View,
@@ -7,6 +7,7 @@ import {
   ScrollView,
   Image,
   SafeAreaView,
+  useColorScheme
 } from 'react-native';
 
 import Styles from '../../Assets/Style/LoginStyle';
@@ -35,6 +36,8 @@ export const Bookmark = props => {
   const {width: windowWidth} = useWindowDimensions();
   const [activeFilterTab, setActiveFilterTab] = useState('0');
   const {showConfirmDialog} = useConfirmDialog();
+  const colorScheme = useColorScheme();
+  const isNightMode = colorScheme === 'dark';
 
   const loadQuestion = index => {
     setActiveIndex(index);
@@ -43,6 +46,22 @@ export const Bookmark = props => {
     //console.log(index, que_list);
     setActiveQuestion(que_list[index]);
   };
+
+  const htmlTagsStyles = useMemo(() => {
+      if (isNightMode) {
+          const baseStyle = {
+              whiteSpace: 'normal',
+              color: Colors.DARK,
+          };
+          return {
+              body: baseStyle,
+              p: baseStyle,
+              span: baseStyle,
+              li: baseStyle
+          };
+      }
+      return {};
+  }, [isNightMode]);
 
   async function fetchData() {
     console.log({
@@ -341,6 +360,7 @@ export const Bookmark = props => {
                 <HTML
                   contentWidth={windowWidth}
                   source={{html: activeQuestion.question}}
+                  tagsStyles={htmlTagsStyles}
                 />
 
                 {/* Options */}
@@ -387,6 +407,7 @@ export const Bookmark = props => {
                             source={{
                               html: activeQuestion['option_' + (index + 1)],
                             }}
+                            tagsStyles={htmlTagsStyles}
                           />
                         </View>
                       </View>
@@ -435,7 +456,7 @@ export const Bookmark = props => {
                   }}>
                   <Image
                     source={imagePaths.DEFAULT_VIDEO}
-                    style={{width: 30, height: 30, tintColor: Colors.WHITE}}
+                    style={{width: 30, height: 30}}
                   />
                   <Text
                     style={{

@@ -52,6 +52,9 @@ const TimelineTabs = props => {
         if (data.status === true) {
           setTimeline(prevData => [...prevData, ...data.data]);
           setPage(prevPage => prevPage + 1);
+        } else {
+          setPage(1);
+          setTimeline([]);
         }
         if (data.data.length === 0) {
           setHasMoreData(false);
@@ -153,7 +156,6 @@ const TimelineTabs = props => {
 
   useEffect(
     function () {
-      setTimeline([]);
       getTimeline();
     },
     [fileType],
@@ -590,7 +592,7 @@ const TimelineTabs = props => {
               </View>
             )}
             keyExtractor={item => item.id}
-            contentContainerStyle={{marginHorizontal: 5, marginTop: 10}}
+            contentContainerStyle={{marginHorizontal: 5, marginVertical: 10}}
             onEndReached={getTimeline} // Fetch more data when end is reached
             onEndReachedThreshold={0.5} // Load data when halfway to the end
             ListFooterComponent={
@@ -690,7 +692,7 @@ export const Timeline = props => {
 
   return (
     <>
-      <View style={styles.container}>
+      <View style={{flex: 1}}>
         <HeaderComp headerTitle={'My Timeline'} />
         <TabView
           navigation={navigation}
@@ -718,7 +720,7 @@ export const Timeline = props => {
 // define your styles
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   centeredView: {
     flex: 1,

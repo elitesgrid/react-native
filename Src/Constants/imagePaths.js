@@ -2,13 +2,6 @@ export default {
   LOGIN_WITH_TITLE: require('../Assets/Images/icon/logo_name.png'),
   LOGO: require('../Assets/Images/icon/icon.png'),
   LOGO_ICON: require('../Assets/Images/logo.png'),
-  //EMAIL: require('../Assets/Images/email.png'),
-  // MOBILE: require('../Assets/Images/mobile.png'),
-  // USER: require('../Assets/Images/user.png'),
-  //PASSWORD: require('../Assets/Images/password.png'),
-  // HIDE_EYE: require('../Assets/Images/show_eye.png'),
-  // SHOW_EYE: require('../Assets/Images/hide_eye.png'),
-  //BACK: require('../Assets/Images/back.png'),
 
   CAMERA: require('../Assets/Images/camera.png'),
 
@@ -28,8 +21,6 @@ export default {
   PROFILE: require('../Assets/Images/bottom_tabs/profile.png'),
   TIMELINE: require('../Assets/Images/bottom_tabs/timeline.png'),
 
-  // NOTIFICATION: require('../Assets/Images/notification.png'),
-  // NOTIFICATION_ACTIVE: require('../Assets/Images/notification_active.png'),
   HAMBURGER: require('../Assets/Images/hamburger.png'),
   PEOPLE_COUNT: require('../Assets/Images/people_count.png'),
   STAR: require('../Assets/Images/star.png'),
@@ -55,11 +46,8 @@ export default {
   ANSWERED_MARK_FOR_REVIEW: require('../Assets/Images/test/answered_mark_for_review.png'),
 
   //Feeds
-  // FEED_LIKE: require('../Assets/Images/feeds/like.png'),
-  // FEED_UNLIKE: require('../Assets/Images/feeds/unlike.png'),
   FEED_COMMENT: require('../Assets/Images/feeds/comment.png'),
   FEED_MORE_GRAY: require('../Assets/Images/feeds/more_gray.png'),
-  // DELETE: require('../Assets/Images/delete.png'),
 
   //Contact US
   CONTACT_US_EMAIL: require('../Assets/Images/contact_us/email.png'),

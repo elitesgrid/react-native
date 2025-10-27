@@ -4,6 +4,7 @@ import {Text, View, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import HeaderComp from '../../Components/HeaderComp';
 import imagePaths from '../../Constants/imagePaths';
 import navigationStrings from '../../Constants/navigationStrings';
+import Colors from '../../Constants/Colors';
 
 export const ContactUS = props => {
   const {navigation} = props;
@@ -30,10 +31,10 @@ export const ContactUS = props => {
             </View>
             <View style={{flex: 0.8}}>
               <View>
-                <Text style={{fontWeight: '500'}}>{'Email'}</Text>
+                <Text style={{fontWeight: '500', color: Colors.TEXT_COLOR}}>{'Email'}</Text>
               </View>
               <View>
-                <Text style={{opacity: 0.5}}>
+                <Text style={{opacity: 0.5, color: Colors.TAG_COLOR}}>
                   {global.CONTACT_DETAILS.email || 'elitegrid2016@shifty.com'}
                 </Text>
               </View>
@@ -49,10 +50,10 @@ export const ContactUS = props => {
             </View>
             <View style={{flex: 0.8}}>
               <View>
-                <Text style={{fontWeight: '500'}}>{'Mobile'}</Text>
+                <Text style={{fontWeight: '500', color: Colors.TEXT_COLOR}}>{'Mobile'}</Text>
               </View>
               <View>
-                <Text style={{opacity: 0.5}}>
+                <Text style={{opacity: 0.5, color: Colors.TAG_COLOR}}>
                   {global.CONTACT_DETAILS.mobile || '+91- 7009218049'}
                 </Text>
               </View>
@@ -65,6 +66,7 @@ export const ContactUS = props => {
               borderRadius: 10,
               borderWidth: 1,
               borderColor: '#E6E8EC',
+              backgroundColor: Colors.THEME
             }}>
             <TouchableOpacity
               onPress={() => navigation.navigate(navigationStrings.HOME)}>
@@ -91,6 +93,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderWidth: 1,
     borderColor: '#E6E8EC',
+    backgroundColor: Colors.WHITE,
     height: 70,
     alignItems: 'center',
     borderRadius: 10,
@@ -99,5 +102,6 @@ const styles = StyleSheet.create({
   button_label: {
     fontWeight: '500',
     fontSize: 15,
+    color: Colors.WHITE
   },
 });

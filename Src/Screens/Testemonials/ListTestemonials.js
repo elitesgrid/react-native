@@ -44,7 +44,7 @@ export const ListTestemonials = (props) => {
                                 </View>
                                 <View style={{ position: "relative", }}>
                                     <ScrollView contentContainerStyle={{  marginTop: 5 }}>
-                                        <Text style={{}}>{item.description}</Text>
+                                        <Text style={{color: Colors.FADDED_COLOR}}>{item.description}</Text>
                                     </ScrollView>
                                 </View>
                             </View>

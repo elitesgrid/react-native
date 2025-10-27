@@ -3,11 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, FlatList } from 'react-native';
 
 import HeaderComp from '../../Components/HeaderComp';
-import LoadingComp from '../../Components/LoadingComp';
-import CommonStyles from '../../Assets/Style/CommonStyle';
 import navigationStrings from '../../Constants/navigationStrings';
 import imagePaths from '../../Constants/imagePaths';
-
+import Colors from '../../Constants/Colors';
 
 // create a component
 export const ListPastPapers = (props) => {

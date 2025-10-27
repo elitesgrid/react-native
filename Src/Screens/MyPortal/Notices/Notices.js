@@ -1,6 +1,6 @@
 //import liraries
 import React, { useEffect, useState, useMemo } from 'react';
-import { View, Text,  FlatList, useWindowDimensions, Image, Alert, useColorScheme} from 'react-native';
+import { View, Text,  FlatList, useWindowDimensions, Image, useColorScheme} from 'react-native';
 
 import PortalService from '../../../Services/apis/PortalService';
 import imagePaths from '../../../Constants/imagePaths';

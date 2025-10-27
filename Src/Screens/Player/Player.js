@@ -76,6 +76,7 @@ export const Player = props => {
        arr.forEach(function(str) { var elements = document.getElementsByClassName(str); while (elements.length > 0) { elements[0].parentNode.removeChild(elements[0]); } }); var content = document.getElementById("content"); if (content !== null) { var headers = content.querySelectorAll("header"); headers.forEach(function(header) { header.style.display = "none"; }); } var css = document.createElement('style'); css.type = 'text/css'; var styles = '.ytp-contextmenu { width: 0px !important}'; if (css.styleSheet) { css.styleSheet.cssText = styles; } else { css.appendChild(document.createTextNode(styles)); } document.getElementsByTagName('head')[0].appendChild(css); if (interval !== null) { clearInterval(interval); interval = null; } function hide_buttons() { var settingsMenu = document.querySelector('.ytp-settings-menu'); if (settingsMenu) { var menu = settingsMenu.querySelector('.ytp-panel-menu'); if (menu) { console.log("Hide Classes"); var lastChild = menu.lastElementChild; if (lastChild) { lastChild.style.display = 'none'; } } } let is_exist = document.getElementsByClassName('ytp-settings-button'); if (is_exist.length > 0) { is_exist[0].style.display = 'inline' } is_exist = document.getElementsByClassName('ytp-button'); if (is_exist.length > 0) { is_exist[0].style.display = 'inline' } is_exist = document.getElementsByClassName('ytp-iv-player-content'); if (is_exist.length > 0) { is_exist[0].style.display = 'none' } is_exist = document.getElementsByClassName('iv-branding'); if (is_exist.length > 0) { is_exist[0].style.display = 'none' } is_exist = document.getElementsByClassName('ytp-unmute-animated'); if (is_exist.length > 0) { is_exist[0].style.display = 'none' } is_exist = document.querySelectorAll('.ytp-menuitem-toggle-checkbox'); for (var i = 0; i < is_exist.length; i++) { var parent = is_exist[i].parentNode.parentNode; parent.style.display = 'none'; } document.addEventListener('contextmenu', event => event.preventDefault()); document.querySelectorAll("video").forEach(function(video) { video.addEventListener("contextmenu", function(ev) { ev.preventDefault(); }); }); } interval = setInterval(function() { hide_buttons(); }, 2000); setTimeout(function() { hide_buttons(); }, 500); setTimeout(function() { hide_buttons(); }, 1000); hide_buttons(); document.getElementsByClassName('ytp-play-button ytp-button')[0].click(); document.addEventListener('contextmenu', event => event.preventDefault());`;
       global.YOUTUBE_SCRIPT === '' ? '' : (js = global.YOUTUBE_SCRIPT);
     }
+    //console.log("JS", js);
     webViewRef.current.injectJavaScript(js);
     setIsLoading(false);
   };
@@ -144,7 +145,7 @@ export const Player = props => {
         const ytId = extractYouTubeId(url);
         if (ytId) {
           vt = 'youtube';
-          vu = 'https://www.youtube.com/embed/' + ytId;
+          vu = 'https://www.youtube-nocookie.com/embed/' + ytId + '?autoplay=1&playsinline=1&modestbranding=1&rel=0&showinfo=0&controls=1';
         } else {
           Alert.alert('Invalid YouTube URL');
         }
@@ -255,21 +256,44 @@ export const Player = props => {
               height: playerHeight,
               backgroundColor: 'black',
             }}>
-            <WebView
-              key={`webview-${videoType}-${isFullscreen ? 'land' : 'port'}`}
-              ref={webViewRef}
-              style={{ flex: 1 }}
-              source={{ uri: videoUrl }}
-              onLoad={handleLoad}
-              javaScriptEnabled
-              allowsInlineMediaPlayback
-              mediaPlaybackRequiresUserAction
-              userAgent={
-                isIpad
-                  ? 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1'
-                  : undefined
-              }
-            />
+            {
+              videoType === "youtube" ? <WebView
+                key={`webview-${videoType}-${isFullscreen ? 'land' : 'port'}`}
+                ref={webViewRef}
+                style={{ flex: 1 }}
+                source={{ 
+                  uri: videoUrl,
+                  headers: {
+                    Referer: 'https://www.youtube-nocookie.com/',
+                    Origin: 'https://www.youtube-nocookie.com/',
+                    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
+                  }
+                }}
+                onLoad={handleLoad}
+                javaScriptEnabled
+                allowsInlineMediaPlayback
+                mediaPlaybackRequiresUserAction
+                userAgent={
+                  isIpad
+                    ? 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1'
+                    : undefined
+                }
+              /> : <WebView
+                key={`webview-${videoType}-${isFullscreen ? 'land' : 'port'}`}
+                ref={webViewRef}
+                style={{ flex: 1 }}
+                source={{ uri: videoUrl }}
+                onLoad={handleLoad}
+                javaScriptEnabled
+                allowsInlineMediaPlayback
+                mediaPlaybackRequiresUserAction
+                userAgent={
+                  isIpad
+                    ? 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1'
+                    : undefined
+                }
+              />
+            }
             <TouchableOpacity
               onPress={toggleFullscreen}
               style={styles.fullscreenBtn}>
@@ -279,7 +303,6 @@ export const Player = props => {
               </TouchableOpacity>
           </View>
         );
-
       case 'video':
         return (
           <View
