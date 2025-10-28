@@ -21,6 +21,7 @@ import LoadingComp from '../../Components/LoadingComp';
 import Colors from '../../Constants/Colors';
 import envVariables from '../../Constants/envVariables';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Using existing icon set
+import SystemNavigationBar from 'react-native-system-navigation-bar';
 
 // create a component
 export const Player = props => {
@@ -44,15 +45,32 @@ export const Player = props => {
 
   let currentTime = params.watched_time || 0;
 
-  // ------------------------------
-  // Fullscreen toggle
-  // ------------------------------
+  const changeOrientation = async function(portrait, force) {
+    Orientation.getDeviceOrientation(async (orientation) => {
+      if ((orientation !== 'LANDSCAPE-LEFT' && orientation !== 'LANDSCAPE-RIGHT') || force) {
+        if (portrait) {
+          Orientation.lockToPortrait();
+          if (Platform.OS === 'android') {
+            await SystemNavigationBar.stickyImmersive(true); // hides nav + status bar
+          }
+        } else {
+          Orientation.lockToLandscape();
+          if (Platform.OS === 'android') {
+            await SystemNavigationBar.stickyImmersive(true); // hides nav + status bar
+          }
+        }
+      } else {
+        setIsFullscreen(true);
+      }
+    });
+  }
+
   const toggleFullscreen = useCallback(() => {
     try {
       if (isFullscreen) {
-        Orientation.lockToPortrait();
+        changeOrientation(true, true);
       } else {
-        Orientation.lockToLandscape();
+        changeOrientation(false, true);
       }
       setIsFullscreen(prev => !prev);
     } catch (err) {
@@ -122,7 +140,7 @@ export const Player = props => {
         {
           text: 'Install Zoom',
           onPress: () =>
-            Linking.openURL(envVariables.STORE_LINK),
+            Linking.openURL(envVariables.STORE_LINK_ZOOM),
         },
         { text: 'Cancel', style: 'cancel' },
       ]);
@@ -207,8 +225,10 @@ export const Player = props => {
   const handleBackPress = () => {
     updateVideoTime();
     if (isFullscreen){
-      Orientation.lockToPortrait();
+      changeOrientation(true, false)
+      SystemNavigationBar.stickyImmersive(true);
     }
+    Orientation.unlockAllOrientations()
     navigation.goBack();
     return true;
   };
@@ -225,7 +245,7 @@ export const Player = props => {
   // Load when focused
   // ------------------------------
   useEffect(() => {
-    Orientation.lockToPortrait();
+    changeOrientation(true, false);
     const unsubscribe = navigation.addListener('focus', () => {
       identifyVideoType(params.url);
     });

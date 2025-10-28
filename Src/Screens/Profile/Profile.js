@@ -91,8 +91,7 @@ export const Profile = () => {
             />
           </View>
           <View style={Styles.inputSection}>
-            <Image source={imagePaths.PASSWORD} />
-
+            <Icon name="calendar-outline" size={22} color={Colors.IDLE} style={{}} />
             <TextInput
               style={{...Styles.form_input, ...{maxWidth: '100%'}}}
               value={activeSince}

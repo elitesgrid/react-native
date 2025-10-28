@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Text, View, Image} from 'react-native';
-//import { NavigationContainer } from '@react-navigation/native';
+import {Text, View, Image, Dimensions, Platform} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import DeviceInfo from 'react-native-device-info';
 
@@ -14,304 +13,106 @@ const BottomTab = createBottomTabNavigator();
 
 export default function TabRoutes() {
   const [isTablet, setIsTablet] = useState(false);
+  const [isLandscape, setIsLandscape] = useState(false);
 
   useEffect(() => {
     const checkIfTablet = async () => {
-      const isTablet = await DeviceInfo.isTablet();
-      setIsTablet(isTablet && Platform.OS === 'ios');
+      const tablet = await DeviceInfo.isTablet();
+      setIsTablet(tablet);
+    };
+
+    const handleOrientationChange = () => {
+      const {width, height} = Dimensions.get('window');
+      setIsLandscape(width > height);
     };
 
     checkIfTablet();
+    handleOrientationChange();
+
+    const sub = Dimensions.addEventListener('change', handleOrientationChange);
+    return () => sub?.remove?.();
   }, []);
 
-  return (
-    <BottomTab.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarInactiveTintColor: Colors.IDLE,
-        tabBarActiveTintColor: Colors.THEME,
-      }}>
-      <BottomTab.Screen
-        options={({route}) => ({
-          tabBarLabel: ({focused}) =>
-            isTablet ? (
-              <></>
-            ) : (
-              <Text style={{
-                ...CommonStyles.bottomTabLabel,
-                color: focused ? Colors.THEME : Colors.IDLE
-              }}>{route.name}</Text>
-            ),
-          tabBarIcon: ({focused}) => {
-            return (
-              <>
-                {!isTablet && (
-                  <Image
-                    style={{
-                      ...CommonStyles.bottomTabImages,
-                      ...{tintColor: focused ? Colors.THEME : Colors.IDLE},
-                    }}
-                    resizeMode="stretch"
-                    source={imagePaths.HOME}
-                  />
-                )}
-                {isTablet && (
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      width: 90,
-                    }}>
-                    <Image
-                      style={{
-                        ...CommonStyles.bottomTabImages,
-                        tintColor: focused ? Colors.THEME : Colors.IDLE,
-                      }}
-                      resizeMode="stretch"
-                      source={imagePaths.HOME}
-                    />
-                    <Text
-                      style={{
-                        ...CommonStyles.bottomTabLabel,
-                        ...{marginLeft: 8, marginTop: 3},
-                        color: focused ? Colors.THEME : Colors.IDLE
-                      }}>
-                      {route.name}
-                    </Text>
-                  </View>
-                )}
-              </>
-            );
-          },
-        })}
-        name={navigationStrings.HOME}
-        component={Home}
+  const renderTabContent = (route, focused, iconSource) => {
+    const color = focused ? Colors.THEME : Colors.IDLE;
+    const icon = (
+      <Image
+        style={{...CommonStyles.bottomTabImages, tintColor: color}}
+        resizeMode="contain"
+        source={iconSource}
       />
+    );
 
-      <BottomTab.Screen
-        options={({route}) => ({
-          tabBarLabel: ({focused}) =>
-            isTablet ? (
-              <></>
-            ) : (
-              <Text style={{
-                ...CommonStyles.bottomTabLabel,
-                color: focused ? Colors.THEME : Colors.IDLE
-              }}>{route.name}</Text>
-            ),
-          tabBarIcon: ({focused}) => {
-            return (
-              <>
-                {!isTablet && (
-                  <Image
-                    style={{
-                      ...CommonStyles.bottomTabImages,
-                      ...{tintColor: focused ? Colors.THEME : Colors.IDLE},
-                    }}
-                    resizeMode="stretch"
-                    source={imagePaths.MY_PORTAL}
-                  />
-                )}
-                {isTablet && (
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      width: 100,
-                    }}>
-                    <Image
-                      style={{
-                        ...CommonStyles.bottomTabImages,
-                        tintColor: focused ? Colors.THEME : Colors.IDLE,
-                      }}
-                      resizeMode="stretch"
-                      source={imagePaths.MY_PORTAL}
-                    />
-                    <Text
-                      style={{
-                        ...CommonStyles.bottomTabLabel,
-                        ...{marginLeft: 8, marginTop: 3},
-                        color: focused ? Colors.THEME : Colors.IDLE
-                      }}>
-                      {route.name}
-                    </Text>
-                  </View>
-                )}
-              </>
-            );
-          },
-        })}
-        name={navigationStrings.MY_PORTAL}
-        component={MyPortal}
-      />
-      <BottomTab.Screen
-        options={({route}) => ({
-          tabBarLabel: ({focused}) =>
-            isTablet ? (
-              <></>
-            ) : (
-              <Text style={{
-                ...CommonStyles.bottomTabLabel,
-                color: focused ? Colors.THEME : Colors.IDLE
-              }}>{route.name}</Text>
-            ),
-          tabBarIcon: ({focused}) => {
-            return (
-              <>
-                {!isTablet && (
-                  <Image
-                    style={{
-                      ...CommonStyles.bottomTabImages,
-                      ...{tintColor: focused ? Colors.THEME : Colors.IDLE},
-                    }}
-                    resizeMode="stretch"
-                    source={imagePaths.MY_ORDER}
-                  />
-                )}
-                {isTablet && (
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      width: 100,
-                    }}>
-                    <Image
-                      style={{
-                        ...CommonStyles.bottomTabImages,
-                        tintColor: focused ? Colors.THEME : Colors.IDLE,
-                      }}
-                      resizeMode="stretch"
-                      source={imagePaths.MY_ORDER}
-                    />
-                    <Text
-                      style={{
-                        ...CommonStyles.bottomTabLabel,
-                        ...{marginLeft: 8, marginTop: 3},
-                        color: focused ? Colors.THEME : Colors.IDLE
-                      }}>
-                      {route.name}
-                    </Text>
-                  </View>
-                )}
-              </>
-            );
-          },
-        })}
-        name={navigationStrings.MY_ORDER}
-        component={MyOrder}
-      />
-      <BottomTab.Screen
-        options={({route}) => ({
-          tabBarLabel: ({focused}) =>
-            isTablet ? (
-              <></>
-            ) : (
-              <Text style={{
-                ...CommonStyles.bottomTabLabel,
-                color: focused ? Colors.THEME : Colors.IDLE
-              }}>{route.name}</Text>
-            ),
-          tabBarIcon: ({focused}) => {
-            return (
-              <>
-                {!isTablet && (
-                  <Image
-                    style={{
-                      ...CommonStyles.bottomTabImages,
-                      ...{tintColor: focused ? Colors.THEME : Colors.IDLE},
-                    }}
-                    resizeMode="stretch"
-                    source={imagePaths.PROFILE}
-                  />
-                )}
-                {isTablet && (
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      width: 100,
-                    }}>
-                    <Image
-                      style={{
-                        ...CommonStyles.bottomTabImages,
-                        tintColor: focused ? Colors.THEME : Colors.IDLE,
-                      }}
-                      resizeMode="stretch"
-                      source={imagePaths.PROFILE}
-                    />
-                    <Text
-                      style={{
-                        ...CommonStyles.bottomTabLabel,
-                        ...{marginLeft: 8, marginTop: 3},
-                        color: focused ? Colors.THEME : Colors.IDLE
-                      }}>
-                      {route.name}
-                    </Text>
-                  </View>
-                )}
-              </>
-            );
-          },
-        })}
-        name={navigationStrings.PROFILE}
-        component={Profile}
-      />
-      <BottomTab.Screen
-        options={({route}) => ({
-          tabBarLabel: ({focused}) =>
-            isTablet ? (
-              <></>
-            ) : (
-              <Text style={{
-                ...CommonStyles.bottomTabLabel,
-                color: focused ? Colors.THEME : Colors.IDLE
-              }}>{route.name}</Text>
-            ),
-          tabBarIcon: ({focused}) => {
-            return (
-              <>
-                {!isTablet && (
-                  <Image
-                    style={{
-                      ...CommonStyles.bottomTabImages,
-                      ...{tintColor: focused ? Colors.THEME : Colors.IDLE},
-                    }}
-                    resizeMode="stretch"
-                    source={imagePaths.TIMELINE}
-                  />
-                )}
-                {isTablet && (
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      width: 100,
-                    }}>
-                    <Image
-                      style={{
-                        ...CommonStyles.bottomTabImages,
-                        tintColor: focused ? Colors.THEME : Colors.IDLE,
-                      }}
-                      resizeMode="stretch"
-                      source={imagePaths.TIMELINE}
-                    />
-                    <Text
-                      style={{
-                        ...CommonStyles.bottomTabLabel,
-                        ...{marginLeft: 8, marginTop: 3},
-                        color: focused ? Colors.THEME : Colors.IDLE
-                      }}>
-                      {route.name}
-                    </Text>
-                  </View>
-                )}
-              </>
-            );
-          },
-        })}
-        name={navigationStrings.TIMELINE}
-        component={Timeline}
-      />
+    const label = (
+      <Text
+        style={{
+          ...CommonStyles.bottomTabLabel,
+          color,
+          marginLeft: isLandscape || isTablet ? 8 : 0,
+          marginTop: isLandscape && isTablet ? 0 : 8,
+        }}>
+        {route.name}
+      </Text>
+    );
+
+    // 📱 Portrait or phone view → icon above text
+    if (!isTablet && !isLandscape) {
+      return (
+        <View style={{alignItems: 'center'}}>
+          {icon}
+          {label}
+        </View>
+      );
+    }
+
+    // 💻 Tablet landscape → icon beside text (row layout)
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingHorizontal: 12,
+          width: 140,
+        }}>
+        {icon}
+        {label}
+      </View>
+    );
+  };
+
+  const screenOptions = {
+    headerShown: false,
+    tabBarInactiveTintColor: Colors.IDLE,
+    tabBarActiveTintColor: Colors.THEME,
+    tabBarStyle: {
+      height: isLandscape && isTablet ? 70 : 60,
+      paddingBottom: Platform.OS === 'ios' ? 8 : 5,
+    },
+  };
+
+  const tabs = [
+    {name: navigationStrings.HOME, comp: Home, icon: imagePaths.HOME},
+    {name: navigationStrings.MY_PORTAL, comp: MyPortal, icon: imagePaths.MY_PORTAL},
+    {name: navigationStrings.MY_ORDER, comp: MyOrder, icon: imagePaths.MY_ORDER},
+    {name: navigationStrings.PROFILE, comp: Profile, icon: imagePaths.PROFILE},
+    {name: navigationStrings.TIMELINE, comp: Timeline, icon: imagePaths.TIMELINE},
+  ];
+
+  return (
+    <BottomTab.Navigator screenOptions={screenOptions}>
+      {tabs.map(tab => (
+        <BottomTab.Screen
+          key={tab.name}
+          name={tab.name}
+          component={tab.comp}
+          options={({route}) => ({
+            tabBarLabel: () => null,
+            tabBarIcon: ({focused}) =>
+              renderTabContent(route, focused, tab.icon),
+          })}
+        />
+      ))}
     </BottomTab.Navigator>
   );
 }

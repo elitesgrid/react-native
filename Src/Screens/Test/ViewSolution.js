@@ -427,7 +427,7 @@ export const ViewSolution = (props) => {
                                                 const optionText = currentQuestions[`option_${opt}`];
                                                 if (!optionText) return null;
                                                 const selected = currentQuestions.custom_json.given_answer == undefined || currentQuestions.custom_json.given_answer.length < 1 || currentQuestions.custom_json.given_answer[i] == "0" || !visibleResponse ? false : true;
-                                                //console.log("selected",selected, visibleResponse, currentQuestions.custom_json);
+                                                // console.log("selected",selected, visibleResponse, currentQuestions);
                                                 return (
                                                     <TouchableOpacity 
                                                         key={i} 
@@ -436,7 +436,7 @@ export const ViewSolution = (props) => {
                                                             TestSeriesStyle.optionsCard,
                                                             styles.optionCardBase, // New base style
                                                             {
-                                                                borderColor: selected ? "#0274BA" : "#222222",
+                                                                borderColor: currentQuestions.answer === opt.toString() && visibleResponse ? Colors.SUCCESS : selected ? Colors.THEME : Colors.TEXT_COLOR,
                                                             },
                                                             currentQuestions.question_type !== "FIB" && styles.optionCardWrap,
                                                         ]}
@@ -475,7 +475,7 @@ export const ViewSolution = (props) => {
                                             <View key={"6"} style={{ flex: 1 }}>
                                                 <View style={{ flex: 1 }}>
                                                     <View style={{ alignItems: "flex-end" }}>
-                                                        <TouchableOpacity onPress={()=>showHideResponse()} style={styles.showHideResponseButton}>
+                                                        <TouchableOpacity onPress={()=> showHideResponse()} style={styles.showHideResponseButton}>
                                                             <Text style={styles.showHideResponseText}>{visibleResponse ? 'Hide Response' : "Show Response"}</Text>
                                                         </TouchableOpacity>
                                                     </View>
@@ -495,18 +495,51 @@ export const ViewSolution = (props) => {
                                                             elevation: 4,
                                                         }}
                                                         >
-                                                        <View style={{ marginBottom: 12 }}>
+                                                        <View style={{ marginBottom: 12, flexDirection: 'row', alignItems: 'center' }}>
                                                             <Text style={{ fontSize: 16, fontWeight: "600", color: "#333" }}>Your Answer</Text>
                                                             <View
-                                                            style={{
-                                                                marginTop: 6,
+                                                                style={{
+                                                                marginLeft: 6,
+                                                                backgroundColor: "#FFF3E0",
+                                                                padding: 10,
+                                                                borderRadius: 8,
+                                                                alignItems: "center",
+                                                                justifyContent: 'center',
+                                                                minWidth: 40,
+                                                                }}
+                                                            >
+                                                                <Text style={{ fontSize: 15, color: "#E65100", fontWeight: "500" }}>
+                                                                {getAnswerLetter()}
+                                                                </Text>
+                                                            </View>
+                                                        </View>
+                                                        <View style={{ marginBottom: 12, flexDirection: 'row' }}>
+                                                            {/* ✅ Correct Answer Block */}
+                                                            <Text
+                                                                style={{
+                                                                fontSize: 16,
+                                                                fontWeight: "600",
+                                                                color: "#333",
+                                                                marginTop: 12,
+                                                                }}
+                                                            >
+                                                                Correct Answer
+                                                            </Text>
+
+                                                            <View
+                                                                style={{
+                                                                marginLeft: 6,
                                                                 backgroundColor: "#EAF8F7",
                                                                 padding: 10,
                                                                 borderRadius: 8,
-                                                                alignSelf: "flex-start",
-                                                            }}
+                                                                alignItems: "center",
+                                                                justifyContent: 'center',
+                                                                minWidth: 40,
+                                                                }}
                                                             >
-                                                            <Text style={{ fontSize: 15, color: "#00796B", fontWeight: "500" }}>{getAnswerLetter()}</Text>
+                                                                <Text style={{ fontSize: 15, color: "#00796B", fontWeight: "500" }}>
+                                                                {currentQuestions.answer}
+                                                                </Text>
                                                             </View>
                                                         </View>
 
@@ -610,7 +643,7 @@ export const ViewSolution = (props) => {
                                             <View style={[styles.radioCircle, isActive && styles.radioCircleSelected]}>
                                                 {isActive && <View style={styles.radioDot} />}
                                             </View>
-                                            <Text style={[styles.radioText, isActive && { color: '#0274BA', fontWeight: '600' }]}>
+                                            <Text style={[styles.radioText, isActive && { color: Colors.THEME, fontWeight: '600' }]}>
                                                 {item.value}
                                             </Text>
                                             </TouchableOpacity>
@@ -875,13 +908,13 @@ const styles = StyleSheet.create({
         marginRight: 12,
     },
     radioCircleSelected: {
-        borderColor: '#0274BA',
+        borderColor: Colors.THEME,
     },
     radioDot: {
         height: 10,
         width: 10,
         borderRadius: 5,
-        backgroundColor: '#0274BA',
+        backgroundColor: Colors.THEME,
     },
     radioText: {
         fontSize: 14,
