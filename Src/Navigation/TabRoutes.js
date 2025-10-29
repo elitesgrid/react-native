@@ -49,7 +49,7 @@ export default function TabRoutes() {
           ...CommonStyles.bottomTabLabel,
           color,
           marginLeft: isLandscape || isTablet ? 8 : 0,
-          marginTop: isLandscape && isTablet ? 0 : 8,
+          marginTop: isLandscape && isTablet ? 0 : 3,
         }}>
         {route.name}
       </Text>
@@ -86,8 +86,9 @@ export default function TabRoutes() {
     tabBarInactiveTintColor: Colors.IDLE,
     tabBarActiveTintColor: Colors.THEME,
     tabBarStyle: {
-      height: isLandscape && isTablet ? 70 : 60,
-      paddingBottom: Platform.OS === 'ios' ? 8 : 5,
+      paddingTop: 5
+      // height: isLandscape && isTablet ? 70 : 60,
+      // paddingBottom: Platform.OS === 'ios' ? 8 : 5,
     },
   };
 

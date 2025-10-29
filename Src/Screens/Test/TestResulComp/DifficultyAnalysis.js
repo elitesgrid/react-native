@@ -124,6 +124,17 @@ export const DifficultyAnalysis = ({ navigation, resultData }) => {
         let newSectionAnalysis = {};
 
         resultData.my_progress.questions.forEach(element => {
+            if(!element.custom_json){
+                element.custom_json = {
+                    given_answer: [],
+                    is_correct: 0, 
+                    marks: 0, 
+                    question_id: element.id, 
+                    section_id: element.section_id, 
+                    spent_time: 0, 
+                    state: "not-answered"
+                }
+            }
             const sectionName = sectionsMap[element.section_id] || 'Unknown Section';
             const difficultyCode = element.que_level; 
             const cj = element.custom_json;

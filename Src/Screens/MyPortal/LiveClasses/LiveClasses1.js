@@ -76,6 +76,7 @@ export const LiveClasses1 = props => {
               numColumns={1}
               renderItem={({item, index}) => (
                 <TouchableOpacity
+                  key={'live_' + index}
                   onPress={() =>
                     navToPlayer({
                       title: item.title,
@@ -86,19 +87,16 @@ export const LiveClasses1 = props => {
                   // key={index}
                   style={{
                     borderColor: '#EEEEEE',
-                    backgroundColor: 'white',
+                    backgroundColor: Colors.WHITE,
                     borderWidth: 1,
-                    borderRadius: 10,
-                    marginVertical: 2.5,
-                    marginHorizontal: 2.5,
-                    width: '100%',
+                    borderRadius: 10
                   }}>
                   <View
                     style={{
                       flex: 1,
                       flexDirection: 'row',
-                      height: 80,
-                      paddingHorizontal: 20,
+                      // height: 80,
+                      paddingHorizontal: 10,
                       paddingVertical: 10,
                     }}>
                     {/* <Image source={{ uri: item.thumbnail }} resizeMode='stretch' style={{ height: 48, width: 70, marginHorizontal: 5 }} /> */}
@@ -143,6 +141,7 @@ export const LiveClasses1 = props => {
           )}
           {liveClasses.length === 0 && (
             <View
+              key={'live-nlcf'}
               style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
               <Text style={{fontSize: 20, color: Colors.BLACK}}>
                 {'No Live Class Found'}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, useWindowDimensions } from 'react-native';
+import { Text, View, useWindowDimensions, LogBox } from 'react-native';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 
 
@@ -44,6 +44,10 @@ export const MyPortal = (props) => {
     { key: 'study_material', title: 'Study Material' },
     { key: 'feed', title: 'Feed' },
     { key: 'notice_board', title: 'Notice Board' },
+  ]);
+
+  LogBox.ignoreLogs([
+    'A props object containing a "key" prop is being spread into JSX',
   ]);
 
   return (

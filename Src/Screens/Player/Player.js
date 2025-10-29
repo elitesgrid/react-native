@@ -45,26 +45,6 @@ export const Player = props => {
 
   let currentTime = params.watched_time || 0;
 
-  const changeOrientation = async function(portrait, force) {
-    Orientation.getDeviceOrientation(async (orientation) => {
-      if ((orientation !== 'LANDSCAPE-LEFT' && orientation !== 'LANDSCAPE-RIGHT') || force) {
-        if (portrait) {
-          Orientation.lockToPortrait();
-          if (Platform.OS === 'android') {
-            await SystemNavigationBar.stickyImmersive(true); // hides nav + status bar
-          }
-        } else {
-          Orientation.lockToLandscape();
-          if (Platform.OS === 'android') {
-            await SystemNavigationBar.stickyImmersive(true); // hides nav + status bar
-          }
-        }
-      } else {
-        setIsFullscreen(true);
-      }
-    });
-  }
-
   const toggleFullscreen = useCallback(() => {
     try {
       if (isFullscreen) {
@@ -94,8 +74,9 @@ export const Player = props => {
        arr.forEach(function(str) { var elements = document.getElementsByClassName(str); while (elements.length > 0) { elements[0].parentNode.removeChild(elements[0]); } }); var content = document.getElementById("content"); if (content !== null) { var headers = content.querySelectorAll("header"); headers.forEach(function(header) { header.style.display = "none"; }); } var css = document.createElement('style'); css.type = 'text/css'; var styles = '.ytp-contextmenu { width: 0px !important}'; if (css.styleSheet) { css.styleSheet.cssText = styles; } else { css.appendChild(document.createTextNode(styles)); } document.getElementsByTagName('head')[0].appendChild(css); if (interval !== null) { clearInterval(interval); interval = null; } function hide_buttons() { var settingsMenu = document.querySelector('.ytp-settings-menu'); if (settingsMenu) { var menu = settingsMenu.querySelector('.ytp-panel-menu'); if (menu) { console.log("Hide Classes"); var lastChild = menu.lastElementChild; if (lastChild) { lastChild.style.display = 'none'; } } } let is_exist = document.getElementsByClassName('ytp-settings-button'); if (is_exist.length > 0) { is_exist[0].style.display = 'inline' } is_exist = document.getElementsByClassName('ytp-button'); if (is_exist.length > 0) { is_exist[0].style.display = 'inline' } is_exist = document.getElementsByClassName('ytp-iv-player-content'); if (is_exist.length > 0) { is_exist[0].style.display = 'none' } is_exist = document.getElementsByClassName('iv-branding'); if (is_exist.length > 0) { is_exist[0].style.display = 'none' } is_exist = document.getElementsByClassName('ytp-unmute-animated'); if (is_exist.length > 0) { is_exist[0].style.display = 'none' } is_exist = document.querySelectorAll('.ytp-menuitem-toggle-checkbox'); for (var i = 0; i < is_exist.length; i++) { var parent = is_exist[i].parentNode.parentNode; parent.style.display = 'none'; } document.addEventListener('contextmenu', event => event.preventDefault()); document.querySelectorAll("video").forEach(function(video) { video.addEventListener("contextmenu", function(ev) { ev.preventDefault(); }); }); } interval = setInterval(function() { hide_buttons(); }, 2000); setTimeout(function() { hide_buttons(); }, 500); setTimeout(function() { hide_buttons(); }, 1000); hide_buttons(); document.getElementsByClassName('ytp-play-button ytp-button')[0].click(); document.addEventListener('contextmenu', event => event.preventDefault());`;
       global.YOUTUBE_SCRIPT === '' ? '' : (js = global.YOUTUBE_SCRIPT);
     }
-    //console.log("JS", js);
-    webViewRef.current.injectJavaScript(js);
+    setTimeout(() => {
+      webViewRef.current?.injectJavaScript(js);
+    }, 500);
     setIsLoading(false);
   };
 
@@ -219,14 +200,39 @@ export const Player = props => {
     }
   }
 
+
+  const changeOrientation = async function(portrait, force) {
+    Orientation.getDeviceOrientation(async (orientation) => {
+      if ((orientation !== 'LANDSCAPE-LEFT' && orientation !== 'LANDSCAPE-RIGHT') || force) {
+        if (portrait) {
+          Orientation.lockToPortrait();
+          if (Platform.OS === 'android') {
+            await SystemNavigationBar.navigationShow(); // hides nav + status bar
+          }
+        } else {
+          Orientation.lockToLandscape();
+          if (Platform.OS === 'android') {
+            await SystemNavigationBar.navigationHide(true);
+          }
+        }
+      } else {
+        setIsFullscreen(true);
+      }
+    });
+  }
+
   // ------------------------------
   // Back Handler
   // ------------------------------
   const handleBackPress = () => {
+    if(isFullscreen){
+      toggleFullscreen();
+      return;
+    }
     updateVideoTime();
     if (isFullscreen){
       changeOrientation(true, false)
-      SystemNavigationBar.stickyImmersive(true);
+      SystemNavigationBar.navigationShow();
     }
     Orientation.unlockAllOrientations()
     navigation.goBack();
@@ -246,6 +252,8 @@ export const Player = props => {
   // ------------------------------
   useEffect(() => {
     changeOrientation(true, false);
+    // console.log('SystemNavigationBar:', SystemNavigationBar);
+    SystemNavigationBar.navigationShow();
     const unsubscribe = navigation.addListener('focus', () => {
       identifyVideoType(params.url);
     });
@@ -257,7 +265,7 @@ export const Player = props => {
     });
 
     return unsubscribe;
-  }, [navigation, params]);
+  }, [navigation, params, 2]);
 
   // ------------------------------
   // Render: YouTube / WebView / Video
@@ -298,6 +306,15 @@ export const Player = props => {
                     ? 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1'
                     : undefined
                 }
+                onMessage={(event) => {
+                  try {
+                    const msg = JSON.parse(event.nativeEvent.data);
+                    if (msg.type === 'fullscreen') {
+                      setIsFullscreen(msg.value);
+                      console.log('Fullscreen changed:', msg.value);
+                    }
+                  } catch {}
+                }}
               /> : <WebView
                 key={`webview-${videoType}-${isFullscreen ? 'land' : 'port'}`}
                 ref={webViewRef}
@@ -312,15 +329,27 @@ export const Player = props => {
                     ? 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1'
                     : undefined
                 }
+                onMessage={(event) => {
+                  try {
+                    const msg = JSON.parse(event.nativeEvent.data);
+                    console.log(msg);
+                    if (msg.type === 'fullscreen') {
+                      setIsFullscreen(msg.value);
+                      console.log('Fullscreen changed:', msg.value);
+                    }
+                  } catch {}
+                }}
               />
             }
-            <TouchableOpacity
+            {
+              !isFullscreen && <TouchableOpacity
               onPress={toggleFullscreen}
               style={styles.fullscreenBtn}>
                 <Text style={{ textAlign: 'center', justifyContent: 'center' }}>
                   <Icon name={isFullscreen ? "fullscreen-exit" : "fullscreen"} size={22} color="#fff" />
                 </Text>
               </TouchableOpacity>
+            }
           </View>
         );
       case 'video':
@@ -337,14 +366,9 @@ export const Player = props => {
               controls
               resizeMode="contain"
               onProgress={data => (currentTime = parseInt(data.currentTime))}
+              onFullscreenPlayerWillPresent={() => changeOrientation(false, true)}
+              onFullscreenPlayerWillDismiss={() => changeOrientation(true, true)}
             />
-            <TouchableOpacity
-              onPress={toggleFullscreen}
-              style={styles.fullscreenBtn}>
-                <Text style={{ textAlign: 'center', justifyContent: 'center' }}>
-                  <Icon name={isFullscreen ? "fullscreen-exit" : "fullscreen"} size={22} color="#fff" />
-                </Text>
-            </TouchableOpacity>
           </View>
         );
 
@@ -373,11 +397,9 @@ export const Player = props => {
       ) : (
         <View style={styles.container}>
           {
-            !isFullscreen && <HeaderComp onPressBack={handleBackPress} headerTitle={params.title} />
-          }
-          {
-            isFullscreen &&
-              <TouchableOpacity
+            !isFullscreen ?
+             <HeaderComp onPressBack={handleBackPress} headerTitle={params.title} />
+             : <TouchableOpacity
                 onPress={handleBackPress}
                 style={{
                   position: 'absolute',

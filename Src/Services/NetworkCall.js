@@ -75,7 +75,7 @@ async function network_call(API, payload) {
     },
   };
   Object.keys(payload).length > 0 ? (refreshOptions.data = payload) : '';
-  console.log(refreshOptions.headers);
+  // console.log(refreshOptions.headers);
   // console.log(payload);
 
   try {
