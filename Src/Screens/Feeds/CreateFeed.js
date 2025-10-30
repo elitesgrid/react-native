@@ -15,9 +15,7 @@ import {
   getStatusBarHeight,
 } from 'react-native-iphone-x-helper';
 
-import imagePaths from '../../Constants/imagePaths';
 import Colors from '../../Constants/Colors';
-import navigationStrings from '../../Constants/navigationStrings';
 import HeaderComp from '../../Components/HeaderComp';
 import HomeService from '../../Services/apis/HomeService';
 import {S3Upload} from '../../Services/S3Upload';
@@ -189,7 +187,7 @@ export const CreateFeed = props => {
           }}
         />
         <View style={{marginTop: 10}}>
-          <Text style={{color: Colors.TAG_COLOR}}>
+          <Text style={{color: Colors.TEXT_COLOR}}>
             {'Write your doubt/query, Community Members will help you soon.'}
           </Text>
           <TextInput
@@ -200,6 +198,7 @@ export const CreateFeed = props => {
               marginVertical: 10,
               padding: 10,
               height: 120,
+              color: Colors.TEXT_COLOR
             }}
             value={query}
             placeholder={'Enter your query'}

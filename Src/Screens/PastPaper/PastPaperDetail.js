@@ -1,20 +1,17 @@
-import React, {useEffect, useState, useMemo} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ToastAndroid,
   ScrollView,
-  useWindowDimensions,
   ImageBackground,
   SafeAreaView,
   TouchableOpacity,
   Linking,
   Platform,
-  useColorScheme,
 } from 'react-native';
 import {Image} from 'react-native-elements';
-import HTML from 'react-native-render-html';
 
 import HeaderComp from '../../Components/HeaderComp';
 import LoadingComp from '../../Components/LoadingComp';
@@ -25,24 +22,13 @@ import CommonStyles from '../../Assets/Style/CommonStyle';
 import navigationStrings from '../../Constants/navigationStrings';
 import MyImageComponent from '../../Components/MyImageComponent';
 import CustomHelper from '../../Constants/CustomHelper';
+import HtmlRendererComp from '../../Components/HtmlRendererComp';
 
 export const PastPaperDetail = props => {
   const {route, navigation} = props;
-  const {width: windowWidth} = useWindowDimensions();
   const [isLoading, setIsLoading] = useState(true);
   const [paperDetail, setPaperDetail] = useState([]);
-  const colorScheme = useColorScheme();
-  const isNightMode = colorScheme === 'dark';
   const item = route.params;
-
-  const htmlTagsStyles = useMemo(() => {
-    const baseColor = isNightMode ? Colors.WHITE : Colors.TEXT_COLOR;
-    return {
-      body: {color: baseColor, lineHeight: 22, fontSize: 15},
-      p: {color: baseColor, marginBottom: 8},
-      li: {color: baseColor},
-    };
-  }, [isNightMode]);
 
   const getPaperDetail = async function (item_id) {
     return await HomeService.get_paper_detail({cat_id: item_id})
@@ -82,7 +68,7 @@ export const PastPaperDetail = props => {
       {isLoading ? (
         <LoadingComp />
       ) : (
-        <View style={[styles.container, {backgroundColor: isNightMode ? Colors.BLACK : Colors.WHITE}]}>
+        <View style={[styles.container, {backgroundColor: Colors.WHITE}]}>
           <HeaderComp headerTitle={item.title} />
 
           <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -97,34 +83,26 @@ export const PastPaperDetail = props => {
             ) : null}
 
             {/* Content Card */}
-            <View style={[styles.contentCard, {backgroundColor: isNightMode ? '#1E1E1E' : Colors.WHITE}]}>
-              <Text style={[styles.title, {color: isNightMode ? Colors.WHITE : Colors.TEXT_COLOR}]}>
+            <View style={[styles.contentCard, {backgroundColor: Colors.WHITE}]}>
+              <Text style={[styles.title, {color: Colors.TEXT_COLOR}]}>
                 {item.title}
               </Text>
 
               {/* Short Description */}
               {paperDetail.short_desc ? (
                 <View style={styles.htmlContainer}>
-                  <HTML
-                    contentWidth={windowWidth}
-                    source={{html: paperDetail.short_desc}}
-                    tagsStyles={htmlTagsStyles}
-                  />
+                  <HtmlRendererComp html={paperDetail.short_desc}></HtmlRendererComp>
                 </View>
               ) : null}
 
               {/* Syllabus Section */}
-              <Text style={[styles.subtitle, {color: isNightMode ? Colors.WHITE : Colors.TEXT_COLOR}]}>
+              <Text style={[styles.subtitle, {color: Colors.TEXT_COLOR}]}>
                 Cat Syllabus
               </Text>
 
               {paperDetail.description ? (
                 <View style={styles.htmlContainer}>
-                  <HTML
-                    contentWidth={windowWidth}
-                    source={{html: paperDetail.description}}
-                    tagsStyles={htmlTagsStyles}
-                  />
+                  <HtmlRendererComp html={paperDetail.description}></HtmlRendererComp>
                 </View>
               ) : null}
 

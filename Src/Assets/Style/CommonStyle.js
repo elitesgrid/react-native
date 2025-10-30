@@ -127,7 +127,7 @@ const CommonStyles = StyleSheet.create({
     marginHorizontal: 5,
     marginTop: 10,
   },
-  reviewListCardSize: {width: 246, height: 250, margin: 15},
+  reviewListCardSize: {width: 246, margin: 15},
 
   bottomTabImages: {height: 20, width: 20, marginTop: 3},
   bottomTabLabel: {marginBottom: 5, fontSize: 13},

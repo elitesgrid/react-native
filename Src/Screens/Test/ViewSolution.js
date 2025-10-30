@@ -1,9 +1,8 @@
 //import liraries
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View,
     Text,
     ScrollView,
-    useWindowDimensions,
     Image,
     TouchableOpacity,
     SafeAreaView,
@@ -11,13 +10,10 @@ import { View,
     TextInput,
     ImageBackground,
     Modal,
-    Dimensions,
-    useColorScheme
+    Dimensions
 } from 'react-native';
 //import { WebView } from 'react-native-webview';
 import MenuDrawer from 'react-native-side-drawer'
-
-import HTML from 'react-native-render-html';
 
 import TestHeaderComp from '../../Components/TestHeaderComp';
 import Colors from '../../Constants/Colors';
@@ -27,13 +23,13 @@ import StorageManager from '../../Services/StorageManager';
 import LoadingComp from '../../Components/LoadingComp'; // Assuming this is defined/used
 import navigationStrings from '../../Constants/navigationStrings';
 import TestServices from '../../Services/apis/TestServices';
+import HtmlRendererComp from '../../Components/HtmlRendererComp';
 
 const { width } = Dimensions.get('window');
 
 // create a component
 export const ViewSolution = (props) => {
     const { route, navigation } = props;
-    const { width: windowWidth } = useWindowDimensions();
     const { params } = route;
 
     const [isOpen, setIsOpen] = useState(false);
@@ -48,8 +44,6 @@ export const ViewSolution = (props) => {
     const [currentQuestionsIndex, setCurrentQuestionsIndex] = useState(0);
     const [visibleResponse, setVisibleResponse] = useState(false);
     const [fibActiveAnswers, setFibActiveAnswers] = useState(['', '', '', '']);
-    const colorScheme = useColorScheme();
-    const isNightMode = colorScheme === 'dark';
     const [drawerLegend, setDrawerLegend] = useState([
         { label: "Answered", key: "answered", count: 0 },
         { label: "Not Answered", key: "not_answered", count: 0 },
@@ -57,24 +51,6 @@ export const ViewSolution = (props) => {
         { label: "Marked for Review", key: "marked_for_review", count: 0 },
         { label: "Answered & Marked for Review", key: "answered_marked_for_review", count: 0 },
     ]);
-
-    const htmlTagsStyles = useMemo(() => {
-        if (isNightMode) {
-            if (isNightMode) {
-                const baseStyle = {
-                    whiteSpace: 'normal',
-                    color: Colors.DARK,
-                };
-                return {
-                    body: baseStyle,
-                    p: baseStyle,
-                    span: baseStyle,
-                    li: baseStyle
-                };
-            }
-        }
-        return {};
-    }, [isNightMode]);
 
     async function getSessionData() {
         let session = await StorageManager.get_session();
@@ -91,6 +67,7 @@ export const ViewSolution = (props) => {
         }
 
         setVisibleResponse(false);
+        console.log(currentQuestion.question);
         setCurrentQuestions(currentQuestion);
         setCurrentQuestionsIndex(index);
         
@@ -408,20 +385,14 @@ export const ViewSolution = (props) => {
                                             {currentQuestions.passage !== "" &&
                                                 <View key={"passage"} style={{ flex: 1 }}>
                                                     <Text style={{color: Colors.TEXT_COLOR}}>{"Passage"}</Text>
-                                                    <HTML 
-                                                    contentWidth={windowWidth} 
-                                                    source={{ html: currentQuestions.passage }}
-                                                    tagsStyles={htmlTagsStyles} />
+                                                    <HtmlRendererComp html={currentQuestions.passage}></HtmlRendererComp>
                                                 </View>
                                             }
                                             <View key={"1"}>
                                                 {currentQuestions.passage !== "" &&
                                                     <Text style={{color: Colors.TEXT_COLOR}}>{"Question"}</Text>
                                                 }
-                                                <HTML 
-                                                contentWidth={windowWidth}
-                                                source={{ html: currentQuestions.question }}
-                                                tagsStyles={htmlTagsStyles} />
+                                                <HtmlRendererComp html={currentQuestions.question}></HtmlRendererComp>
                                             </View>
                                             {[1, 2, 3, 4].map((opt, i) => {
                                                 const optionText = currentQuestions[`option_${opt}`];
@@ -462,11 +433,7 @@ export const ViewSolution = (props) => {
                                                             />
                                                             }
                                                             {
-                                                                currentQuestions.question_type !== "FIB" && <HTML 
-                                                                    contentWidth={windowWidth - 60} // subtract padding + image width
-                                                                    source={{ html: optionText }} 
-                                                                    tagsStyles={htmlTagsStyles}
-                                                                />
+                                                                currentQuestions.question_type !== "FIB" && <HtmlRendererComp html={optionText}></HtmlRendererComp>
                                                             }
                                                         </View>
                                                     </TouchableOpacity>
@@ -562,22 +529,17 @@ export const ViewSolution = (props) => {
                                                         {
                                                             currentQuestions.solution && 
                                                             <View>
-                                                                <Text style={{ fontSize: 16, fontWeight: "600", color: "#333", marginBottom: 8 }}>
-                                                                Solution
-                                                                </Text>
+                                                                <Text style={{ fontSize: 16, fontWeight: "600", color: "#333", marginBottom: 8 }}>Solution</Text>
                                                                 <View
-                                                                style={{
-                                                                    backgroundColor: "#F9F9F9",
-                                                                    borderRadius: 10,
-                                                                    padding: 10,
-                                                                    borderWidth: 1,
-                                                                    borderColor: "#EEE",
-                                                                }}
+                                                                    style={{
+                                                                        backgroundColor: "#F9F9F9",
+                                                                        borderRadius: 10,
+                                                                        padding: 10,
+                                                                        borderWidth: 1,
+                                                                        borderColor: "#EEE",
+                                                                    }}
                                                                 >
-                                                                <HTML 
-                                                                contentWidth={windowWidth - 60} 
-                                                                source={{ html: currentQuestions.solution }}
-                                                                tagsStyles={htmlTagsStyles} />
+                                                                    <HtmlRendererComp html={currentQuestions.solution}></HtmlRendererComp>
                                                                 </View>
                                                             </View>
                                                         }

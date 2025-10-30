@@ -1,13 +1,11 @@
-import React, {useEffect, useState, useMemo} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   View,
   ActivityIndicator,
   Image,
   TouchableOpacity,
-  useWindowDimensions,
   FlatList,
-  useColorScheme
 } from 'react-native';
 
 import HeaderComp from '../../Components/HeaderComp';
@@ -16,7 +14,7 @@ import CustomHelper from '../../Constants/CustomHelper';
 import NotificationService from '../../Services/apis/NotificationService';
 import navigationStrings from '../../Constants/navigationStrings';
 import Colors from '../../Constants/Colors';
-import HTML from 'react-native-render-html';
+import HtmlRendererComp from '../../Components/HtmlRendererComp';
 
 export const Notification = props => {
   const {route, navigation} = props;
@@ -25,25 +23,6 @@ export const Notification = props => {
   const [isLoading, setIsLoading] = useState(true);
   const [notificationList, setNotificationList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const {width: windowWidth} = useWindowDimensions();
-  const colorScheme = useColorScheme();
-  const isNightMode = colorScheme === 'dark';
-
-  const htmlTagsStyles = useMemo(() => {
-      if (isNightMode) {
-          const baseStyle = {
-              whiteSpace: 'normal',
-              color: Colors.DARK,
-          };
-          return {
-              body: baseStyle,
-              p: baseStyle,
-              span: baseStyle,
-              li: baseStyle
-          };
-      }
-      return {};
-  }, [isNightMode]);
 
   const getNotification = async function () {
     return await NotificationService.get_notifications({
@@ -181,11 +160,7 @@ export const Notification = props => {
                     justifyContent: 'center',
                     maxWidth: '82%',
                   }}>
-                  <HTML
-                    contentWidth={windowWidth}
-                    source={{html: item.message}}
-                    tagsStyles={htmlTagsStyles}
-                  />
+                  <HtmlRendererComp html={item.message}></HtmlRendererComp>
                   <View
                     style={{
                       flexDirection: 'row',

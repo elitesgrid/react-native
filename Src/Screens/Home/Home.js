@@ -243,9 +243,10 @@ export const Home = (props) => {
                               <ScrollView 
                                 contentContainerStyle={{ paddingVertical: 10 }}
                                 nestedScrollEnabled={true}
+                                style={{ maxHeight: 200 }}
                                 showsVerticalScrollIndicator={false}
                                 >
-                                <Text style={{lineHeight: 18, color: Colors.TAG_COLOR}}>{item.description}</Text>
+                                <Text style={{lineHeight: 20, color: Colors.TAG_COLOR}}>{item.description}</Text>
                               </ScrollView>
                             </View>
                           </View>

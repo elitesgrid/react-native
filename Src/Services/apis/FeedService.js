@@ -44,6 +44,10 @@ async function hide_post(payload) {
     return await network_call("HIDE_POST", payload);
 }
 
+async function generate_presigned_ul(payload) {
+    return await network_call('UPLOAD_GENERATE_PRESIGNED_URL', payload);
+}
+
 export default  {
     get_feed_list,
     post_feed,
@@ -55,5 +59,6 @@ export default  {
     get_feed_comments,
     delete_comment,
     attempt_mcq,
-    hide_post
+    hide_post,
+    generate_presigned_ul
 };

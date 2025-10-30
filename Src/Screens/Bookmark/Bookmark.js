@@ -1,29 +1,27 @@
-import React, {useEffect, useState, useMemo} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   View,
-  useWindowDimensions,
   TouchableOpacity,
   ScrollView,
   Image,
-  SafeAreaView,
-  useColorScheme
+  SafeAreaView
 } from 'react-native';
 
 import Styles from '../../Assets/Style/LoginStyle';
 import HeaderComp from '../../Components/HeaderComp';
 import imagePaths from '../../Constants/imagePaths';
-import HTML from 'react-native-render-html';
 
 import navigationStrings from '../../Constants/navigationStrings';
 import Colors from '../../Constants/Colors';
 import TestServices from '../../Services/apis/TestServices';
 import CustomHelper from '../../Constants/CustomHelper';
-import ConfirmationPopup from '../../Constants/ConfirmationPopup';
+// import ConfirmationPopup from '../../Constants/ConfirmationPopup';
 import LoadingComp from '../../Components/LoadingComp';
 import NoDataFound from '../../Components/NoDataFound';
 import { useConfirmDialog } from '../../Components/ConfirmDialogContext';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import HtmlRendererComp from '../../Components/HtmlRendererComp';
 
 export const Bookmark = props => {
   const {navigation} = props;
@@ -33,12 +31,9 @@ export const Bookmark = props => {
   const [questionsList, setQuestionList] = useState([]);
   const [activeQuestion, setActiveQuestion] = useState({});
   const [correctAnswerIndex, setCorrectAnswerIndex] = useState(-1);
-  const {width: windowWidth} = useWindowDimensions();
   const [activeFilterTab, setActiveFilterTab] = useState('0');
   const {showConfirmDialog} = useConfirmDialog();
-  const colorScheme = useColorScheme();
-  const isNightMode = colorScheme === 'dark';
-
+  
   const loadQuestion = index => {
     setActiveIndex(index);
     setCorrectAnswerIndex(-1);
@@ -46,22 +41,6 @@ export const Bookmark = props => {
     //console.log(index, que_list);
     setActiveQuestion(que_list[index]);
   };
-
-  const htmlTagsStyles = useMemo(() => {
-      if (isNightMode) {
-          const baseStyle = {
-              whiteSpace: 'normal',
-              color: Colors.DARK,
-          };
-          return {
-              body: baseStyle,
-              p: baseStyle,
-              span: baseStyle,
-              li: baseStyle
-          };
-      }
-      return {};
-  }, [isNightMode]);
 
   async function fetchData() {
     console.log({
@@ -357,11 +336,7 @@ export const Bookmark = props => {
                 </View>
 
                 {/* Question Content */}
-                <HTML
-                  contentWidth={windowWidth}
-                  source={{html: activeQuestion.question}}
-                  tagsStyles={htmlTagsStyles}
-                />
+                <HtmlRendererComp html={activeQuestion.question}></HtmlRendererComp>
 
                 {/* Options */}
                 {Array.from({length: 9}).map(
@@ -402,13 +377,7 @@ export const Bookmark = props => {
                           </Text>
                         </View>
                         <View style={{flex: 1, marginLeft: 10}}>
-                          <HTML
-                            contentWidth={windowWidth}
-                            source={{
-                              html: activeQuestion['option_' + (index + 1)],
-                            }}
-                            tagsStyles={htmlTagsStyles}
-                          />
+                          <HtmlRendererComp html={activeQuestion['option_' + (index + 1)]}></HtmlRendererComp>
                         </View>
                       </View>
                     ),

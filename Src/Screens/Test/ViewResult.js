@@ -18,6 +18,7 @@ import { DifficultyAnalysis } from './TestResulComp/DifficultyAnalysis';
 import { ScoreCard } from './TestResulComp/ScoreCard';
 import navigationStrings from '../../Constants/navigationStrings';
 import CustomHelper from '../../Constants/CustomHelper';
+import { TestToppersList } from './TestResulComp/TestToppersList';
 
 // create a component
 export const ViewResult = (props) => {
@@ -30,7 +31,8 @@ export const ViewResult = (props) => {
     const renderScene = SceneMap({
         score_card: () => <ScoreCard navigation={navigation} resultData={resultData} />,
         difficulty_analysis: () => <DifficultyAnalysis navigation={navigation} resultData={resultData}/>,
-        time_analysis: () => <TimeAnalysis navigation={navigation} resultData={resultData}/>
+        time_analysis: () => <TimeAnalysis navigation={navigation} resultData={resultData}/>,
+        toppers_analysis: () => <TestToppersList navigation={navigation} testRankers={resultData?.my_progress?.toppers || []}/>
     });
 
     // Render the tab bar
@@ -45,7 +47,7 @@ export const ViewResult = (props) => {
     );
     
     const [index, setIndex] = React.useState(0);
-    const [routes] = React.useState([
+    const [routes, setRoutes] = React.useState([
         { key: 'score_card', title: 'Score Card' },
         { key: 'difficulty_analysis', title: 'Difficulty Analysis' },
         { key: 'time_analysis', title: 'Time Analysis' }
@@ -63,6 +65,20 @@ export const ViewResult = (props) => {
                 data = data.data;
                 setResultData(data);
                 setIsLoading(false);
+
+                let toppersList = data?.my_progress?.toppers || [];
+                console.log(toppersList);
+                setRoutes(prev => {
+                    const alreadyExists = prev.some(r => r.key === 'toppers_analysis');
+                    if (alreadyExists) return prev;
+
+                    return [
+                        ...prev,
+                        ...(toppersList.length > 0
+                        ? [{ key: 'toppers_analysis', title: 'Toppers List' }]
+                        : []),
+                    ];
+                });
             } else {
                 setIsLoading(false);
             }

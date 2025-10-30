@@ -1,12 +1,12 @@
 //import liraries
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import HeaderComp from '../../Components/HeaderComp';
 import Colors from '../../Constants/Colors';
 import TestServices from '../../Services/apis/TestServices';
 import LoadingComp from '../../Components/LoadingComp';
 import CustomHelper from '../../Constants/CustomHelper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Using existing icon set
+import { TestToppersList } from './TestResulComp/TestToppersList';
 
 export const TestRankers = (props) => {
   const { route, navigation } = props;
@@ -37,96 +37,11 @@ export const TestRankers = (props) => {
 
   if (isLoading) return <LoadingComp />;
 
-  const top3 = testRankers.slice(0, 3);
-  const others = testRankers.slice(3);
-
-  // Set podium colors (Top 1 = Theme color)
-  const podiumColors = [Colors.THEME, '#C0C0C0', '#CD7F32']; // 1: Theme, 2: Silver, 3: Bronze
-  const podiumIcons = ['crown', 'medal-outline', 'trophy-outline'];
-
   return (
     <View style={{ flex: 1, backgroundColor: Colors.BACKGROUND }}>
       <HeaderComp headerTitle={params.title || 'Test Rankers'} />
 
-      <ScrollView
-        contentContainerStyle={{
-          paddingHorizontal: 16,
-          paddingBottom: 40,
-          paddingTop: 20,
-        }}
-      >
-        {/* --- Top 3 podium --- */}
-        {top3.length > 0 && (
-          <View style={styles.podiumContainer}>
-            {/* Rank #2 - Left */}
-            {top3[1] && (
-              <View style={[styles.podiumBox, { height: 140, backgroundColor: '#C0C0C0' }]}>
-                <Icon name="medal-outline" size={28} color="#fff" style={{ marginBottom: 4 }} />
-                <Text style={styles.podiumRank}>#2</Text>
-                <Text style={styles.podiumName}>{top3[1].name}</Text>
-                <Text style={styles.podiumMarks}>{top3[1].marks} Marks</Text>
-              </View>
-            )}
-
-            {/* Rank #1 - Center */}
-            {top3[0] && (
-              <View
-                style={[
-                  styles.podiumBox,
-                  {
-                    height: 180,
-                    backgroundColor: Colors.THEME,
-                    borderWidth: 2,
-                    borderColor: '#fff',
-                    shadowColor: Colors.THEME,
-                    shadowOpacity: 0.6,
-                    shadowRadius: 10,
-                    elevation: 8,
-                  },
-                ]}
-              >
-                <Icon name="crown" size={34} color="#FFD700" style={{ marginBottom: 6 }} />
-                <Text style={[styles.podiumRank, { color: '#fff' }]}>#1</Text>
-                <Text style={[styles.podiumName, { color: '#fff' }]}>{top3[0].name}</Text>
-                <Text style={[styles.podiumMarks, { color: '#fff' }]}>{top3[0].marks} Marks</Text>
-              </View>
-            )}
-
-            {/* Rank #3 - Right */}
-            {top3[2] && (
-              <View style={[styles.podiumBox, { height: 120, backgroundColor: '#CD7F32' }]}>
-                <Icon name="trophy-outline" size={28} color="#fff" style={{ marginBottom: 4 }} />
-                <Text style={styles.podiumRank}>#3</Text>
-                <Text style={styles.podiumName}>{top3[2].name}</Text>
-                <Text style={styles.podiumMarks}>{top3[2].marks} Marks</Text>
-              </View>
-            )}
-          </View>
-        )}
-
-        {/* --- Others list --- */}
-        {others.length > 0 ? (
-          <View style={{ marginTop: 25 }}>
-            {others.map((item, index) => (
-              <View key={index} style={styles.listCard}>
-                <View style={[styles.rankCircle, { backgroundColor: Colors.THEME }]}>
-                  <Text style={styles.rankText}>#{item.ranks}</Text>
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.nameText}>{item.name}</Text>
-                  <Text style={styles.marksText}>{item.marks} Marks</Text>
-                </View>
-              </View>
-            ))}
-          </View>
-        ) : (
-          testRankers.length === 0 && (
-            <View style={styles.noDataView}>
-              <Text style={styles.noDataText}>No rankers available yet.</Text>
-            </View>
-          )
-        )}
-      </ScrollView>
+      <TestToppersList testRankers={testRankers}></TestToppersList>
     </View>
   );
 };

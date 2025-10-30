@@ -49,6 +49,8 @@ const api_list = {
   DELETE_COMMENT: 'feeds/delete_comment',
   ATTEMPT_MCQ: 'feeds/attempt_mcq',
   HIDE_POST: 'feeds/hide_post',
+
+  UPLOAD_GENERATE_PRESIGNED_URL: 'windows/upload_generate_presigned_url'
 };
 
 async function network_call(API, payload) {

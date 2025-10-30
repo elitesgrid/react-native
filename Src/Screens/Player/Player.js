@@ -8,6 +8,7 @@ import {
   Linking,
   Dimensions,
   TouchableOpacity,
+  Platform,
   Text
 } from 'react-native';
 
@@ -35,7 +36,7 @@ export const Player = props => {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const windowWidth = Dimensions.get('window').width;
-  const videoHeight = (windowWidth * 9) / 16; // 16:9 ratio
+  const videoHeight = ((windowWidth * 9) / 16) + (Platform.OS === 'android' ? 0 : 60); // 16:9 ratio
 
   const isTablet = DeviceInfo.isTablet();
   const isIpad =
@@ -342,7 +343,7 @@ export const Player = props => {
               />
             }
             {
-              !isFullscreen && <TouchableOpacity
+              !isFullscreen && Platform.OS === 'android' && <TouchableOpacity
               onPress={toggleFullscreen}
               style={styles.fullscreenBtn}>
                 <Text style={{ textAlign: 'center', justifyContent: 'center' }}>

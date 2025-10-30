@@ -1,5 +1,5 @@
 //import liraries
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { View,
     Text,
     ScrollView,
@@ -11,14 +11,11 @@ import { View,
     StyleSheet,
     TextInput,
     ImageBackground,
-    KeyboardAvoidingView,
-    useColorScheme,
     BackHandler
 } from 'react-native';
 //import { WebView } from 'react-native-webview';
 import MenuDrawer from 'react-native-side-drawer'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import HTML from 'react-native-render-html';
 import TestHeaderComp from '../../Components/TestHeaderComp';
 import Colors from '../../Constants/Colors';
 import TestSeriesStyle from '../../Assets/Style/TestSeriesStyle';
@@ -30,6 +27,7 @@ import LoadingComp from '../../Components/LoadingComp'; // Assuming this is defi
 import navigationStrings from '../../Constants/navigationStrings';
 import { useConfirmDialog } from '../../Components/ConfirmDialogContext';
 import { StackActions } from '@react-navigation/native';
+import HtmlRendererComp from '../../Components/HtmlRendererComp';
 
 function useExamTimer(initialRemainSeconds = 0) {
   const [questionTime, setQuestionTime] = useState(0); // counts UP
@@ -65,7 +63,6 @@ function useExamTimer(initialRemainSeconds = 0) {
 // create a component
 export const AttemptTest = (props) => {
     const { route, navigation } = props;
-    const { width: windowWidth } = useWindowDimensions();
     const { params } = route;
     const insets = useSafeAreaInsets();
 
@@ -84,8 +81,6 @@ export const AttemptTest = (props) => {
     const [resumeSectionId, setResumeSectionId] = useState("0");
     const [sectionTimings, setSectionsTimings] = useState();
     const {showConfirmDialog} = useConfirmDialog();
-    const colorScheme = useColorScheme();
-    const isNightMode = colorScheme === 'dark';
     const timerMounted = useRef(false);
     const isDev = useRef(false);
     const {
@@ -141,22 +136,6 @@ export const AttemptTest = (props) => {
             console.log("Auto Submit.");
         }
     }
-
-    const htmlTagsStyles = useMemo(() => {
-        if (isNightMode) {
-            const baseStyle = {
-                whiteSpace: 'normal',
-                color: Colors.DARK,
-            };
-            return {
-                body: baseStyle,
-                p: baseStyle,
-                span: baseStyle,
-                li: baseStyle
-            };
-        }
-        return {};
-    }, [isNightMode]);
 
     useEffect(function(){
         if (!timerMounted.current) {
@@ -812,22 +791,14 @@ export const AttemptTest = (props) => {
                                             {currentQuestions.passage !== "" &&
                                                 <View key={"passage"} style={{ flex: 1 }}>
                                                     <Text style={{color: Colors.TEXT}}>{"Passage"}</Text>
-                                                    <HTML 
-                                                        contentWidth={windowWidth} 
-                                                        source={{ html: currentQuestions.passage }} 
-                                                        tagsStyles={htmlTagsStyles}
-                                                    />
+                                                    <HtmlRendererComp html={currentQuestions.passage}></HtmlRendererComp>
                                                 </View>
                                             }
                                             <View key={"1"}>
                                                 {currentQuestions.passage !== "" &&
                                                     <Text style={{color: Colors.TEXT}}>{"Question"}</Text>
                                                 }
-                                                <HTML 
-                                                    contentWidth={windowWidth} 
-                                                    source={{ html: currentQuestions.question }} 
-                                                    tagsStyles={htmlTagsStyles}
-                                                />
+                                                <HtmlRendererComp html={currentQuestions.question}></HtmlRendererComp>
                                             </View>
                                             {[1, 2, 3, 4].map((opt, i) => {
                                                 const optionText = currentQuestions[`option_${opt}`];
@@ -876,11 +847,7 @@ export const AttemptTest = (props) => {
                                                             />
                                                             }
                                                             {
-                                                                currentQuestions.question_type !== "FIB" && <HTML 
-                                                                    contentWidth={windowWidth - 60} // subtract padding + image width
-                                                                    source={{ html: optionText.trim() }} 
-                                                                    tagsStyles={htmlTagsStyles}
-                                                                />
+                                                                currentQuestions.question_type !== "FIB" &&<HtmlRendererComp html={optionText}></HtmlRendererComp>
                                                             }
                                                         </View>
                                                     </TouchableOpacity>

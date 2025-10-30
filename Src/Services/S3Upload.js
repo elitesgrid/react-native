@@ -1,44 +1,43 @@
-import S3 from "aws-sdk/clients/s3";
-import AWS from "aws-sdk/global";
 import RNFS from 'react-native-fs';
 import { Buffer } from 'buffer';
+import FeedService from "./apis/FeedService";
+import axios from 'axios';
 
-const identityPool = `ap-south-1:9744b1f3-2b0a-462c-94bc-47e80b1ff198`;
-AWS.config.update({
-    region: "ap-south-1",
-    credentials: new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: identityPool,
-    }),
-});
 
   
 export const S3Upload = (imageUri,filePath, filename) => {
     return new Promise(async(resolve, reject) => {
-        await AWS.config.credentials.getPromise();
-        const S3Client = new S3();
-
-        const fileUri = imageUri.uri;
         const fileName = filePath+'/'+filename+`-${Date.now()}.jpg`;
-        const fileType = 'image/jpeg';
-        filePath = fileUri.replace('file://', '');
+        let payload = {
+            key_path: filePath,
+            name: fileName
+        }
+        let data = await FeedService.generate_presigned_ul(payload);
+        if(data.status){
+            data = data.data;
 
-        const file = await RNFS.readFile(filePath, 'base64');
-        const buffer = Buffer.from(file, 'base64');
+            let presigned_url = atob(data.presigned_url);
+            // console.log(presigned_url);
 
-        const params = {
-            Bucket: 'elites-grid-prod',
-            Key: fileName,
-            Body: buffer,
-            ContentEncoding: 'base64',
-            ContentType: fileType,
-        };
+            const fileUri = imageUri.uri;
+            const filePath = fileUri.replace('file://', '');
 
-        S3Client.upload(params, function(err, data) {
-            if (err) {
-                console.error("Error uploading file:", err);
-                return reject(err);
+            const fileData = await RNFS.readFile(filePath, 'base64');
+            const blob = Buffer.from(fileData, 'base64');
+
+            const response = await axios.put(presigned_url, blob, {
+                // headers: {
+                //     'Content-Type': 'image/jpeg', // or your file type
+                // },
+            });
+            // console.log(presigned_url, data);
+            if (response.status === 200) {
+                console.log('✅ Upload successful');
+                resolve({Location: data.accessible_url});
+            } else {
+                console.error('⚠️ Upload failed with status:', response.status);
+                resolve({});
             }
-            resolve(data);
-        });
+        }
     });
 };

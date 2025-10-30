@@ -1,42 +1,19 @@
 //import liraries
-import React, { useEffect, useState, useMemo } from 'react';
-import { View, Text,  FlatList, useWindowDimensions, Image, useColorScheme} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text,  FlatList, Image} from 'react-native';
 
 import PortalService from '../../../Services/apis/PortalService';
 import imagePaths from '../../../Constants/imagePaths';
 import Colors from '../../../Constants/Colors';
 import PortalStyles from '../../../Assets/Style/PortalStyle';
 import { WebView } from 'react-native-webview';
-import HTML from 'react-native-render-html';
 import CustomHelper from '../../../Constants/CustomHelper';
+import HtmlRendererComp from '../../../Components/HtmlRendererComp';
 
 // create a component
 export const Notices = (props) => {
-    const { navigation } = props;
-    const { width: windowWidth } = useWindowDimensions();
-
     const [isLoading, setIsLoading] = useState(true);
     const [noticeList, setNoticesList] = useState([]);
-    const colorScheme = useColorScheme();
-    const isNightMode = colorScheme === 'dark';
-
-    const htmlTagsStyles = useMemo(() => {
-        if (isNightMode) {
-            if (isNightMode) {
-                const baseStyle = {
-                    whiteSpace: 'normal',
-                    color: Colors.DARK,
-                };
-                return {
-                    body: baseStyle,
-                    p: baseStyle,
-                    span: baseStyle,
-                    li: baseStyle
-                };
-            }
-        }
-        return {};
-    }, [isNightMode]);
 
     const getNotices = async function () {
         let payload = {
@@ -95,11 +72,7 @@ export const Notices = (props) => {
                                                 </View>
                                             </View>
                                             <View style={{flex:1}}>
-                                                <HTML 
-                                                contentWidth={windowWidth} 
-                                                source={{ html: item.description }}
-                                                tagsStyles={htmlTagsStyles}
-                                                />
+                                                <HtmlRendererComp html={item.description}></HtmlRendererComp>
                                             </View>
                                         </View>
                                     )}
