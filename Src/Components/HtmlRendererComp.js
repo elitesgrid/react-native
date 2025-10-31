@@ -29,6 +29,7 @@ const HtmlRendererComp = ({ html = '', key1 = '' }) => {
   }, [isNightMode]);
 
   const replaceHtmlMath = (rawHtml) => {
+    rawHtml = rawHtml.trim();
     if (!rawHtml) return '';
     return rawHtml
       .replace(/<sup>(.*?)<\/sup>/g, (_, p1) =>
@@ -52,7 +53,8 @@ const HtmlRendererComp = ({ html = '', key1 = '' }) => {
   };
 
   LogBox.ignoreLogs([
-    'Support for defaultProps will be removed from function components',
+    'TNodeChildrenRenderer: Support for defaultProps will be removed',
+    'MemoizedTNodeRenderer: Support for defaultProps will be removed',
   ]);
 
   const processedHtml = useMemo(() => replaceHtmlMath(html), [html]);
@@ -60,7 +62,7 @@ const HtmlRendererComp = ({ html = '', key1 = '' }) => {
   return (
     <RenderHTML
       contentWidth={windowWidth}
-      source={{ html: html.trim() }}
+      source={{ html: processedHtml.trim() }}
       tagsStyles={htmlTagsStyles}
     />
   );

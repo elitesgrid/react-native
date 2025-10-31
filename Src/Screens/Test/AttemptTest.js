@@ -28,12 +28,12 @@ import navigationStrings from '../../Constants/navigationStrings';
 import { useConfirmDialog } from '../../Components/ConfirmDialogContext';
 import { StackActions } from '@react-navigation/native';
 import HtmlRendererComp from '../../Components/HtmlRendererComp';
+import useTabletLandscape from '../../Hooks/useTabletLandscape';
 
 function useExamTimer(initialRemainSeconds = 0) {
   const [questionTime, setQuestionTime] = useState(0); // counts UP
   const [remainSeconds, setRemainSeconds] = useState(initialRemainSeconds); // counts DOWN
   const [formattedRemainTime, setFormattedRemainTime] = useState("");
-  const [pageReady, setPageReady] = useState(false);
   const intervalRef = useRef(null);
 
   useEffect(() => {
@@ -65,7 +65,9 @@ export const AttemptTest = (props) => {
     const { route, navigation } = props;
     const { params } = route;
     const insets = useSafeAreaInsets();
-
+    const tabletLandscape = useTabletLandscape();
+    const {showConfirmDialog} = useConfirmDialog();
+    
     const [isOpen, setIsOpen] = useState(false);
 
     const [isLoading, setIsLoading] = useState(true);
@@ -80,9 +82,11 @@ export const AttemptTest = (props) => {
     const [finalJson, setFinalJson] = useState([]);
     const [resumeSectionId, setResumeSectionId] = useState("0");
     const [sectionTimings, setSectionsTimings] = useState();
-    const {showConfirmDialog} = useConfirmDialog();
+    const [drawerPercentage, setDrawerPercentage] = useState(80);
+
     const timerMounted = useRef(false);
     const isDev = useRef(false);
+    
     const {
         questionTime,
         remainSeconds,
@@ -147,6 +151,17 @@ export const AttemptTest = (props) => {
         }
         timerActions()
     }, [remainSeconds]);
+
+    useEffect(() => {
+        // console.log("tabletLandscape",tabletLandscape);
+        if(tabletLandscape.isDeviceLandscape){
+            setDrawerPercentage(30);
+        } else if(tabletLandscape.isIpadTablet && tabletLandscape.isScreenLandscape){
+            setDrawerPercentage(40);
+        } else {
+            setDrawerPercentage(80);
+        }
+    }, [tabletLandscape]);
 
     async function getSessionData() {
         let session = await StorageManager.get_session();
@@ -423,7 +438,7 @@ export const AttemptTest = (props) => {
             console.log("Backpress requested", backPress, state);
             showConfirmDialog({
                 title: 'Elites Grid',
-                message: 'Are you sure want to submit test?',
+                message: state == '1' ? 'Do you want to save your progress and exit the test?' : 'Are you sure want to submit test?',
                 onConfirm: async () => {
                     submitTest(backPress, await collectJson(state));
                 },
@@ -497,6 +512,9 @@ export const AttemptTest = (props) => {
                         if(resume_que) {
                             // Normalize state string
                             state = resume_que.state.replace('-', '_'); 
+                            if(state === "unanswered"){
+                                state = "not_answered";
+                            }
 
                             spent_time = parseInt(resume_que.spent_time);
                             answers = resume_que.given_answer;
@@ -633,7 +651,11 @@ export const AttemptTest = (props) => {
         };
 
         const selected = config[type];
-        if (!selected) return null;
+        if (!selected) {
+            //console.log("Returning Null", type, value, index);
+            return null;
+        }
+        //console.log("Returning Null", type, value, index);
 
         return (
             <TouchableOpacity onPress={() => index !== "" && pallete_jump_question(index, value)}>
@@ -746,7 +768,7 @@ export const AttemptTest = (props) => {
                                     </TouchableOpacity>
                                 </SafeAreaView>
                             }
-                            drawerPercentage={80}
+                            drawerPercentage={drawerPercentage}
                             animationTime={250}
                             position={'right'}
                         >
@@ -829,7 +851,7 @@ export const AttemptTest = (props) => {
                                                             <Image 
                                                                 source={selected ? imagePaths.LETTERS[`${String.fromCharCode(64 + opt)}`] : imagePaths[`TEST_OPTION_${String.fromCharCode(64 + opt)}`]}
                                                                 style={{height: 30,width: 30}}
-                                                             />
+                                                            />
                                                         </View>
                                                         <View style={styles.optionContent}>
                                                             {

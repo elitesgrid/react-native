@@ -85,10 +85,11 @@ export const Login = ({navigation}) => {
           keyboardShouldPersistTaps="handled">
           <View
             style={[
-              Styles.containerChild,
+              // Styles.containerChild,
+              {flex: 1},
               {paddingTop: moderateVerticalScale(120)},
             ]}>
-            <View>
+            <View style={{flex: 1}}>
               <View style={Styles.logo_bg_parent}>
                 <Image
                   source={imagePaths.LOGIN_WITH_TITLE}
@@ -132,12 +133,15 @@ export const Login = ({navigation}) => {
                 </View>
 
                 {/* Forgot Password */}
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate(navigationStrings.FORGOT_PASSWORD)
-                  }>
-                  <Text style={Styles.forgot_password}>Forgot Password?</Text>
-                </TouchableOpacity>
+                <View style={{alignItems:'flex-end'}}>
+                  <TouchableOpacity
+                    style={{marginBottom: 10,padding: 5}}
+                    onPress={() =>
+                      navigation.navigate(navigationStrings.FORGOT_PASSWORD)
+                    }>
+                    <Text style={{color: Colors.TEXT}}>Forgot Password?</Text>
+                  </TouchableOpacity>
+                </View>
 
                 {/* Sign In */}
                 <TouchableOpacity 
@@ -166,7 +170,7 @@ export const Login = ({navigation}) => {
               </View>
             )}
 
-            <View style={{alignItems: 'center'}}>
+            <View style={{alignItems: 'center', bottom: 20}}>
               <Text style={{color: Colors.IDLE}}>
                 {'Version ' + envVariables.VERSION}
               </Text>

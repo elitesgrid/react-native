@@ -19,10 +19,11 @@ export const Instructions = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [testSeries, setTestSeries] = useState({});
   const [accepted, setAccepted] = useState(false);
+  const [state, setState] = useState(0);
 
   const startTest = (item) => {
     if (!accepted) {
-      CustomHelper.showMessage('Please accept the Terms & Conditions before starting the test.');
+      CustomHelper.showMessage('Please accept the Terms & Conditions before ' + state(state ? 'resume' : 'start') + 'ing the test.');
       return;
     }
     navigation.navigate(navigationStrings.TEST_ATTEMPT, item);
@@ -39,6 +40,7 @@ export const Instructions = (props) => {
         if (data.status === true) {
           data = data.data;
           delete data.questions[0].questions
+          setState(data?.section_sequence|| '');
           setTestSeries(data);
         }
         return true;
@@ -337,7 +339,7 @@ export const Instructions = (props) => {
               fontSize: 16,
             }}
           >
-            Start Test
+            {state ? 'Resume' : 'Start'} Test
           </Text>
         </TouchableOpacity>
       </ScrollView>

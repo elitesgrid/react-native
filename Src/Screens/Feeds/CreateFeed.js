@@ -5,6 +5,8 @@ import {
   View,
   Image,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
   ActivityIndicator,
   TextInput,
 } from 'react-native';
@@ -139,6 +141,18 @@ export const CreateFeed = props => {
       });
   };
 
+  const rightElement = (
+      <TouchableOpacity style={{
+        backgroundColor: Colors.WHITE, 
+        paddingVertical: 5,
+        paddingHorizontal: 8,
+        borderRadius: 10
+      }}
+      onPress={()=> submitPost()}>
+        <Text style={{color: Colors.TEXT}}>{"Submit"}</Text>
+      </TouchableOpacity>
+  )
+
   async function fetchData() {
     // You can await here
     const response = await getMyOrder();
@@ -158,7 +172,7 @@ export const CreateFeed = props => {
 
   return (
     <View style={{flex: 1}}>
-      <HeaderComp headerTitle='Create New Post'></HeaderComp>
+      <HeaderComp headerTitle='Create New Post' rightElement={rightElement}></HeaderComp>
       <View style={{margin: 10, flex: 0.93}}>
         <Dropdown
           style={{
@@ -186,29 +200,35 @@ export const CreateFeed = props => {
             setCourseId(item.value);
           }}
         />
-        <View style={{marginTop: 10}}>
-          <Text style={{color: Colors.TEXT_COLOR}}>
-            {'Write your doubt/query, Community Members will help you soon.'}
-          </Text>
-          <TextInput
-            style={{
-              borderWidth: 1,
-              borderColor: Colors.IDLE,
-              borderRadius: 5,
-              marginVertical: 10,
-              padding: 10,
-              height: 120,
-              color: Colors.TEXT_COLOR
-            }}
-            value={query}
-            placeholder={'Enter your query'}
-            onChangeText={text => setQuery(text)}
-            autoCapitalize={'none'}
-            multiline={true}
-            textAlignVertical="top"
-            placeholderTextColor={Colors.IDLE}
-          />
-        </View>
+        <TouchableWithoutFeedback 
+          style={{marginTop: 10}}
+          onPress={Keyboard.dismiss} 
+          accessible={false}
+         >
+          <View style={{ flex: 1, marginTop: 10 }}>
+            <Text style={{color: Colors.TEXT_COLOR}}>
+              {'Write your doubt/query, Community Members will help you soon.'}
+            </Text>
+            <TextInput
+              style={{
+                borderWidth: 1,
+                borderColor: Colors.IDLE,
+                borderRadius: 5,
+                marginVertical: 10,
+                padding: 10,
+                height: 120,
+                color: Colors.TEXT_COLOR
+              }}
+              value={query}
+              placeholder={'Enter your query'}
+              onChangeText={text => setQuery(text)}
+              autoCapitalize={'none'}
+              multiline={true}
+              textAlignVertical="top"
+              placeholderTextColor={Colors.IDLE}
+            />
+          </View>
+        </TouchableWithoutFeedback>
         <View>
           {imageUri1 && (
             <View>

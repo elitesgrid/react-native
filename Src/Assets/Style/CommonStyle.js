@@ -38,8 +38,7 @@ const CommonStyles = StyleSheet.create({
   },
   hamburgerImage: {
     height: 20,
-    width: 20,
-    marginLeft: moderateScale(10),
+    width: 20
   },
   HeaderContainer: {
     flexDirection: 'row',

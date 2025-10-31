@@ -59,11 +59,6 @@ const Styles = StyleSheet.create({
     width: '80%',
     color: Colors.BLACK,
   },
-  forgot_password: {
-    alignSelf: 'flex-end',
-    marginBottom: moderateVerticalScale(20),
-    color: '#808080'
-  },
   button: {
     alignItems: 'center',
     justifyContent: 'center',

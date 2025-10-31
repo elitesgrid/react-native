@@ -24,6 +24,7 @@ import LoadingComp from '../../Components/LoadingComp'; // Assuming this is defi
 import navigationStrings from '../../Constants/navigationStrings';
 import TestServices from '../../Services/apis/TestServices';
 import HtmlRendererComp from '../../Components/HtmlRendererComp';
+import useTabletLandscape from '../../Hooks/useTabletLandscape';
 
 const { width } = Dimensions.get('window');
 
@@ -31,9 +32,9 @@ const { width } = Dimensions.get('window');
 export const ViewSolution = (props) => {
     const { route, navigation } = props;
     const { params } = route;
+    const tabletLandscape = useTabletLandscape();
 
     const [isOpen, setIsOpen] = useState(false);
-
     const [isLoading, setIsLoading] = useState(true);
     const [bookmarkModalVisibility,setBookmarkModalVisibility] = useState(false);
     const [cusName, setCusName] = useState('');
@@ -51,6 +52,7 @@ export const ViewSolution = (props) => {
         { label: "Marked for Review", key: "marked_for_review", count: 0 },
         { label: "Answered & Marked for Review", key: "answered_marked_for_review", count: 0 },
     ]);
+    const [drawerPercentage, setDrawerPercentage] = useState(80);
 
     async function getSessionData() {
         let session = await StorageManager.get_session();
@@ -67,7 +69,7 @@ export const ViewSolution = (props) => {
         }
 
         setVisibleResponse(false);
-        console.log(currentQuestion.question);
+        // console.log(currentQuestion.question);
         setCurrentQuestions(currentQuestion);
         setCurrentQuestionsIndex(index);
         
@@ -119,6 +121,9 @@ export const ViewSolution = (props) => {
                 default:
                     que_type = "MC";
                     break;
+            }
+            if(question?.custom_json?.state === "unanswered"){
+                question.custom_json.state = "not_answered";
             }
 
             question.question_type = que_type;
@@ -205,6 +210,17 @@ export const ViewSolution = (props) => {
         }
     };
 
+    useEffect(() => {
+        //console.log("tabletLandscape",tabletLandscape);
+        if(tabletLandscape.isDeviceLandscape){
+            setDrawerPercentage(25);
+        } else if(tabletLandscape.isIpadTablet){
+            setDrawerPercentage(30);
+        } else {
+            setDrawerPercentage(80);
+        }
+    }, [tabletLandscape]);
+
     useEffect(function(){
         load_question( currentQuestionsIndex ? currentQuestionsIndex : 0);
     }, [testQuestions]);
@@ -275,76 +291,75 @@ export const ViewSolution = (props) => {
                             onClose={togglePallete}
                             drawerContent={
                                 <SafeAreaView style={[TestSeriesStyle.pallete_container, styles.drawerContentContainer]}>
-      
-                                {/* Header */}
-                                <View style={TestSeriesStyle.pallete_header}>
-                                    <Image
-                                    style={styles.profileImage}
-                                    resizeMode="contain"
-                                    source={profileImage === '' ? imagePaths.LOGO : {uri: profileImage}}
-                                    />
-                                    <Text
-                                    style={styles.drawerProfileText} // Inline style moved to StyleSheet
-                                    numberOfLines={1}
-                                    ellipsizeMode="tail"
-                                    >
-                                    {cusName}
-                                    </Text>
-                                </View>
-
-                                <View style={styles.legendContainer}>
-                                    <Text style={styles.legendHeader}>
-                                        Question Legend
-                                    </Text>
-                                    <View style={styles.legendRowContainer}>
-                                    {drawerLegend.map((item, idx) => (
-                                        <View
-                                            key={idx}
-                                            style={[
-                                                styles.legendItem,
-                                                {
-                                                    width: idx == 4 ? "98%" : (idx % 2 === 0 ? "40%" : "60%"),
-                                                }
-                                            ]}
+                                    {/* Header */}
+                                    <View style={TestSeriesStyle.pallete_header}>
+                                        <Image
+                                        style={styles.profileImage}
+                                        resizeMode="contain"
+                                        source={profileImage === '' ? imagePaths.LOGO : {uri: profileImage}}
+                                        />
+                                        <Text
+                                        style={styles.drawerProfileText} // Inline style moved to StyleSheet
+                                        numberOfLines={1}
+                                        ellipsizeMode="tail"
                                         >
-                                            {pallete_highlighers(item.key, item.count, "0")}
-                                            <Text style={styles.legendText}>
-                                                {item.label}
-                                            </Text>
-                                        </View>
-                                    ))}
+                                        {cusName}
+                                        </Text>
                                     </View>
-                                </View>
 
-                                {/* Choose Question Header */}
-                                <View style={styles.chooseQuestionHeader}>
-                                    <Text style={styles.chooseQuestionHeaderText}>
-                                    Choose Question
-                                    </Text>
-                                </View>
-
-                                {/* Question Palette */}
-                                <ScrollView contentContainerStyle={styles.questionPaletteScroll}>
-                                    <View style={styles.questionPaletteRow}>
-                                    {testQuestions.map((item, index) => (
-                                        <View key={index} style={styles.questionPaletteItem}>
-                                            {pallete_highlighers(item.custom_json.state, item.sno, parseInt(item.sno) - 1)}
+                                    <View style={styles.legendContainer}>
+                                        <Text style={styles.legendHeader}>
+                                            Question Legend
+                                        </Text>
+                                        <View style={styles.legendRowContainer}>
+                                        {drawerLegend.map((item, idx) => (
+                                            <View
+                                                key={idx}
+                                                style={[
+                                                    styles.legendItem,
+                                                    {
+                                                        width: idx == 4 ? "98%" : (idx % 2 === 0 ? "40%" : "60%"),
+                                                    }
+                                                ]}
+                                            >
+                                                {pallete_highlighers(item.key, item.count, "0")}
+                                                <Text style={styles.legendText}>
+                                                    {item.label}
+                                                </Text>
+                                            </View>
+                                        ))}
                                         </View>
-                                    ))}
                                     </View>
-                                </ScrollView>
 
-                                {isOpen && (
-                                    <TouchableOpacity
-                                    onPress={() => setIsOpen(false)}
-                                    style={styles.navCloseBtn}
-                                    >
-                                    <Text style={styles.navCloseText}>{'>'}</Text>
-                                    </TouchableOpacity>
-                                )}
+                                    {/* Choose Question Header */}
+                                    <View style={styles.chooseQuestionHeader}>
+                                        <Text style={styles.chooseQuestionHeaderText}>
+                                        Choose Question
+                                        </Text>
+                                    </View>
+
+                                    {/* Question Palette */}
+                                    <ScrollView contentContainerStyle={styles.questionPaletteScroll}>
+                                        <View style={styles.questionPaletteRow}>
+                                        {testQuestions.map((item, index) => (
+                                            <View key={index} style={styles.questionPaletteItem}>
+                                                {pallete_highlighers(item.custom_json.state, item.sno, parseInt(item.sno) - 1)}
+                                            </View>
+                                        ))}
+                                        </View>
+                                    </ScrollView>
+
+                                    {isOpen && (
+                                        <TouchableOpacity
+                                        onPress={() => setIsOpen(false)}
+                                        style={styles.navCloseBtn}
+                                        >
+                                        <Text style={styles.navCloseText}>{'>'}</Text>
+                                        </TouchableOpacity>
+                                    )}
                                 </SafeAreaView>
                             }
-                            drawerPercentage={80}
+                            drawerPercentage={drawerPercentage}
                             animationTime={250}
                             position={'right'}
                         >

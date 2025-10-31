@@ -18,6 +18,7 @@ const HeaderComp = ({
   onPressBack,
   headerStyles = {},
   headerTitle = '',
+  rightElement = null
 }) => {
   const navigation = useNavigation();
 
@@ -34,7 +35,6 @@ const HeaderComp = ({
       <View style={CommonStyles.HeaderContainer}>
         {/* LEFT: Back button */}
         <TouchableOpacity
-          style={styles.backButton}
           onPress={onPressBack ? onPressBack : goBack}
         >
           <Icon name="arrow-left" size={22} color="#fff" />
@@ -46,16 +46,16 @@ const HeaderComp = ({
         </Text>
 
         {/* RIGHT: User ID */}
-        <Text style={styles.userId}>{global.USER_ID || 'A'}</Text>
+        {rightElement}
+        {
+          !rightElement && <Text style={styles.userId}>{global.USER_ID || 'A'}</Text>
+        }
       </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  backButton: {
-    padding: 8,
-  },
   image: {
     height: 20,
     width: 20,
