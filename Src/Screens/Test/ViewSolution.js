@@ -546,6 +546,21 @@ export const ViewSolution = (props) => {
                                                     </View>
                                                 )
                                             }
+                                            {
+                                                !visibleResponse && currentQuestions.video !== '0' && currentQuestions.video && <TouchableOpacity
+                                                    onPress={()=> watchVideoSolution(currentQuestions.video)}
+                                                    style={{
+                                                        backgroundColor: "#007BFF",
+                                                        paddingVertical: 8,
+                                                        paddingHorizontal: 12,
+                                                        borderRadius: 8,
+                                                        alignSelf: "flex-start",
+                                                        marginBottom: 15,
+                                                    }}
+                                                >
+                                                    <Text style={{ color: "#fff", fontWeight: "600" }}>🎥 Watch Video Solution</Text>
+                                                </TouchableOpacity>
+                                            }
                                         </View>
                                     </View>
                                 </ScrollView>

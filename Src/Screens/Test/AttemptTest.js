@@ -791,14 +791,14 @@ export const AttemptTest = (props) => {
                                             {currentQuestions.passage !== "" &&
                                                 <View key={"passage"} style={{ flex: 1 }}>
                                                     <Text style={{color: Colors.TEXT}}>{"Passage"}</Text>
-                                                    <HtmlRendererComp html={currentQuestions.passage}></HtmlRendererComp>
+                                                    <HtmlRendererComp key1='passage' html={currentQuestions.passage}></HtmlRendererComp>
                                                 </View>
                                             }
                                             <View key={"1"}>
                                                 {currentQuestions.passage !== "" &&
                                                     <Text style={{color: Colors.TEXT}}>{"Question"}</Text>
                                                 }
-                                                <HtmlRendererComp html={currentQuestions.question}></HtmlRendererComp>
+                                                <HtmlRendererComp key1='question' html={currentQuestions.question}></HtmlRendererComp>
                                             </View>
                                             {[1, 2, 3, 4].map((opt, i) => {
                                                 const optionText = currentQuestions[`option_${opt}`];

@@ -1,18 +1,21 @@
 //import liraries
-import React, { useMemo } from 'react';
-import { useWindowDimensions, useColorScheme } from 'react-native';
+import React, { useMemo, memo } from 'react';
+import { useWindowDimensions, useColorScheme, LogBox } from 'react-native';
 import RenderHTML from 'react-native-render-html';
 import Colors from '../Constants/Colors';
 
-const HtmlRendererComp = ({ html = '' }) => {
+const HtmlRendererComp = ({ html = '', key1 = '' }) => {
   const { width: windowWidth } = useWindowDimensions();
   const colorScheme = useColorScheme();
   const isNightMode = colorScheme === 'dark';
 
+  // if(key1 === 'passage'){
+  //   console.log("HTML",html);
+  // }
   const htmlTagsStyles = useMemo(() => {
     const baseStyle = {
       whiteSpace: 'normal',
-      color: isNightMode ? Colors.WHITE : Colors.DARK,
+      color: Colors.BLACK,
       fontSize: 15,
       lineHeight: 22,
     };
@@ -21,10 +24,10 @@ const HtmlRendererComp = ({ html = '' }) => {
       p: baseStyle,
       span: baseStyle,
       li: baseStyle,
+      table: baseStyle,
     };
   }, [isNightMode]);
 
-  // ✅ Convert <sup> and <sub> to Unicode equivalents
   const replaceHtmlMath = (rawHtml) => {
     if (!rawHtml) return '';
     return rawHtml
@@ -48,15 +51,19 @@ const HtmlRendererComp = ({ html = '' }) => {
       );
   };
 
+  LogBox.ignoreLogs([
+    'Support for defaultProps will be removed from function components',
+  ]);
+
   const processedHtml = useMemo(() => replaceHtmlMath(html), [html]);
 
   return (
     <RenderHTML
       contentWidth={windowWidth}
-      source={{ html: processedHtml }}
+      source={{ html: html.trim() }}
       tagsStyles={htmlTagsStyles}
     />
   );
 };
 
-export default HtmlRendererComp;
+export default memo(HtmlRendererComp);
