@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Text, ScrollView, TouchableOpacity, View, Image, ImageBackground, Pressable, Platform } from 'react-native';
 import Styles from '../../Assets/Style/LoginStyle';
-import HomeHeaderComp from '../../Components/HomeHeaderComp';
 import BannerSlider from './includes/BannerSlider';
 import Colors from '../../Constants/Colors';
 import CommonStyles from '../../Assets/Style/CommonStyle';
@@ -11,6 +10,8 @@ import imagePaths from '../../Constants/imagePaths';
 import navigationStrings from '../../Constants/navigationStrings';
 import LoadingComp from '../../Components/LoadingComp';
 import CustomHelper from '../../Constants/CustomHelper';
+import HeaderComp from '../../Components/HeaderComp';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Using existing icon set
 
 export const Home = (props) => {
   const { navigation } = props;
@@ -32,6 +33,10 @@ export const Home = (props) => {
   const navToPlayer = function (item) {
     navigation.navigate(navigationStrings.PLAYER, item);
   }
+
+  const navToNofication = function () {
+    navigation.navigate(navigationStrings.NOTIFICATION, {});
+  };
 
   const getHome = async function () {
     return await HomeService.get_home({})
@@ -80,7 +85,7 @@ export const Home = (props) => {
           :
           (
             <View style={Styles.container}>
-              <HomeHeaderComp onPressBack={() => { navigation.openDrawer(); }} headingText="Home" />
+              <HeaderComp leftIcon={<Icon name="menu" size={22} color="#fff" />} onPressBack={() => { navigation.openDrawer(); }} headerTitle="Home" rightElement={<Icon onPress={() => { navToNofication(); }} name="bell" size={22} color={Colors.WHITE} style={{}} />} />
               <ScrollView
                 nestedScrollEnabled={true}
                 >

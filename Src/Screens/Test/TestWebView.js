@@ -3,8 +3,6 @@ import React, {useEffect, useState} from 'react';
 import {View, SafeAreaView, StatusBar, Alert} from 'react-native';
 import {WebView} from 'react-native-webview';
 
-//import TestHeaderComp from '../../Components/TestHeaderComp';
-//import HeaderComp from '../../Components/HeaderComp';
 import Colors from '../../Constants/Colors';
 import TestSeriesStyle from '../../Assets/Style/TestSeriesStyle';
 import envVariables from '../../Constants/envVariables';
@@ -98,9 +96,6 @@ export const TestWebView = props => {
         <LoadingComp />
       ) : (
         <View style={{flex: 1}}>
-          {/* <StatusBar backgroundColor={Colors.THEME} barStyle="light-content" /> */}
-          {/* <TestHeaderComp headerTitle={params.title} /> */}
-          {/* <HeaderComp headerTitle={params.title} /> */}
           <SafeAreaView style={{backgroundColor: Colors.THEME, paddingTop: 20}}></SafeAreaView>
           <View style={{flex: 1}}>
             {

@@ -8,11 +8,9 @@ import {
   StyleSheet,
   TouchableOpacity,
   Text,
-  Alert,
   Image,
 } from 'react-native';
 import navigationStrings from '../Constants/navigationStrings';
-import imagePaths from '../Constants/imagePaths';
 import Colors from '../Constants/Colors';
 import StorageManager from '../Services/StorageManager';
 import RNRestart from 'react-native-restart';
@@ -42,7 +40,13 @@ function CustomDrawerContent(props) {
   }, []);
 
   function fixProfileImage(url) {
-    return url === '' ? imagePaths.H_PROFILE : {uri: url};
+    return url === '' ? <Icon 
+    name="account-outline" 
+    size={50} 
+    color={Colors.THEME} style={styles.profileImage} /> : <Image
+            source={{uri: url}}
+            style={styles.profileImage}
+          />;
   }
 
   function Logout() {
@@ -67,10 +71,7 @@ function CustomDrawerContent(props) {
             navigation.navigate(navigationStrings.PROFILE);
           }}
           style={styles.profileContainer}>
-          <Image
-            source={fixProfileImage(profileImage)}
-            style={styles.profileImage}
-          />
+          {fixProfileImage(profileImage)}
           <View style={styles.profileInfo}>
             <Text style={styles.userName}>{name || 'Guest User'}</Text>
             <Text style={styles.userEmail}>{email || 'No email'}</Text>
@@ -83,9 +84,7 @@ function CustomDrawerContent(props) {
         <DrawerItem
           labelStyle={styles.drawerLabel}
           icon={() => (
-            <Image
-              source={imagePaths.PROFILE}
-              style={styles.drawerIcon}></Image>
+            <Icon name="account-outline" size={22} color={Colors.THEME} style={{}} />
           )}
           label={'My Profile'}
           onPress={() => navigation.navigate(navigationStrings.PROFILE)}
@@ -93,9 +92,7 @@ function CustomDrawerContent(props) {
         <DrawerItem
           labelStyle={styles.drawerLabel}
           icon={() => (
-            <Image
-              source={imagePaths.BOOK_MARK}
-              style={styles.drawerIcon}></Image>
+            <Icon name="bookmark-outline" size={22} color={Colors.THEME} style={{}} />
           )}
           label={'Bookmark'}
           onPress={() => navigation.navigate(navigationStrings.BOOK_MARK)}
@@ -103,9 +100,7 @@ function CustomDrawerContent(props) {
         <DrawerItem
           labelStyle={styles.drawerLabel}
           icon={() => (
-            <Image
-              source={imagePaths.SETTING}
-              style={styles.drawerIcon}></Image>
+            <Icon name="cog-outline" size={22} color={Colors.THEME} style={{}} />
           )}
           label={'Change Password'}
           onPress={() =>
@@ -115,9 +110,7 @@ function CustomDrawerContent(props) {
         <DrawerItem
           labelStyle={styles.drawerLabel}
           icon={() => (
-            <Image
-              source={imagePaths.CONTACT_US}
-              style={styles.drawerIcon}></Image>
+            <Icon name="email-outline" size={22} color={Colors.THEME} style={{}} />
           )}
           label={'Contact Us'}
           onPress={() => navigation.navigate(navigationStrings.CONTACT_US)}
@@ -138,9 +131,7 @@ function CustomDrawerContent(props) {
         <DrawerItem
           labelStyle={[styles.drawerLabel, {color: Colors.THEME}]}
           icon={() => (
-            <Image
-              source={imagePaths.SIGN_OUT}
-              style={styles.drawerIcon}></Image>
+            <Icon name="exit-to-app" size={22} color={Colors.THEME} style={{}} />
           )}
           label={'Sign Out'}
           onPress={Logout}

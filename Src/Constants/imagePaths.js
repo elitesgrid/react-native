@@ -5,23 +5,8 @@ export default {
 
   CAMERA: require('../Assets/Images/camera.png'),
 
-  //Sidebar
-  BOOK_MARK: require('../Assets/Images/sidebar/bookmark.png'),
-  SETTING: require('../Assets/Images/sidebar/setting.png'),
-  SIGN_OUT: require('../Assets/Images/sidebar/sign_out.png'),
-  CONTACT_US: require('../Assets/Images/sidebar/contact_us.png'),
-  HELP_CIRCLE: require('../Assets/Images/sidebar/help-circle.png'),
-  H_PROFILE: require('../Assets/Images/sidebar/profile.png'),
-
-  //Bottom Tabs ICons
-  HOME: require('../Assets/Images/bottom_tabs/home.png'),
   DEFAULT_16_9: require('../Assets/Images/16x9_default.png'),
-  MY_PORTAL: require('../Assets/Images/bottom_tabs/MyPortal.png'),
-  MY_ORDER: require('../Assets/Images/bottom_tabs/MyOrder.png'),
-  PROFILE: require('../Assets/Images/bottom_tabs/profile.png'),
-  TIMELINE: require('../Assets/Images/bottom_tabs/timeline.png'),
 
-  HAMBURGER: require('../Assets/Images/hamburger.png'),
   PEOPLE_COUNT: require('../Assets/Images/people_count.png'),
   STAR: require('../Assets/Images/star.png'),
 
@@ -44,10 +29,6 @@ export default {
   NOT_VISITED: require('../Assets/Images/test/not_visited.png'),
   MARK_FOR_REVIEW: require('../Assets/Images/test/mark_for_review.png'),
   ANSWERED_MARK_FOR_REVIEW: require('../Assets/Images/test/answered_mark_for_review.png'),
-
-  //Feeds
-  FEED_COMMENT: require('../Assets/Images/feeds/comment.png'),
-  FEED_MORE_GRAY: require('../Assets/Images/feeds/more_gray.png'),
 
   //Contact US
   CONTACT_US_EMAIL: require('../Assets/Images/contact_us/email.png'),

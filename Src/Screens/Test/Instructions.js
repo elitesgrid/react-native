@@ -244,7 +244,6 @@ export const Instructions = (props) => {
                 style={{
                   width: 18,
                   height: 18,
-                  tintColor: Colors.THEME,
                   marginTop: 3,
                 }}
               />
@@ -282,11 +281,10 @@ export const Instructions = (props) => {
               width: 22,
               height: 22,
               borderWidth: 1.5,
-              borderColor: Colors.THEME,
+              borderColor: accepted ? Colors.SUCCESS : Colors.THEME,
               borderRadius: 4,
               justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: accepted ? Colors.THEME : '#fff',
+              alignItems: 'center'
             }}
           >
             {accepted && (
@@ -294,8 +292,7 @@ export const Instructions = (props) => {
                 source={imagePaths.TEST_INSTRUCTION_CHECK}
                 style={{
                   width: 14,
-                  height: 14,
-                  tintColor: Colors.WHITE,
+                  height: 14
                 }}
               />
             )}

@@ -7,8 +7,6 @@ import {
   StatusBar,
   SafeAreaView,
 } from 'react-native';
-import { Image } from 'react-native-elements';
-import imagePaths from '../Constants/imagePaths';
 import { useNavigation } from '@react-navigation/native';
 import Colors from '../Constants/Colors';
 import CommonStyles from '../Assets/Style/CommonStyle';
@@ -18,10 +16,10 @@ const HeaderComp = ({
   onPressBack,
   headerStyles = {},
   headerTitle = '',
-  rightElement = null
+  rightElement = null,
+  leftIcon = null
 }) => {
   const navigation = useNavigation();
-
   const goBack = () => {
     navigation.goBack(null);
   };
@@ -37,11 +35,14 @@ const HeaderComp = ({
         <TouchableOpacity
           onPress={onPressBack ? onPressBack : goBack}
         >
-          <Icon name="arrow-left" size={22} color="#fff" />
+          {leftIcon ? leftIcon : <Icon name="arrow-left" size={22} color="#fff" />}
         </TouchableOpacity>
 
         {/* CENTER: Title */}
-        <Text numberOfLines={1} style={styles.headerTitle}>
+        <Text numberOfLines={1} style={[
+          styles.headerTitle,
+          leftIcon ? { textAlign: 'center' } : { marginLeft: 8 },
+        ]}>
           {headerTitle}
         </Text>
 
@@ -65,8 +66,7 @@ const styles = StyleSheet.create({
     color: Colors.WHITE,
     fontSize: 18,
     fontWeight: '600',
-    flex: 1,
-    // textAlign: 'center',
+    flex: 1
   },
   userId: {
     color: Colors.WHITE,

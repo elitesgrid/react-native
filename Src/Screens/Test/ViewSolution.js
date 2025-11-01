@@ -15,7 +15,6 @@ import { View,
 //import { WebView } from 'react-native-webview';
 import MenuDrawer from 'react-native-side-drawer'
 
-import TestHeaderComp from '../../Components/TestHeaderComp';
 import Colors from '../../Constants/Colors';
 import TestSeriesStyle from '../../Assets/Style/TestSeriesStyle';
 import imagePaths from '../../Constants/imagePaths';
@@ -25,6 +24,7 @@ import navigationStrings from '../../Constants/navigationStrings';
 import TestServices from '../../Services/apis/TestServices';
 import HtmlRendererComp from '../../Components/HtmlRendererComp';
 import useTabletLandscape from '../../Hooks/useTabletLandscape';
+import HeaderComp from '../../Components/HeaderComp';
 
 const { width } = Dimensions.get('window');
 
@@ -363,7 +363,16 @@ export const ViewSolution = (props) => {
                             animationTime={250}
                             position={'right'}
                         >
-                        <TestHeaderComp headerTitle={params.quiz.title} headerTestTime={''} togglePallete={togglePallete} />
+                        <HeaderComp 
+                            headerTitle={params.quiz.title} 
+                            rightElement={<View style={{height:45}}>
+                                <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+                                    <TouchableOpacity style={{ alignItems: "center", marginRight: 10 }} onPress={togglePallete}>
+                                        <Image style={{ height: 20, width: 20 }} source={imagePaths.TEST_HAMBURGER} />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>}
+                        />
                         <View style={styles.sectionHeaderBar}>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{  }}>
                                 {testSections.length && currentQuestions && testSections.map((section, idx) => (

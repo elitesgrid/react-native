@@ -113,11 +113,26 @@ export const Player = props => {
   // ------------------------------
   // Launch Zoom externally if needed
   // ------------------------------
-  const launchZoomApp = async url => {
-    const supported = await Linking.canOpenURL(url);
-    if (supported) {
-      Linking.openURL(url);
-    } else {
+  const launchZoomApp = async (url) => {
+    try {
+      let zoomUrl = url;
+
+      if (!url.startsWith('zoomus://') && !url.startsWith('https://')) {
+        zoomUrl = `zoomus://zoom.us/join?confno=${url}`;
+      }
+
+      const canOpenZoomScheme = await Linking.canOpenURL('zoomus://');
+      if (canOpenZoomScheme) {
+        await Linking.openURL(zoomUrl);
+        return;
+      }
+
+      const canOpenHttps = await Linking.canOpenURL(url);
+      if (canOpenHttps) {
+        await Linking.openURL(url);
+        return;
+      }
+
       Alert.alert('Zoom Not Installed', 'Please install the Zoom app.', [
         {
           text: 'Install Zoom',
@@ -126,8 +141,12 @@ export const Player = props => {
         },
         { text: 'Cancel', style: 'cancel' },
       ]);
+    } catch (error) {
+      console.log('Error launching Zoom:', error);
+      Alert.alert('Error', 'Something went wrong while opening Zoom.');
     }
   };
+
 
   // ------------------------------
   // Identify video type & load player

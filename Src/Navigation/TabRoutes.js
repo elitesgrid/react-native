@@ -5,9 +5,9 @@ import DeviceInfo from 'react-native-device-info';
 
 import {Home, MyPortal, MyOrder, Profile, Timeline} from '../Screens/index';
 import navigationStrings from '../Constants/navigationStrings';
-import imagePaths from '../Constants/imagePaths';
 import Colors from '../Constants/Colors';
 import CommonStyles from '../Assets/Style/CommonStyle';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -36,10 +36,10 @@ export default function TabRoutes() {
   const renderTabContent = (route, focused, iconSource) => {
     const color = focused ? Colors.THEME : Colors.IDLE;
     const icon = (
-      <Image
-        style={{...CommonStyles.bottomTabImages, tintColor: color}}
-        resizeMode="contain"
-        source={iconSource}
+      <Icon
+        name={iconSource}
+        size={18}
+        color={focused ? Colors.THEME : Colors.IDLE}
       />
     );
 
@@ -93,11 +93,11 @@ export default function TabRoutes() {
   };
 
   const tabs = [
-    {name: navigationStrings.HOME, comp: Home, icon: imagePaths.HOME},
-    {name: navigationStrings.MY_PORTAL, comp: MyPortal, icon: imagePaths.MY_PORTAL},
-    {name: navigationStrings.MY_ORDER, comp: MyOrder, icon: imagePaths.MY_ORDER},
-    {name: navigationStrings.PROFILE, comp: Profile, icon: imagePaths.PROFILE},
-    {name: navigationStrings.TIMELINE, comp: Timeline, icon: imagePaths.TIMELINE},
+    {name: navigationStrings.HOME, comp: Home, icon: 'home-outline'},
+    {name: navigationStrings.MY_PORTAL, comp: MyPortal, icon: 'file-document-outline'},
+    {name: navigationStrings.MY_ORDER, comp: MyOrder, icon: 'cart-outline'},
+    {name: navigationStrings.PROFILE, comp: Profile, icon: 'account-outline'},
+    {name: navigationStrings.TIMELINE, comp: Timeline, icon: 'timeline-outline'},
   ];
 
   return (

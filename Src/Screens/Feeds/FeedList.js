@@ -401,11 +401,7 @@ export const FeedList = props => {
                               <TouchableOpacity
                                   onPress={() => openBottomSheet({feed_id: item.id})}
                                   style={styles.moreOptionsButton}>
-                                  <Image
-                                      style={styles.moreOptionsIcon}
-                                      resizeMode="contain"
-                                      source={imagePaths.FEED_MORE_GRAY}
-                                  />
+                                  <Icon name={"dots-vertical"} size={22} color={Colors.IDLE} />
                               </TouchableOpacity>
                           </TouchableOpacity>
                           
@@ -474,10 +470,7 @@ export const FeedList = props => {
                               <TouchableOpacity
                                   onPress={() => navToFeedDetail({feed_id: item.id})}
                                   style={styles.actionButton}>
-                                  <Image
-                                      style={styles.commentIcon}
-                                      source={imagePaths.FEED_COMMENT}
-                                  />
+                                  <Icon name={"comment-outline"} size={22} color={Colors.IDLE} />
                                   <Text style={styles.actionText}>
                                       {' ' + item.total_comments + ' Comment'}
                                   </Text>
@@ -631,14 +624,6 @@ const styles = StyleSheet.create({
     timestampText: {
         color: '#9096B4',
         fontSize: 11,
-    },
-    moreOptionsButton: {
-        padding: 5, // Increased hit area
-        marginLeft: 10,
-    },
-    moreOptionsIcon: {
-        width: 4,
-        height: 16,
     },
 
     // --- Content Body Styles ---

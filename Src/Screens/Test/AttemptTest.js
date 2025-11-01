@@ -3,7 +3,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import { View,
     Text,
     ScrollView,
-    useWindowDimensions,
     Image,
     TouchableOpacity,
     SafeAreaView,
@@ -16,7 +15,6 @@ import { View,
 //import { WebView } from 'react-native-webview';
 import MenuDrawer from 'react-native-side-drawer'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import TestHeaderComp from '../../Components/TestHeaderComp';
 import Colors from '../../Constants/Colors';
 import TestSeriesStyle from '../../Assets/Style/TestSeriesStyle';
 import imagePaths from '../../Constants/imagePaths';
@@ -29,6 +27,7 @@ import { useConfirmDialog } from '../../Components/ConfirmDialogContext';
 import { StackActions } from '@react-navigation/native';
 import HtmlRendererComp from '../../Components/HtmlRendererComp';
 import useTabletLandscape from '../../Hooks/useTabletLandscape';
+import HeaderComp from '../../Components/HeaderComp';
 
 function useExamTimer(initialRemainSeconds = 0) {
   const [questionTime, setQuestionTime] = useState(0); // counts UP
@@ -772,7 +771,25 @@ export const AttemptTest = (props) => {
                             animationTime={250}
                             position={'right'}
                         >
-                        <TestHeaderComp headerTitle={params.title} headerTestTime={testFormatRemainTime} togglePallete={togglePallete} onPressBack={onTestBackPress}/>
+                        <HeaderComp 
+                            headerTitle={params.title} 
+                            onPressBack={onTestBackPress}
+                            rightElement={<View style={{height:45}}>
+                                <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+                                    {
+                                        testFormatRemainTime && <View style={{ paddingHorizontal: 8, marginVertical: 8, marginHorizontal: 10, borderRadius: 20, backgroundColor: "#81BADD" }}>
+                                            <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+                                                <Image style={{ width: 20, height: 20 }} source={imagePaths.TEST_TIMER_ICON} />
+                                                <Text style={{ fontSize: 13, fontWeight: "400", color: Colors.BLACK, paddingLeft: 4 }}>{testFormatRemainTime}</Text>
+                                            </View>
+                                        </View>
+                                    }
+                                    <TouchableOpacity style={{ alignItems: "center", marginRight: 10 }} onPress={togglePallete}>
+                                        <Image style={{ height: 20, width: 20 }} source={imagePaths.TEST_HAMBURGER} />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>}
+                        />
                         <View style={styles.sectionHeaderBar}>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{  }}>
                                 {testSections.length && currentQuestions && testSections.map((section, idx) => (
