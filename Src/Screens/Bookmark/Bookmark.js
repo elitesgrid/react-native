@@ -21,6 +21,7 @@ import NoDataFound from '../../Components/NoDataFound';
 import { useConfirmDialog } from '../../Components/ConfirmDialogContext';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import HtmlRendererComp from '../../Components/HtmlRendererComp';
+import DeviceInfo from 'react-native-device-info';
 
 export const Bookmark = props => {
   const {navigation} = props;
@@ -72,7 +73,7 @@ export const Bookmark = props => {
 
   const removeBookmark = async function (item) {
     showConfirmDialog({
-      title: 'Elites Grid',
+      title: DeviceInfo.getApplicationName(),
       message: 'Are you sure want to remove question from bookmark?',
       onConfirm: () => {
         TestServices.remove_bookmarked_question({

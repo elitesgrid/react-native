@@ -47,10 +47,7 @@ const HeaderComp = ({
         </Text>
 
         {/* RIGHT: User ID */}
-        {rightElement}
-        {
-          !rightElement && <Text style={styles.userId}>{global.USER_ID || 'A'}</Text>
-        }
+        {rightElement ? rightElement : <Text style={styles.userId}>{global.USER_ID || 'A'}</Text>}
       </View>
     </SafeAreaView>
   );

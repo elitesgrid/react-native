@@ -28,6 +28,7 @@ import { StackActions } from '@react-navigation/native';
 import HtmlRendererComp from '../../Components/HtmlRendererComp';
 import useTabletLandscape from '../../Hooks/useTabletLandscape';
 import HeaderComp from '../../Components/HeaderComp';
+import DeviceInfo from 'react-native-device-info';
 
 function useExamTimer(initialRemainSeconds = 0) {
   const [questionTime, setQuestionTime] = useState(0); // counts UP
@@ -408,7 +409,7 @@ export const AttemptTest = (props) => {
         let sections = sectionTimings ? Object.keys(sectionTimings) : [];
         if(params.allow_move_section === "0" && resumeSectionId !== sections[sections.length - 1] && backPress !== "1"){
             showConfirmDialog({
-                title: 'Elites Grid',
+                title: DeviceInfo.getApplicationName(),
                 message: 'Are you sure want to submit this section?',
                 onConfirm: async () => {
                     const index = sections.length === 0 ? -1 : sections.indexOf(resumeSectionId);
@@ -436,7 +437,7 @@ export const AttemptTest = (props) => {
             }
             console.log("Backpress requested", backPress, state);
             showConfirmDialog({
-                title: 'Elites Grid',
+                title: DeviceInfo.getApplicationName(),
                 message: state == '1' ? 'Do you want to save your progress and exit the test?' : 'Are you sure want to submit test?',
                 onConfirm: async () => {
                     submitTest(backPress, await collectJson(state));

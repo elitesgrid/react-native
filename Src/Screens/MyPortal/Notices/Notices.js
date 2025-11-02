@@ -18,12 +18,12 @@ export const Notices = (props) => {
     const getNotices = async function () {
         let payload = {
             page: 1,
-            course_ids: "33,320,323,287,324,325,326,311",
+            course_ids: "0",
         }
         return await PortalService.get_notices(payload)
             .then(async (data) => {
                 setIsLoading(false);
-                if (data.status === true && data.notices) {
+                if (data.status === true && data.data.notices) {
                     data = data.data;
                     setNoticesList(data.notices);
                     setIsLoading(false);
@@ -37,12 +37,7 @@ export const Notices = (props) => {
     };
 
     useEffect(function () {
-        async function fetchData() {
-            // You can await here       
-            const response = await getNotices();
-            console.log(response);
-        }
-        fetchData();
+        getNotices();
     }, []);
 
     return (
@@ -56,7 +51,7 @@ export const Notices = (props) => {
                     (
                         <View style={PortalStyles.container}>
                             {
-                                noticeList.length == 0 ? <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+                                noticeList.length === 0 ? <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
                                     <Text style={{fontSize: 20,fontWeight:'500',color:Colors.TEXT_COLOR}}>No Notice Available For you.</Text>
                                 </View> : 
                                 <FlatList

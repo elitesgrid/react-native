@@ -17,6 +17,7 @@ import RNRestart from 'react-native-restart';
 import envVariables from '../Constants/envVariables';
 import { useConfirmDialog } from './ConfirmDialogContext';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import DeviceInfo from 'react-native-device-info';
 
 function CustomDrawerContent(props) {
   const {navigation} = props;
@@ -51,7 +52,7 @@ function CustomDrawerContent(props) {
 
   function Logout() {
     showConfirmDialog({
-      title: 'Elites Grid',
+      title: DeviceInfo.getApplicationName(),
       message: 'Are you sure want to logout?',
       onConfirm: () => {
         StorageManager.remove_session();
