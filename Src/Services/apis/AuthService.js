@@ -47,10 +47,22 @@ async function registration(payload) {
   return result;
 }
 
+async function de_activate_account(payload) {
+  let result = await network_call('DELETE_ACCOUNT', payload);
+  if (result.status === true) {
+    if (result.status === true) {
+      StorageManager.remove_session();
+      StorageManager.remove_key('JWT');
+    }
+  }
+  return result;
+}
+
 export default {
   login,
   forgot_password,
   update_password,
   logout,
   registration,
+  de_activate_account
 };

@@ -15,6 +15,7 @@ const api_list = {
   FORGOT_PASSWORD: 'user/forgot_password',
   REGISTRATION: 'user/registration',
   UPDATE_PASSWORD: 'user/change_password',
+  DELETE_ACCOUNT: 'user/de_activate_account',
   GET_HOME: 'home/get_home',
   GET_SYLLABUS_DETAIL: 'courses/get_syllabus',
   GET_COURSE_DETAIL: 'courses/get_course_detail',
@@ -77,7 +78,7 @@ async function network_call(API, payload) {
     },
   };
   Object.keys(payload).length > 0 ? (refreshOptions.data = payload) : '';
-  // console.log(refreshOptions.headers);
+  console.log(refreshOptions.headers);
   // console.log(payload);
 
   try {

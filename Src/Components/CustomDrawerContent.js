@@ -18,6 +18,7 @@ import envVariables from '../Constants/envVariables';
 import { useConfirmDialog } from './ConfirmDialogContext';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DeviceInfo from 'react-native-device-info';
+import AuthService from '../Services/apis/AuthService';
 
 function CustomDrawerContent(props) {
   const {navigation} = props;
@@ -34,6 +35,18 @@ function CustomDrawerContent(props) {
       setEmail(session.email);
       setProfileImage(session.profile_image);
     }
+  }
+
+  const delete_account = function (){
+    showConfirmDialog({
+      title: DeviceInfo.getApplicationName(),
+      message: 'Are you sure want to delete account?',
+      onConfirm: async () => {
+        await AuthService.de_activate_account({});
+        // StorageManager.remove_session();
+        RNRestart.Restart();
+      },
+    });
   }
 
   useEffect(() => {
@@ -123,10 +136,7 @@ function CustomDrawerContent(props) {
           )}
           label={'Delete Account'}
           onPress={() =>
-            navigation.navigate(navigationStrings.C_WEBVIEW, {
-              title: 'Delete Account',
-              url: envVariables.DELETE_ACCOUNT_URL,
-            })
+            delete_account()
           }
         />
         <DrawerItem

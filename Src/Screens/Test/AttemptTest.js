@@ -386,6 +386,8 @@ export const AttemptTest = (props) => {
                 return false;
             }
             data = data.data;
+            const popAction = StackActions.pop(2);
+            CustomHelper.showMessage('Test submitted successfully.');
             if (data.id) {
                 testSeries.report_id = data.id;
                 delete testSeries.questions;
@@ -393,13 +395,14 @@ export const AttemptTest = (props) => {
                 //console.log(testSeries);
                 // Assuming navigationStrings.TEST_VIEW_RESULT is available globally
                 if(backPress === "1"){
-                    const popAction = StackActions.pop(2);
                     navigation.dispatch(popAction);
                 } else {
                     navigation.replace(navigationStrings.TEST_VIEW_RESULT, testSeries); 
                 }
                 console.log("Submit Test Success");
+                return;
             }
+            navigation.dispatch(popAction);
             console.log("Submit Test", data);
         });
     }

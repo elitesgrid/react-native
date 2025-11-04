@@ -9,7 +9,8 @@ import {
   Dimensions,
   TouchableOpacity,
   Platform,
-  Text
+  Text,
+  ActivityIndicator
 } from 'react-native';
 
 import Orientation from 'react-native-orientation-locker';
@@ -34,6 +35,7 @@ export const Player = props => {
   const [videoType, setVideoType] = useState(''); // 'youtube', 'webview', 'video'
   const [videoUrl, setVideoUrl] = useState('');
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isLoadingWebView, setIsLoadingWebView] = useState(true);
 
   const windowWidth = Dimensions.get('window').width;
   const videoHeight = ((windowWidth * 9) / 16) + (Platform.OS === 'android' ? 0 : 60); // 16:9 ratio
@@ -62,28 +64,22 @@ export const Player = props => {
   const handleLoad = () => {
     let js = '';
     if (videoUrl.includes('zoom')) {
-      js = `function hide_ctrls(){var content = document.getElementById("content");                    if(content){                        var headers = content.querySelectorAll("header");                        headers.forEach(function(header) {                            header.style.display = "none";                        });                    }                                var app_content = document.getElementById("app");                    if(app_content){                        var headers = app_content.querySelectorAll("header");                        headers.forEach(function(header) {                            header.style.display = "none";                        });                    }                                var accessibilityHome = document.getElementById("accessibilityHome");                    if(accessibilityHome){                        accessibilityHome.style.display = "none";                    }                                var is_exist = document.getElementsByClassName('getty-notice');                    if(is_exist.length > 0){                        is_exist[0].style.display = 'none'                    }                                is_exist = document.getElementsByClassName('vjs-playback-range-control');                    if(is_exist.length > 0){                        is_exist[0].style.display = 'none'                    }                                is_exist = document.getElementsByClassName('trim-wrapper');                    if(is_exist.length > 0){                        is_exist[0].style.display = 'none'                    }                                is_exist = document.getElementsByClassName('mv-embed-top');                    if(is_exist.length > 0){                        is_exist[0].style.display = 'none'                    }                                is_exist = document.getElementsByClassName('mv-embed-middle');                    if(is_exist.length > 0){                        is_exist[0].style.display = 'none'                    }                                is_exist = document.getElementsByClassName('mv-embed-bottom');                    if(is_exist.length > 0){                        is_exist[0].style.display = 'none'                    }                                var floatingBtn = document.getElementById("ot-sdk-btn-floating");                    if(floatingBtn){floatingBtn.style.display = "none";} document.querySelectorAll('video').forEach(video => {
-          video.disablePictureInPicture = true;
-          video.addEventListener('enterpictureinpicture', (event) => {
-            event.preventDefault();
-            event.stopImmediatePropagation();
-          });
-        });}setInterval(function () {hide_ctrls();}, 2000);`;
-      global.ZOOM_SCRIPT === '' ? '' : (js = 'var seek_to=' + currentTime + ';' + global.ZOOM_SCRIPT);
+      js = 'var seek_to=' + currentTime + ';';
+      if(global.SHARE_URL_ZOOM_SCRIPT && videoUrl.includes('clips/')){
+        js += global.SHARE_URL_ZOOM_SCRIPT
+      } else {
+        js += global.ZOOM_SCRIPT
+      }
     } else if (videoUrl.includes('yout')) {
-      js = `let interval = null; let arr = ["ytp-chrome-top-buttons", "ytp-title", "ytp-youtube-button ytp-button yt-uix-sessionlink", "ytp-button ytp-endscreen-next", "ytp-button ytp-endscreen-previous", "ytp-show-cards-title", "ytp-endscreen-content", "ytp-chrome-top", "ytp-share-button", "ytp-watch-later-button", "ytp-pause-overlay", "ytp-subtitles-button", "ytp-fullscreen-button"]; arr.forEach(function(str) { if (document.getElementsByClassName(str).length > 0) { document.getElementsByClassName(str)[0].style.display = 'none'; } });
-       arr.forEach(function(str) { var elements = document.getElementsByClassName(str); while (elements.length > 0) { elements[0].parentNode.removeChild(elements[0]); } }); var content = document.getElementById("content"); if (content !== null) { var headers = content.querySelectorAll("header"); headers.forEach(function(header) { header.style.display = "none"; }); } var css = document.createElement('style'); css.type = 'text/css'; var styles = '.ytp-contextmenu { width: 0px !important}'; if (css.styleSheet) { css.styleSheet.cssText = styles; } else { css.appendChild(document.createTextNode(styles)); } document.getElementsByTagName('head')[0].appendChild(css); if (interval !== null) { clearInterval(interval); interval = null; } function hide_buttons() { var settingsMenu = document.querySelector('.ytp-settings-menu'); if (settingsMenu) { var menu = settingsMenu.querySelector('.ytp-panel-menu'); if (menu) { console.log("Hide Classes"); var lastChild = menu.lastElementChild; if (lastChild) { lastChild.style.display = 'none'; } } } let is_exist = document.getElementsByClassName('ytp-settings-button'); if (is_exist.length > 0) { is_exist[0].style.display = 'inline' } is_exist = document.getElementsByClassName('ytp-button'); if (is_exist.length > 0) { is_exist[0].style.display = 'inline' } is_exist = document.getElementsByClassName('ytp-iv-player-content'); if (is_exist.length > 0) { is_exist[0].style.display = 'none' } is_exist = document.getElementsByClassName('iv-branding'); if (is_exist.length > 0) { is_exist[0].style.display = 'none' } is_exist = document.getElementsByClassName('ytp-unmute-animated'); if (is_exist.length > 0) { is_exist[0].style.display = 'none' } is_exist = document.querySelectorAll('.ytp-menuitem-toggle-checkbox'); for (var i = 0; i < is_exist.length; i++) { var parent = is_exist[i].parentNode.parentNode; parent.style.display = 'none'; } document.addEventListener('contextmenu', event => event.preventDefault()); document.querySelectorAll("video").forEach(function(video) { video.addEventListener("contextmenu", function(ev) { ev.preventDefault(); }); }); } interval = setInterval(function() { hide_buttons(); }, 2000); setTimeout(function() { hide_buttons(); }, 500); setTimeout(function() { hide_buttons(); }, 1000); hide_buttons(); document.getElementsByClassName('ytp-play-button ytp-button')[0].click(); document.addEventListener('contextmenu', event => event.preventDefault());`;
-      global.YOUTUBE_SCRIPT === '' ? '' : (js = global.YOUTUBE_SCRIPT);
+      js = '(function() {' +  global.YOUTUBE_SCRIPT + '})();';
     }
     setTimeout(() => {
+      console.log(js);
       webViewRef.current?.injectJavaScript(js);
     }, 500);
     setIsLoading(false);
   };
 
-  // ------------------------------
-  // Helper: extract YouTube ID
-  // ------------------------------
   const extractYouTubeId = url => {
     const regExp =
       /^.*(youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/;
@@ -91,9 +87,6 @@ export const Player = props => {
     return match && match[2] ? match[2] : null;
   };
 
-  // ------------------------------
-  // Update watched time
-  // ------------------------------
   const updateVideoTime = async () => {
     try {
       if (!params.id) return;
@@ -110,9 +103,6 @@ export const Player = props => {
     }
   };
 
-  // ------------------------------
-  // Launch Zoom externally if needed
-  // ------------------------------
   const launchZoomApp = async (url) => {
     try {
       let zoomUrl = url;
@@ -147,10 +137,6 @@ export const Player = props => {
     }
   };
 
-
-  // ------------------------------
-  // Identify video type & load player
-  // ------------------------------
   async function identifyVideoType(url) {
     try {
       setIsLoading(true);
@@ -158,8 +144,11 @@ export const Player = props => {
 
       let vt = "";
       let vu = "";
-
-      if (url.includes('youtu')) {
+      if(url.includes('dev-yt')){
+          console.log('dev-yt', url);
+          vt = 'youtube';
+          vu = url.replace('dev-yt', '');
+      } else if (url.includes('youtu')) {
         // YouTube
         const ytId = extractYouTubeId(url);
         if (ytId) {
@@ -241,9 +230,6 @@ export const Player = props => {
     });
   }
 
-  // ------------------------------
-  // Back Handler
-  // ------------------------------
   const handleBackPress = () => {
     if(isFullscreen){
       toggleFullscreen();
@@ -267,9 +253,6 @@ export const Player = props => {
     return () => backHandler.remove();
   }, [isFullscreen]);
 
-  // ------------------------------
-  // Load when focused
-  // ------------------------------
   useEffect(() => {
     changeOrientation(true, false);
     // console.log('SystemNavigationBar:', SystemNavigationBar);
@@ -287,15 +270,79 @@ export const Player = props => {
     return unsubscribe;
   }, [navigation, params, 2]);
 
-  // ------------------------------
-  // Render: YouTube / WebView / Video
-  // ------------------------------
   const renderPlayer = () => {
     const playerHeight = isFullscreen ? '100%' : videoHeight;
     const playerWidth = '100%';
 
     switch (videoType) {
       case 'youtube':
+        return (
+          <View
+            style={{
+              width: playerWidth,
+              height: playerHeight,
+              backgroundColor: 'black',
+            }}>
+            <WebView
+              key={`webview-${videoType}-${isFullscreen ? 'land' : 'port'}`}
+              ref={webViewRef}
+              style={{ flex: 1 }}
+              source={{ 
+                uri: videoUrl,
+                headers: {
+                  Referer: 'https://www.youtube-nocookie.com/',
+                  Origin: 'https://www.youtube-nocookie.com/',
+                  'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
+                }
+              }}
+              onLoad={handleLoad}
+              onLoadStart={() => setIsLoadingWebView(true)}
+              onLoadEnd={() => {
+                setTimeout(() => {
+                  setIsLoadingWebView(false);
+                }, 3000);
+              }}
+              javaScriptEnabled
+              allowsInlineMediaPlayback
+              mediaPlaybackRequiresUserAction
+              userAgent={
+                isIpad
+                  ? 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1'
+                  : undefined
+              }
+              onMessage={(event) => {
+                try {
+                  const msg = JSON.parse(event.nativeEvent.data);
+                  if (msg.type === 'fullscreen') {
+                    setIsFullscreen(msg.value);
+                    console.log('Fullscreen changed:', msg.value);
+                  }
+                } catch {}
+              }}
+            />
+            {isLoadingWebView && (
+              <View
+                style={{
+                  ...StyleSheet.absoluteFillObject,
+                  backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  zIndex: 2,
+                }}>
+                <ActivityIndicator size="large" color="#fff" />
+              </View>
+            )}
+            {
+              !isFullscreen && Platform.OS === 'android' && <TouchableOpacity
+              onPress={toggleFullscreen}
+              style={styles.fullscreenBtn}>
+                <Text style={{ textAlign: 'center', justifyContent: 'center' }}>
+                  <Icon name={isFullscreen ? "fullscreen-exit" : "fullscreen"} size={22} color="#fff" />
+                </Text>
+              </TouchableOpacity>
+            }
+          </View>
+        );
       case 'webview':
         return (
           <View
@@ -304,63 +351,49 @@ export const Player = props => {
               height: playerHeight,
               backgroundColor: 'black',
             }}>
-            {
-              videoType === "youtube" ? <WebView
-                key={`webview-${videoType}-${isFullscreen ? 'land' : 'port'}`}
-                ref={webViewRef}
-                style={{ flex: 1 }}
-                source={{ 
-                  uri: videoUrl,
-                  headers: {
-                    Referer: 'https://www.youtube-nocookie.com/',
-                    Origin: 'https://www.youtube-nocookie.com/',
-                    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
+            <WebView
+              key={`webview-${videoType}-${isFullscreen ? 'land' : 'port'}`}
+              ref={webViewRef}
+              style={{ flex: 1 }}
+              source={{ uri: videoUrl }}
+              onLoad={handleLoad}
+              onLoadStart={() => setIsLoadingWebView(true)}
+              onLoadEnd={() => {
+                setTimeout(() => {
+                  setIsLoadingWebView(false);
+                }, 3000);
+              }}
+              javaScriptEnabled
+              allowsInlineMediaPlayback
+              mediaPlaybackRequiresUserAction
+              userAgent={
+                isIpad
+                  ? 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1'
+                  : undefined
+              }
+              onMessage={(event) => {
+                try {
+                  const msg = JSON.parse(event.nativeEvent.data);
+                  console.log(msg);
+                  if (msg.type === 'fullscreen') {
+                    setIsFullscreen(msg.value);
+                    console.log('Fullscreen changed:', msg.value);
                   }
-                }}
-                onLoad={handleLoad}
-                javaScriptEnabled
-                allowsInlineMediaPlayback
-                mediaPlaybackRequiresUserAction
-                userAgent={
-                  isIpad
-                    ? 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1'
-                    : undefined
-                }
-                onMessage={(event) => {
-                  try {
-                    const msg = JSON.parse(event.nativeEvent.data);
-                    if (msg.type === 'fullscreen') {
-                      setIsFullscreen(msg.value);
-                      console.log('Fullscreen changed:', msg.value);
-                    }
-                  } catch {}
-                }}
-              /> : <WebView
-                key={`webview-${videoType}-${isFullscreen ? 'land' : 'port'}`}
-                ref={webViewRef}
-                style={{ flex: 1 }}
-                source={{ uri: videoUrl }}
-                onLoad={handleLoad}
-                javaScriptEnabled
-                allowsInlineMediaPlayback
-                mediaPlaybackRequiresUserAction
-                userAgent={
-                  isIpad
-                    ? 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1'
-                    : undefined
-                }
-                onMessage={(event) => {
-                  try {
-                    const msg = JSON.parse(event.nativeEvent.data);
-                    console.log(msg);
-                    if (msg.type === 'fullscreen') {
-                      setIsFullscreen(msg.value);
-                      console.log('Fullscreen changed:', msg.value);
-                    }
-                  } catch {}
-                }}
-              />
-            }
+                } catch {}
+              }}
+            />
+            {isLoadingWebView && (
+              <View
+                style={{
+                  ...StyleSheet.absoluteFillObject,
+                  backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  zIndex: 2,
+                }}>
+                <ActivityIndicator size="large" color="#fff" />
+              </View>
+            )}
             {
               !isFullscreen && Platform.OS === 'android' && <TouchableOpacity
               onPress={toggleFullscreen}
@@ -407,9 +440,6 @@ export const Player = props => {
     }
   };
 
-  // ------------------------------
-  // MAIN RENDER
-  // ------------------------------
   return (
     <>
       {isLoading ? (
@@ -444,9 +474,6 @@ export const Player = props => {
   );
 };
 
-// ------------------------------
-// Styles
-// ------------------------------
 const styles = StyleSheet.create({
   container: {
     flex: 1,
