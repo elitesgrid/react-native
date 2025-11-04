@@ -436,11 +436,19 @@ export const ViewSolution = (props) => {
                                                             currentQuestions.question_type !== "FIB" && styles.optionCardWrap,
                                                         ]}
                                                     >
-                                                        <View style={{ paddingRight: 8 }}>
-                                                            <Image 
-                                                            source={selected ? imagePaths.LETTERS[`${String.fromCharCode(64 + opt)}`] : imagePaths[`TEST_OPTION_${String.fromCharCode(64 + opt)}`]} 
-                                                            style={{height: 30, width: 30}}
-                                                            />
+                                                        <View
+                                                            style={{
+                                                                marginRight: 4,
+                                                                backgroundColor: selected ? "#0274BA" : "#222222",
+                                                                width: 25,
+                                                                height: 25,
+                                                                borderRadius: 15,
+                                                                justifyContent: 'center',
+                                                                alignItems: 'center',
+                                                            }}>
+                                                            <Text style={{ color: Colors.WHITE, fontSize: 12, fontWeight: 'bold' }}>
+                                                                {String.fromCharCode(64 + opt)}
+                                                            </Text>
                                                         </View>
                                                         <View style={styles.optionContent}>
                                                             {

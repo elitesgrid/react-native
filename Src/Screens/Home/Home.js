@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Text, ScrollView, TouchableOpacity, View, Image, ImageBackground, Pressable, Platform } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Using existing icon set
 import Styles from '../../Assets/Style/LoginStyle';
 import BannerSlider from './includes/BannerSlider';
 import Colors from '../../Constants/Colors';
@@ -11,7 +12,6 @@ import navigationStrings from '../../Constants/navigationStrings';
 import LoadingComp from '../../Components/LoadingComp';
 import CustomHelper from '../../Constants/CustomHelper';
 import HeaderComp from '../../Components/HeaderComp';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Using existing icon set
 
 export const Home = (props) => {
   const { navigation } = props;
@@ -222,7 +222,7 @@ export const Home = (props) => {
                       horizontal={true}
                       >
                       {testimonial.map((item, index) => {
-                        return (<TouchableOpacity key={index} style={CommonStyles.reviewListCard}>
+                        return (<View key={index} style={CommonStyles.reviewListCard}>
                           <View style={CommonStyles.reviewListCardSize}>
                             <View style={{ flex: 0.2, flexDirection: "row", position: "relative" }}>
                               <View style={{ flex: 0.4, justifyContent: "center", alignItems: "center" }}>
@@ -244,18 +244,19 @@ export const Home = (props) => {
                                 </View>
                               </View>
                             </View>
-                            <View style={{ position: "relative", flex: 0.8 }}>
+                            <View style={{ position: "relative", flex: 0.8, marginTop: 8 }}>
                               <ScrollView 
                                 contentContainerStyle={{ paddingVertical: 10 }}
                                 nestedScrollEnabled={true}
                                 style={{ maxHeight: 200 }}
                                 showsVerticalScrollIndicator={false}
+                                onStartShouldSetResponderCapture={() => true}
                                 >
                                 <Text style={{lineHeight: 20, color: Colors.TAG_COLOR}}>{item.description}</Text>
                               </ScrollView>
                             </View>
                           </View>
-                        </TouchableOpacity>)
+                        </View>)
                       })}
                     </ScrollView>
                   </View>

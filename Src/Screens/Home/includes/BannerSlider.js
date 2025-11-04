@@ -1,53 +1,95 @@
-import { View } from "react-native";
-import { Text } from "react-native-elements";
-// import { SliderBox } from "react-native-image-slider-box";
-import { ImageSlider } from "react-native-image-slider-banner";
+import React, { useState } from 'react';
+import { View, Image, Dimensions, TouchableOpacity } from 'react-native';
+import Carousel from 'react-native-reanimated-carousel';
+import ImageViewing from 'react-native-image-viewing';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Using existing icon set
+import Colors from '../../../Constants/Colors';
 
+const BannerSlider = ({ imagesList = [] }) => {
+  const width = Dimensions.get('window').width;
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [visible, setVisible] = useState(false);
 
-const BannerSlider = ({
-    onPressBack,
-    headerStyles = {},
-    headingText = {},
-    imagesList = [],
-    ...props
-}) => {
-    let banners = [];
-    imagesList.forEach(element => {
-        banners.push({img:element.image});
-        // banners.push(element.image);
-    });
+  const imageUrls = imagesList.map(item => ({ uri: item.image }));
+  const bannerHeight = width > 1000 ? 400 : width > 600 ? 300 : width > 400 ? 230 : width * 0.45;
 
-    function slideClick(index) {
-        console.warn(`images ${index} pressed`)
-    }
-
-    return (
-        <View style={{backgroundColor:""}}>
-            <ImageSlider
-                data={banners}
-                autoPlay={true}
-                timer={3000}
-                //showHeader={true}
-                //onItemChanged={(item) => console.log("item", item)}
-                caroselImageStyle={{height:235}}
-                //closeIconColor="#fff"
+  return (
+    <View style={{ alignItems: 'center', marginVertical: 3 }}>
+      <Carousel
+        width={width}
+        height={bannerHeight}
+        data={imagesList}
+        loop
+        autoPlay
+        autoPlayInterval={4000}
+        scrollAnimationDuration={800}
+        onSnapToItem={index => setCurrentIndex(index)}
+        renderItem={({ item, index }) => (
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={() => {
+              setCurrentIndex(index);
+              setVisible(true);
+            }}>
+            <Image
+              source={{ uri: item.image }}
+              style={{
+                width: '100%',
+                height: 235,
+                borderRadius: 12,
+              }}
+              resizeMode="cover"
             />
-            {/* <SliderBox
-                images={banners}
-                sliderBoxHeight={200}
-                onCurrentImagePressed={index => slideClick(index)}
-                dotColor="#FFEE58"
-                inactiveDotColor="#90A4AE"
-                paginationBoxVerticalPadding={20}
-                autoplay
-                circleLoop
-                resizeMethod={'resize'}
-                resizeMode={'cover'}
-                ImageComponentStyle={{borderRadius: 15, width: '97%', marginTop: 5}}
-                imageLoadingColor="#2196F3"
-            /> */}
-        </View>
-    );
-}
+          </TouchableOpacity>
+        )}
+      />
+
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginTop: 10,
+        }}>
+        {imagesList.map((_, index) => (
+          <View
+            key={index}
+            style={{
+              height: 8,
+              width: currentIndex === index ? 18 : 8,
+              borderRadius: 4,
+              backgroundColor: currentIndex === index ? '#0274BA' : '#C0C0C0',
+              marginHorizontal: 4,
+            }}
+          />
+        ))}
+      </View>
+
+      <ImageViewing
+        images={imageUrls}
+        imageIndex={currentIndex}
+        visible={visible}
+        onRequestClose={() => setVisible(false)}
+        swipeToCloseEnabled={true}
+        doubleTapToZoomEnabled={true}
+        HeaderComponent={() => (
+          <TouchableOpacity
+            style={{
+              position: 'absolute',
+              top: 50,
+              right: 20,
+              zIndex: 10,
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              borderRadius: 20,
+              padding: 8,
+            }}
+            onPress={() => setVisible(false)}>
+            <Icon name="close" size={22} color={Colors.WHITE} style={{}} />
+          </TouchableOpacity>
+        )}
+      />
+    </View>
+  );
+};
 
 export default BannerSlider;

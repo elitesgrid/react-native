@@ -291,25 +291,7 @@ const TimelineTabs = props => {
                   </View>
                 )}
                 {parseInt(item.file_type) === 3 && (
-                  <TouchableOpacity
-                    onPress={() =>
-                      item.url_2
-                        ? choosePlayer({
-                            url: item.url,
-                            url_2: item.url_2,
-                            id: item.id,
-                            length: item?.length || 0,
-                            watched_time: item?.watched_time || 0,
-                            title: item.title,
-                          })
-                        : navToPlayer({
-                            url: item.url,
-                            id: item.id,
-                            length: item?.length || 0,
-                            watched_time: item?.watched_time || 0,
-                            title: item.title,
-                          })
-                    }
+                  <View
                     key={index}
                     style={PortalStyles.SubjectTopicCard}>
                     <View
@@ -372,24 +354,44 @@ const TimelineTabs = props => {
                         </View>
                       </View>
                       <View style={{flexDirection: 'row', marginLeft: 60,marginTop: 5}}>
-                        <LinearGradient
-                          colors={['#37B6F1', '#0274BA']}
-                          style={{
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            borderRadius: 5,
-                            paddingHorizontal: 8,
-                            marginHorizontal: 5,
-                          }}>
-                          <Text
+                        <TouchableOpacity
+                          onPress={() =>
+                          item.url_2
+                            ? choosePlayer({
+                                url: item.url,
+                                url_2: item.url_2,
+                                id: item.id,
+                                length: item?.length || 0,
+                                watched_time: item?.watched_time || 0,
+                                title: item.title,
+                              })
+                            : navToPlayer({
+                                url: item.url,
+                                id: item.id,
+                                length: item?.length || 0,
+                                watched_time: item?.watched_time || 0,
+                                title: item.title,
+                              })
+                        }>
+                          <LinearGradient
+                            colors={['#37B6F1', '#0274BA']}
                             style={{
-                              marginVertical: 2,
-                              fontSize: 14,
-                              color: Colors.WHITE,
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              borderRadius: 5,
+                              paddingHorizontal: 8,
+                              marginHorizontal: 5,
                             }}>
-                            {'View'}
-                          </Text>
-                        </LinearGradient>
+                            <Text
+                              style={{
+                                marginVertical: 2,
+                                fontSize: 14,
+                                color: Colors.WHITE,
+                              }}>
+                              {'View'}
+                            </Text>
+                          </LinearGradient>
+                        </TouchableOpacity>
                         <TouchableOpacity
                           onPress={() => {
                             update_video_time(item);
@@ -416,7 +418,7 @@ const TimelineTabs = props => {
                         </TouchableOpacity>
                       </View>
                     </View>
-                  </TouchableOpacity>
+                  </View>
                 )}
                 {parseInt(item.file_type) === 8 && (
                   <View

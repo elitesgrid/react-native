@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {
   Text,
   View,
@@ -23,39 +23,53 @@ export const Notification = props => {
   const [isLoading, setIsLoading] = useState(true);
   const [notificationList, setNotificationList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
-  const getNotification = async function () {
-    return await NotificationService.get_notifications({
-      page: currentPage,
-      id: 0,
-    })
-      .then(async data => {
-        setIsLoading(false);
-        if (data.status === true) {
-          data = data.data;
-          //console.log(data.notification.length);
-          setNotificationList(data.notification);
-        }
-        return true;
-      })
-      .catch(error => {
-        CustomHelper.showMessage(error.message);
-        return false;
+  const getNotification = useCallback(async (page = 1, append = false) => {
+    try {
+      if (append) setIsFetchingMore(true);
+      else setIsLoading(true);
+
+      const data = await NotificationService.get_notifications({
+        page,
+        id: 0,
       });
-  };
 
-  const loadItems = function () {
-    setCurrentPage(currentPage + 1);
-    getNotification();
-  };
+      if (data?.status === true) {
+        const newNotifications = data.data.notification || [];
 
-  const loadItemsPrev = function () {
-    console.log('currentPage', currentPage);
-    setCurrentPage(currentPage - 1);
-    console.log('currentPage', currentPage);
-    getNotification();
-  };
+        setHasMore(newNotifications.length > 0);
 
+        setNotificationList(prev =>
+          append ? [...prev, ...newNotifications] : newNotifications,
+        );
+      }
+
+    } catch (error) {
+      CustomHelper.showMessage(error.message);
+    } finally {
+      setIsLoading(false);
+      setIsFetchingMore(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setCurrentPage(1);
+      getNotification(1, false);
+    });
+    return unsubscribe;
+  }, [navigation, params, getNotification]);
+
+  const handleLoadMore = () => {
+    if (!isFetchingMore && hasMore) {
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      getNotification(nextPage, true);
+    }
+  };
+  
   function fixImageUrl(message) {
     try {
       let letter = message.charAt(0);
@@ -91,111 +105,104 @@ export const Notification = props => {
     }
   };
 
-  useEffect(
-    function () {
-      const unsubscribe = navigation.addListener('focus', () => {
-        async function fetchData() {
-          // You can await here
-          const response = await getNotification();
-          //console.log(response);
-        }
-        fetchData();
-      });
-      return unsubscribe;
-    },
-    [navigation, params],
-  );
+  const renderLoader = () =>
+    isFetchingMore ? (
+      <View style={{paddingVertical: 20}}>
+        <ActivityIndicator size="small" color={Colors.THEME} />
+      </View>
+    ) : null;
 
-  const renderLoader = () => {
+  if (isLoading) {
     return (
-      <View>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#F9F9F9',
+        }}>
         <ActivityIndicator size="large" color={Colors.THEME} />
       </View>
     );
-  };
+  }
 
   return (
     <View style={{flex: 1, backgroundColor: '#F9F9F9'}}>
       <HeaderComp headerTitle={'Notifications'} />
-      <View>
-        <FlatList
-          data={notificationList}
-          renderItem={item => {
-            item = item.item;
-            return (
-              <TouchableOpacity
-                onPress={() => notificationClick(item)}
+      <FlatList
+        data={notificationList}
+        renderItem={({item}) => (
+          <TouchableOpacity
+            onPress={() => notificationClick(item)}
+            style={{
+              flexDirection: 'row',
+              backgroundColor: '#FFFFFF',
+              marginHorizontal: 12,
+              marginTop: 8,
+              borderRadius: 12,
+              padding: 10,
+              alignItems: 'center',
+              shadowColor: '#000',
+              shadowOpacity: 0.08,
+              shadowRadius: 4,
+              shadowOffset: {width: 0, height: 2},
+              elevation: 2,
+            }}>
+            <View
+              style={{
+                height: 55,
+                width: 55,
+                borderRadius: 12,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: '#F2F7FB',
+              }}>
+              <Image
+                source={fixImageUrl(item.message)}
+                resizeMode="contain"
+                style={{height: 35, width: 35}}
+              />
+            </View>
+            <View
+              style={{
+                flex: 1,
+                marginLeft: 12,
+                justifyContent: 'center',
+                maxWidth: '82%',
+              }}>
+              <HtmlRendererComp html={item.message} />
+              <View
                 style={{
                   flexDirection: 'row',
-                  backgroundColor: '#FFFFFF',
-                  marginHorizontal: 12,
-                  marginTop: 8,
-                  borderRadius: 12,
-                  padding: 10,
+                  justifyContent: 'space-between',
                   alignItems: 'center',
-                  shadowColor: '#000',
-                  shadowOpacity: 0.08,
-                  shadowRadius: 4,
-                  shadowOffset: { width: 0, height: 2 },
-                  elevation: 2,
+                  marginTop: 6,
                 }}>
-                <View style={{
-                  height: 55,
-                  width: 55,
-                  borderRadius: 12,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor: '#F2F7FB',
-                }}>
-                  <Image
-                    source={fixImageUrl(item.message)}
-                    resizeMode="contain"
-                    style={{height: 35, width: 35}}
-                  />
-                </View>
-                <View
-                  style={{
-                    flex: 1,
-                    marginLeft: 12,
-                    justifyContent: 'center',
-                    maxWidth: '82%',
-                  }}>
-                  <HtmlRendererComp html={item.message}></HtmlRendererComp>
+                <Text style={{color: Colors.IDLE, fontSize: 12}}>
+                  {CustomHelper.tsToDate(item.created, 'd-m-Y h:i A')}
+                </Text>
+                {item.is_read === '0' && (
                   <View
                     style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      marginTop: 6,
-                    }}>
-                    <Text style={{color: Colors.IDLE, fontSize: 12}}>
-                      {CustomHelper.tsToDate(item.created, 'd-m-Y h:i A')}
-                    </Text>
-                    {item.is_read === '0' && (
-                      <View
-                        style={{
-                          height: 8,
-                          width: 8,
-                          borderRadius: 4,
-                          backgroundColor: Colors.THEME || '#0274BA',
-                          marginRight: 4,
-                        }}
-                      />
-                    )}
-                  </View>
-                </View>
-              </TouchableOpacity>
-            );
-          }}
-          keyExtractor={item => item.id}
-          ListFooterComponent={renderLoader}
-          onEndReached={loadItems}
-          onScrollToTop={loadItemsPrev}
-          onEndReachedThreshold={0.8}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingVertical: 10 }}
-        />
-      </View>
+                      height: 8,
+                      width: 8,
+                      borderRadius: 4,
+                      backgroundColor: Colors.THEME || '#0274BA',
+                      marginRight: 4,
+                    }}
+                  />
+                )}
+              </View>
+            </View>
+          </TouchableOpacity>
+        )}
+        keyExtractor={item => item.id.toString()}
+        ListFooterComponent={renderLoader}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.4}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{paddingVertical: 10}}
+      />
     </View>
   );
 };
