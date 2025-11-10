@@ -4,11 +4,11 @@ import {
   Text,
   StyleSheet,
   SafeAreaView,
-  SectionList, // Key for section grouping
+  SectionList,
   TouchableOpacity,
 } from 'react-native';
 
-// Constants and Colors (as defined before)
+// --- Color Constants ---
 const Colors = {
   CORRECT: '#4CAF50',
   INCORRECT: '#F44336',
@@ -20,33 +20,13 @@ const Colors = {
   BACKGROUND: '#f0f4f7',
   TEXT_DARK: '#333333',
   BORDER_LIGHT: '#E0E0E0',
-  SECTION_HEADER: '#007AFF', // Blue for main section headers
+  SECTION_HEADER: '#007AFF',
   SECTION_BACKGROUND: '#FFFFFF',
-  TEXT_LIGHT: "#292c2aff"
+  TEXT_LIGHT: '#292c2aff',
 };
 
-// --- Single Item Component for the SectionList ---
+// --- Single Item Component ---
 const TimeListItem = ({ item }) => {
-  // Logic to determine time efficiency
-  const yourTime = parseFloat(item.timeSpentByMe);
-  const topperTime = parseFloat(item.timeSpentByToppers);
-  const timeDifference = yourTime - topperTime;
-  const isSlower = yourTime > topperTime && yourTime > 0;
-  const isSkipped = item.status !== 'Answered';
-
-  // Choose color based on efficiency
-  const deltaColor = isSkipped
-    ? Colors.SKIPPED
-    : isSlower
-    ? Colors.INCORRECT // Red for slow time
-    : Colors.CORRECT; // Green for fast time
-
-  const deltaText = isSkipped
-    ? 'Skipped'
-    : isSlower
-    ? `+${timeDifference.toFixed(2)} Min (Slow)`
-    : `${timeDifference.toFixed(2)} Min (Fast)`;
-
   const statusColor = item.status === 'Answered' ? Colors.EASY : Colors.SKIPPED;
   const diffColor =
     item.difficulty === 'Hard'
@@ -56,19 +36,17 @@ const TimeListItem = ({ item }) => {
       : Colors.EASY;
 
   const handlePress = () => {
-    // Action to view question detail
     console.log(`Viewing details for Question ${item.questionNo} in ${item.section}`);
   };
 
   return (
     <TouchableOpacity style={styles.listItem} onPress={handlePress}>
-      
       {/* 1. Question Number (Left) */}
       <View style={styles.itemSectionNo}>
         <Text style={styles.questionNoText}>{item.questionNo}</Text>
       </View>
-      
-      {/* 2. Metrics & Comparison (Center/Main) */}
+
+      {/* 2. Main Metrics (Center) */}
       <View style={styles.itemSectionMetrics}>
         <View style={styles.metricRow}>
           <Text style={styles.metricLabel}>Difficulty:</Text>
@@ -76,17 +54,29 @@ const TimeListItem = ({ item }) => {
             {item.difficulty}
           </Text>
         </View>
+
         <View style={styles.metricRow}>
           <Text style={styles.metricLabel}>Status:</Text>
           <Text style={[styles.metricValue, { color: statusColor }]}>
             {item.status}
           </Text>
         </View>
-        
-        {/* Comparison Line (The most critical part) */}
-        <View style={styles.comparisonRow}>
-          <Text style={styles.comparisonLabel}>Efficiency:</Text>
-          <Text style={[styles.comparisonDelta, { color: deltaColor }]}>{deltaText}</Text>
+
+        <View style={styles.metricRow}>
+          <Text style={styles.metricLabel}>My Answer:</Text>
+          <Text style={styles.metricValue}>{item.myAnswer || '—'}</Text>
+        </View>
+
+        <View style={styles.metricRow}>
+          <Text style={styles.metricLabel}>Correct Answer:</Text>
+          <Text style={[styles.metricValue, { color: Colors.CORRECT }]}>
+            {item.correctAnswer || '—'}
+          </Text>
+        </View>
+
+        <View style={styles.metricRow}>
+          <Text style={styles.metricLabel}>% Right:</Text>
+          <Text style={styles.metricValue}>{item.percentRight}%</Text>
         </View>
       </View>
 
@@ -96,6 +86,8 @@ const TimeListItem = ({ item }) => {
         <Text style={styles.timeValue}>{item.timeSpentByMe}</Text>
         <Text style={styles.timeLabel}>Topper Time</Text>
         <Text style={styles.timeValue}>{item.timeSpentByToppers}</Text>
+        <Text style={styles.timeLabel}>Avg Time (Right)</Text>
+        <Text style={styles.timeValue}>{item.avgTimeRight}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -104,96 +96,170 @@ const TimeListItem = ({ item }) => {
 // --- Section Header Component ---
 const SectionHeader = ({ title, count }) => (
   <View style={styles.sectionHeaderContainer}>
-    <Text style={styles.sectionHeaderText}>{title} ({count} Q)</Text>
+    <Text style={styles.sectionHeaderText}>
+      {title} ({count} Q)
+    </Text>
   </View>
 );
 
-// --- Main Optimized Screen Component ---
+// --- Main Component ---
 export const TimeAnalysis = ({ resultData }) => {
-    const [sectionsData, setSectionData] = useState([]);
- 
-    const formatSecondsToMMSS = (totalSeconds) => {
-        const seconds = Math.max(0, Math.round(totalSeconds));
+  const [sectionsData, setSectionData] = useState([]);
 
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
+  const formatSecondsToMMSS = (totalSeconds) => {
+    const seconds = Math.max(0, Math.round(totalSeconds));
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
 
-        const paddedMinutes = String(minutes).padStart(2, '0');
-        const paddedSeconds = String(remainingSeconds).padStart(2, '0');
+    const paddedMinutes = String(minutes).padStart(2, '0');
+    const paddedSeconds = String(remainingSeconds).padStart(2, '0');
 
-        return `${paddedMinutes}:${paddedSeconds}`;
-    };
+    return `${paddedMinutes}:${paddedSeconds}`;
+  };
 
-    useEffect(() => {
-        if (!resultData?.my_progress?.questions?.length) return;
+  useEffect(() => {
+    if (!resultData?.my_progress?.questions?.length) return;
 
-        const sectionsMap = resultData.my_progress.sections.reduce((acc, element) => {
-            acc[element.id] = element.subject;
-            return acc;
-        }, {});
+    const sectionsMap = resultData.my_progress.sections.reduce((acc, element) => {
+      acc[element.id] = element.subject;
+      return acc;
+    }, {});
 
-        let d = {};
-        resultData.my_progress.questions.forEach(element => {
-            const sectionName = sectionsMap[element.section_id];
-            const difficultyLevel = element.que_level; 
-            const cj = element.custom_json;
+    let d = {};
+    resultData.my_progress.questions.forEach((element) => {
+      const sectionName = sectionsMap[element.section_id];
+      const difficultyLevel = element.que_level;
+      const cj = element.custom_json;
 
-            let targetData = "V Hard";
-            switch(difficultyLevel) {
-                case "0": 
-                    targetData = "Easy";
-                    break;
-                case "1": 
-                    targetData = "Medium"; 
-                    break;
-                case "2": 
-                    targetData = "Hard"; 
-                    break;
+      let targetData = 'Very Hard';
+      switch (difficultyLevel) {
+        case '0':
+          targetData = 'Easy';
+          break;
+        case '1':
+          targetData = 'Medium';
+          break;
+        case '2':
+          targetData = 'Hard';
+          break;
+      }
+
+      let state = '';
+      switch (cj.state) {
+        case 'answered_marked_for_review':
+          state = 'Bookmarked';
+          break;
+        case 'answered':
+        case 'not_visited':
+        case 'not_answered':
+        case 'marked_for_review':
+          state = cj.state
+            .split('_')
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+          break;
+        default:
+          state = cj.state !== '' ? cj.state : 'N/A';
+          break;
+      }
+
+      if (!d[sectionName]) {
+        d[sectionName] = {
+          title: sectionName,
+          count: 0,
+          data: [],
+        };
+      }
+
+      let your_answer = "";
+
+      if (parseInt(element.question_type) === 0) {
+        if (
+          element.custom_json &&
+          element.custom_json.given_answer &&
+          Array.isArray(element.custom_json.given_answer)
+        ) {
+          for (let i = 0; i <= 10; i++) {
+            const given = element.custom_json.given_answer[i];
+            if (
+              typeof given !== "undefined" &&
+              given !== null &&
+              element.custom_json.given_answer.length > 0 &&
+              (given === true || given === 1 || given === "1")
+            ) {
+              your_answer = i;
             }
+          }
+        }
 
-            let state = "";
-            switch(cj.state) {
-                case "answered": 
-                    state = "Answered";
-                    break;
-                case "not_visited": 
-                    state = "Not Visited"; 
-                    break;
-                case "not_answered": 
-                    state = "Not Answered"; 
-                    break;
-                case "answered_marked_for_review": 
-                    state = "Bookmarked"; 
-                    break;
-                default: 
-                    state = cj.state !== "" ? cj.state : "N/A"; 
-                    break;
-            }
+        if (typeof your_answer === "number" && !isNaN(your_answer)) {
+          your_answer = your_answer + 1;
+        } else {
+          your_answer = "Not Attempted";
+        }
 
-            if (!d[sectionName]) {
-                d[sectionName] = {
-                    title: sectionName,
-                    count: 0,
-                    data: [],
-                }
-            }
+      } else if (parseInt(element.question_type) === 3) {
+        if (
+          element.custom_json &&
+          element.custom_json.given_answer &&
+          Array.isArray(element.custom_json.given_answer) &&
+          element.custom_json.given_answer[0]
+        ) {
+          your_answer = element.custom_json.given_answer[0];
+        }
+      }
+      if (!your_answer) your_answer = "Not Attempted";
 
-            let data = {
-                section: sectionName,
-                questionNo: element.sno,
-                myAnswer: element.answer,
-                difficulty: targetData,
-                timeSpentByMe: formatSecondsToMMSS(cj.spent_time),
-                status: state,
-                timeSpentByToppers: formatSecondsToMMSS(element.topper_time),
-            }
-            d[sectionName].data.push(data);
-            ++d[sectionName].count;
-        });
-        d = Object.values(d);
-        // console.log(d);
-        setSectionData(d);
-    }, [resultData]);
+      
+      let avgTimeRight = "0"
+      if (element.total_right_attempt) {
+        // When total right attempts are available
+        const avg = Math.round(element.right_ans_consumed_sec / element.total_right_attempt);
+        avgTimeRight = formatSecondsToMMSS(avg);
+      } else if (element.custom_json?.question_id) {
+        // When question_id exists in custom_json
+        const queId = element.custom_json.question_id;
+        const key = `que${queId}`;
+
+        if (
+          my_progress?.toppers_spent_Avg_time &&
+          my_progress.toppers_spent_Avg_time[key]
+        ) {
+          const val = Math.round(my_progress.toppers_spent_Avg_time[key] / 10 * 100) / 100;
+          avgTimeRight = formatSecondsToMMSS(val);
+        } else {
+          avgTimeRight = "N/A";
+        }
+      } else {
+        avgTimeRight = "N/A";
+      }
+
+      let percent_right = "--";
+      if (element.total_right_attempt && element.total_attempt) {
+        const percent = (element.total_right_attempt * 100) / element.total_attempt;
+        percent_right = `${percent.toFixed(2)}`;
+      }
+
+      // console.log(element);
+      const data = {
+        section: sectionName,
+        questionNo: element.sno,
+        myAnswer: your_answer,
+        correctAnswer: parseInt(element.question_type) === 0 ? element.answer : element.option_1,
+        avgTimeRight: avgTimeRight,
+        percentRight: percent_right,
+        difficulty: targetData,
+        timeSpentByMe: formatSecondsToMMSS(cj.spent_time),
+        status: state,
+        timeSpentByToppers: formatSecondsToMMSS(element.topper_time),
+      };
+
+      d[sectionName].data.push(data);
+      ++d[sectionName].count;
+    });
+
+    setSectionData(Object.values(d));
+  }, [resultData]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -201,10 +267,11 @@ export const TimeAnalysis = ({ resultData }) => {
         sections={sectionsData}
         keyExtractor={(item) => String(item.questionNo)}
         renderItem={({ item }) => <TimeListItem item={item} />}
-        renderSectionHeader={({ section: { title, count } }) => <SectionHeader title={title} count={count} />}
+        renderSectionHeader={({ section: { title, count } }) => (
+          <SectionHeader title={title} count={count} />
+        )}
         contentContainerStyle={styles.listContainer}
-        // Essential optimization properties for SectionList
-        initialNumToRender={10} 
+        initialNumToRender={10}
         maxToRenderPerBatch={8}
         windowSize={21}
       />
@@ -212,7 +279,7 @@ export const TimeAnalysis = ({ resultData }) => {
   );
 };
 
-// --- Stylesheet ---
+// --- Styles ---
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
@@ -222,7 +289,6 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     paddingHorizontal: 16,
   },
-  // --- Section Header Styles ---
   sectionHeaderContainer: {
     backgroundColor: Colors.SECTION_BACKGROUND,
     paddingVertical: 10,
@@ -243,13 +309,12 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: Colors.TEXT_DARK,
   },
-  // --- List Item Styles (same as previous optimized version) ---
   listItem: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: 8,
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 10,
     marginBottom: 8,
     borderWidth: 1,
@@ -278,29 +343,13 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   metricLabel: {
-    fontSize: 12,
+    fontSize: 11,
     color: Colors.TEXT_LIGHT,
   },
   metricValue: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '600',
-  },
-  comparisonRow: {
-    marginTop: 5,
-    paddingTop: 5,
-    borderTopWidth: 1,
-    borderTopColor: '#f5f5f5',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  comparisonLabel: {
-    fontSize: 13,
-    fontWeight: 'bold',
     color: Colors.TEXT_DARK,
-  },
-  comparisonDelta: {
-    fontSize: 13,
-    fontWeight: 'bold',
   },
   itemSectionTime: {
     flex: 1.5,
@@ -312,7 +361,7 @@ const styles = StyleSheet.create({
     color: Colors.TEXT_LIGHT,
   },
   timeValue: {
-    fontSize: 13,
+    fontSize: 11,
     fontWeight: '600',
     color: Colors.TEXT_DARK,
     marginBottom: 4,
