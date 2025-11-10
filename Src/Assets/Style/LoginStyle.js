@@ -69,7 +69,7 @@ const Styles = StyleSheet.create({
   },
   button_label: {
     color: '#fff',
-    fontSize: scale(15),
+    fontSize: scale(12),
   },
   login_footer_text: {
     textAlign: 'center',
